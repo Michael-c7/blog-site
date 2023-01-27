@@ -26,8 +26,8 @@ function App() {
 
   return (
     <>
-      <Navbar/>
       <Router>
+        <Navbar/>
         <Routes>
           {/* All private routes go in here */}
           <Route element={<PrivateRoutes/>}>
@@ -44,8 +44,8 @@ function App() {
 
           <Route element={<Error/>} path="*"/>
         </Routes>
+        <Footer/>
       </Router>
-      <Footer/>
     </>
   )
 }
