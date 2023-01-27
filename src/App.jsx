@@ -13,7 +13,6 @@ import Category from './pages/Category'
 import Post from './pages/Post'
 import Search from './pages/Search'
 
-
 import Error from './pages/Error'
 // private route
 import CreateAPost from './pages/CreateAPost'
