@@ -37,9 +37,9 @@ function App() {
           <Route element={<Home/>} path="/"/>
           <Route element={<Login/>} path="/login"/>
           <Route element={<SignUp/>} path="/SignUp"/>
-          <Route element={<Author/>} path="/author"/>
-          <Route element={<Category/>} path="/category"/>
-          <Route element={<Post/>} path="/post"/>
+          <Route element={<Author/>} path="/author/:authorId"/>
+          <Route element={<Category/>} path="/category/:categoryName"/>
+          <Route element={<Post/>} path="/post/:postId"/>
           <Route element={<Search/>} path="/search"/>
 
           <Route element={<Error/>} path="*"/>
