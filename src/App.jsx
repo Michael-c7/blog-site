@@ -24,6 +24,7 @@ function App() {
     <div>
       <Router>
         <Routes>
+          {/* All private routes go in here */}
           <Route element={<PrivateRoutes/>}>
             <Route element={<CreateAPost/>} path="/createapost"/>
           </Route>
