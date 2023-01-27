@@ -17,11 +17,16 @@ import Error from './pages/Error'
 // private route
 import CreateAPost from './pages/CreateAPost'
 
+// component
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+
 
 function App() {
 
   return (
-    <div>
+    <>
+      <Navbar/>
       <Router>
         <Routes>
           {/* All private routes go in here */}
@@ -32,18 +37,16 @@ function App() {
           <Route element={<Home/>} path="/"/>
           <Route element={<Login/>} path="/login"/>
           <Route element={<SignUp/>} path="/SignUp"/>
-
           <Route element={<Author/>} path="/author"/>
           <Route element={<Category/>} path="/category"/>
           <Route element={<Post/>} path="/post"/>
           <Route element={<Search/>} path="/search"/>
 
-
           <Route element={<Error/>} path="*"/>
-
         </Routes>
       </Router>
-    </div>
+      <Footer/>
+    </>
   )
 }
 
