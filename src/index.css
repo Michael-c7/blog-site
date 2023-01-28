@@ -2,41 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-/* :root {
- 
-} */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  padding:0;
-  margin:0;
+:root {
+  --category--business:#3742fa;
+  --category--food:#F97F51;
+  --category--movies:#a55eea;
+  --category--music:#ffa502;
+  --category--science:#20bf6b;
+  --category--gaming:#eb3b5a;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.4;
 
 
-  background-color: #222;
-  color:#efefef;
-}
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+/*Form*/
+@layer components {
+  .form-card {
+    @apply w-96 max-[400px]:w-11/12 bg-white border border-gray-200 rounded p-6 flex flex-col my-14 mx-auto;
+  }
 
-ul {
-  list-style-type: none;
-}
+  .form-input-container {
+    @apply flex flex-col mb-4;
+  }
 
-a {
-  color:inherit;
-  text-decoration: none;
+  .form-label {
+    @apply mb-2 text-slate-600;
+  }
+
+  .form-input {
+    @apply border border-gray-300 rounded py-1;
+  }
+
+  .form-primary-btn {
+    @apply bg-black text-white rounded py-2 px-8 my-4 text-lg hover:bg-slate-900 transition ease-in-out duration-150;
+  }
 }
