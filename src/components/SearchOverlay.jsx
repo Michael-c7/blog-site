@@ -4,19 +4,17 @@ import { VscChromeClose } from "react-icons/vsc"
 
 
 const SearchOverlay = (props) => {
-    // isSearchOverlayShown is for if searchOverlay visible or not
     const { isSearchOverlayShown, setIsSearchOverlayShown } = props
-    console.log(props)
 
-    // React.useEffect(() => {
-    //     let body = document.querySelector("body")
-    //     if(isSearchOverlayShown) {
-    //         body.style.overflow = "hidden"
-    //     } else {
-    //         body.style.overflow = "initial"
+    React.useEffect(() => {
+        let body = document.querySelector("body")
+        if(isSearchOverlayShown) {
+            body.style.overflow = "hidden"
+        } else {
+            body.style.overflow = "initial"
 
-    //     }
-    // }, [isSearchOverlayShown])
+        }
+    }, [isSearchOverlayShown])
 
     return (
         <div className={`absolute bg-[rgba(250,250,250,0.93)] z-50 left-0 top-0 w-full h-full ease-in-out duration-150 transition-all ${isSearchOverlayShown ? " z-50 opacity-100" : "z-[-1] opacity-0"}`}>
