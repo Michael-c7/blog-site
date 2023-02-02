@@ -2,6 +2,8 @@ import React from 'react'
 import { Link } from "react-router-dom";
 
 import SearchOverlay from "./SearchOverlay"
+import MobileMenu from "./MobileMenu"
+
 
 import logo from '../assets/images/BizTech.png'
 import user from '../assets/images/defaultUser.png'
@@ -11,40 +13,10 @@ import { BiSearch, BiUser } from 'react-icons/bi'
 import { AiOutlineHeart, AiOutlineEdit, AiOutlineForm, AiOutlineMenu } from 'react-icons/ai'
 import { MdLogout } from 'react-icons/md'
 
+import { navItems } from "../utility/reusable"
+
 
 const Navbar = () => {
-  const navItems = [
-    {
-      id:0,
-      text:'Home',
-      link:'/',
-    },
-    {
-      id:1,
-      text:'Science',
-      link:'/category/science',
-    },
-    {
-      id:2,
-      text:'Gaming',
-      link:'/category/gaming',
-    },
-    {
-      id:3,
-      text:'Business',
-      link:'/category/business',
-    },
-    {
-      id:4,
-      text:'Movies',
-      link:'/category/movies',
-    },
-    {
-      id:5,
-      text:'Food',
-      link:'/category/food',
-    },
-  ]
 
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = React.useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
@@ -67,7 +39,7 @@ const Navbar = () => {
   return (
     <nav ref={navbarRef} className={`bg-white py-4 flex-center flex-row outer-width mx-auto max-[320px]:flex-col navbar--after `}>
         <SearchOverlay {...{isSearchOverlayShown:isSearchOverlayShown, setIsSearchOverlayShown:setIsSearchOverlayShown}}/>
-        
+        <MobileMenu/>
         <div className='left-side flex flex-row'>
           <Link className='logo-container mr-3 max-[320px]:mr-3 max-[320px]:mb-2' to="/">
             <img src={logo}/>
