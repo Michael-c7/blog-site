@@ -1,6 +1,8 @@
 import React from 'react'
 import { Link } from "react-router-dom";
 
+import SearchOverlay from "./SearchOverlay"
+
 import logo from '../assets/images/BizTech.png'
 import user from '../assets/images/defaultUser.png'
 // icons
@@ -47,6 +49,9 @@ const Navbar = () => {
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = React.useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = React.useState(false)
+  
+  const [isSearchOverlayShown, setIsSearchOverlayShown] = React.useState(true)
+
 
   const [navbarHeight, setNavbarHeight] = React.useState(null)
 
@@ -61,13 +66,15 @@ const Navbar = () => {
 
   return (
     <nav ref={navbarRef} className={`bg-white py-4 flex-center flex-row outer-width mx-auto max-[320px]:flex-col navbar--after `}>
+        <SearchOverlay {...{isSearchOverlayShown:isSearchOverlayShown, setIsSearchOverlayShown:setIsSearchOverlayShown}}/>
+        
         <div className='left-side flex flex-row'>
           <Link className='logo-container mr-3 max-[320px]:mr-3 max-[320px]:mb-2' to="/">
             <img src={logo}/>
           </Link>
 
           <ul className="flex flex-row relative">
-            <li className="mx-2 font-medium relative  hidden max-[830px]:block max-[530px]:hidden">
+            <li className="mx-2 font-medium relative hidden max-[830px]:block max-[530px]:hidden">
               <button className="flex-center" onClick={() => setIsCategoriesMenuOpen(!isCategoriesMenuOpen)}>
                 <span>Categories</span>
                 <IoIosArrowDown className="text-zinc-500 top-[2px] relative text-xs ml-[1px]" />
@@ -112,7 +119,7 @@ const Navbar = () => {
             </Link>
           ) : ""}
 
-          <button className="bg-gray-200 p-2 rounded-full flex-center text-[18px] relative">
+          <button className="bg-gray-200 p-2 rounded-full flex-center text-[18px] relative" onClick={() => setIsSearchOverlayShown(true)}>
             <BiSearch/>
           </button>
 
