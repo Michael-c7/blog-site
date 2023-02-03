@@ -3,6 +3,14 @@ for reusable thing
 eg: navbar links
 (would be reused on navbar and mobile menu)
 */
+import { 
+  FaFacebookF,
+  FaGooglePlusG,
+  FaBehance,
+  FaVimeo,
+  FaYoutube,
+} from "react-icons/fa"
+
 
 export const navItems = [
     {
@@ -36,3 +44,37 @@ export const navItems = [
       link:'/category/food',
     },
   ]
+
+
+export const socialMediaItems = [
+  {
+    id:0,
+    icon:FaFacebookF,
+    link:"/",
+    bgColor:"--facebook--bg-color",
+  },
+  {
+    id:1,
+    icon:FaGooglePlusG,
+    link:"/",
+    bgColor:"--google-plus--bg-color",
+  },
+  {
+    id:2,
+    icon:FaBehance,
+    link:"/",
+    bgColor:"--behanced--bg-color",
+  },
+  {
+    id:3,
+    icon:FaVimeo,
+    link:"/",
+    bgColor:"--vimeo--bg-color",
+  },
+  {
+    id:4,
+    icon:FaYoutube,
+    link:"/",
+    bgColor:"--youtube--bg-color",
+  },
+]
