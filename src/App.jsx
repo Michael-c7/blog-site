@@ -20,14 +20,17 @@ import CreateAPost from './pages/CreateAPost'
 // component
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-
+import Sidebar from './components/Sidebar'
+import Overlay from './components/Overlay'
 
 function App() {
 
   return (
-    <>
+    <div className='site-wrapper'>
       <Router>
         <Navbar/>
+        <Sidebar/>
+        <Overlay/>
         <Routes>
           {/* All private routes go in here */}
           <Route element={<PrivateRoutes/>}>
@@ -46,7 +49,7 @@ function App() {
         </Routes>
         <Footer/>
       </Router>
-    </>
+    </div>
   )
 }
 
