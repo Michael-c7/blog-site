@@ -1,28 +1,27 @@
-import React from 'react'
+import React from "react"
 import { Link } from "react-router-dom";
 
 import SearchOverlay from "./SearchOverlay"
-import MobileMenu from "./MobileMenu"
 
-
-import logo from '../assets/images/BizTech.png'
-import user from '../assets/images/defaultUser.png'
+import logo from "../assets/images/BizTech.png"
+import user from "../assets/images/defaultUser.png"
 // icons
-import { IoIosArrowDown, } from 'react-icons/io';
-import { BiSearch, BiUser } from 'react-icons/bi'
-import { AiOutlineHeart, AiOutlineEdit, AiOutlineForm, AiOutlineMenu } from 'react-icons/ai'
-import { MdLogout } from 'react-icons/md'
+import { IoIosArrowDown, } from "react-icons/io";
+import { BiSearch, BiUser } from "react-icons/bi"
+import { AiOutlineHeart, AiOutlineEdit, AiOutlineForm, AiOutlineMenu } from "react-icons/ai"
+import { MdLogout } from "react-icons/md"
 
 import { navItems } from "../utility/reusable"
 
+import { useStandardContext } from "../contexts/standard_context";
 
 const Navbar = () => {
+  const { openSidebar } = useStandardContext()
+
 
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = React.useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = React.useState(false)
-  
-  const [isSearchOverlayShown, setIsSearchOverlayShown] = React.useState(true)
+  const [isSearchOverlayShown, setIsSearchOverlayShown] = React.useState(false)
 
 
   const [navbarHeight, setNavbarHeight] = React.useState(null)
@@ -35,13 +34,11 @@ const Navbar = () => {
   let auth = true
 
 
-
   return (
     <nav ref={navbarRef} className={`bg-white py-4 flex-center flex-row outer-width mx-auto max-[320px]:flex-col navbar--after `}>
         <SearchOverlay {...{isSearchOverlayShown:isSearchOverlayShown, setIsSearchOverlayShown:setIsSearchOverlayShown}}/>
-        <MobileMenu/>
-        <div className='left-side flex flex-row'>
-          <Link className='logo-container mr-3 max-[320px]:mr-3 max-[320px]:mb-2' to="/">
+        <div className="left-side flex flex-row">
+          <Link className="logo-container mr-3 max-[320px]:mr-3 max-[320px]:mb-2" to="/">
             <img src={logo}/>
           </Link>
 
@@ -55,7 +52,7 @@ const Navbar = () => {
               <ul className={`dropdown-menu-container left-0 right-auto p-0 ${isCategoriesMenuOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"}`}>
               {navItems.map((el, index) => {
                 return (
-                  <li className=" hover:bg-slate-400 font-normal py-3 relative navItems-item--after" key={el.id}>
+                  <li className="hover:bg-slate-400 font-normal py-3 relative navItems-item--after" key={el.id}>
                     <Link className="px-2" to={el.link}>{el.text}</Link>
                   </li>
                 )
@@ -73,7 +70,7 @@ const Navbar = () => {
           </ul>
         </div>
 
-        <div className='right-side flex flex-row items-center relative'>
+        <div className="right-side flex flex-row items-center relative">
           {!auth ? (
             <Link className="mr-4 max-[530px]:hidden" to="/signUp">Sign Up</Link>
           ) : ""}
@@ -95,7 +92,7 @@ const Navbar = () => {
             <BiSearch/>
           </button>
 
-          <button className="hidden max-[530px]:block bg-gray-200 p-2 rounded-full flex-center text-[16px] relative ml-2">
+          <button className="hidden max-[530px]:block bg-gray-200 p-2 rounded-full flex-center text-[16px] relative ml-2"  onClick={() => openSidebar()}>
             <AiOutlineMenu/>
           </button>
 
@@ -109,20 +106,25 @@ const Navbar = () => {
             {auth ? (
               <ul className="dropdown-menu text-zinc-500">
                 <li className="my-4 hover:text-zinc-900">
-                    <Link to='/' className="flex flex-row items-center">
+                    <Link to="/" className="flex flex-row items-center">
                       <BiUser className="mr-3 text-xl"/>
                       <span>Profile</span>
                     </Link>
                 </li>
+                <li className="my-4 hover:text-zinc-900 min-[530px]:hidden">
+                    <Link to="/createAPost" className="flex flex-row items-center">
+                      <AiOutlineForm className="mr-3 text-xl"/>
+                      <span>Write</span>
+                    </Link>
+                </li>
                 <li className="my-4 hover:text-zinc-900">
-                  <Link to='/' className="flex flex-row items-center">
+                  <Link to="/" className="flex flex-row items-center">
                     <AiOutlineHeart className="mr-3 text-xl"/>
                     <span>Liked Posts</span>
                   </Link>
                 </li>
-
                 <li className="my-4 hover:text-zinc-900">
-                  <Link to='/' className="flex flex-row items-center">
+                  <Link to="/" className="flex flex-row items-center">
                     <MdLogout className="mr-3 text-xl"/>
                     <span>Sign Out</span>
                   </Link>
@@ -133,18 +135,16 @@ const Navbar = () => {
               {!auth ? (
                 <div className="text-center">
                   <h2 className="font-medium">Get started on BizTech</h2>
-                  <Link to='/login' className="flex flex-row justify-center items-center my-4 form-primary-btn text-sm mx-0">
+                  <Link to="/login" className="flex flex-row justify-center items-center my-4 form-primary-btn text-sm mx-0">
                   Login
                   </Link>
-                  <Link to='/signUp' className="flex flex-row justify-center items-center my-4 form-secondary-btn text-sm mx-0">
+                  <Link to="/signUp" className="flex flex-row justify-center items-center my-4 form-secondary-btn text-sm mx-0">
                   Sign Up
                   </Link>
                 </div>
               ) : ""}
           </div>
         </div>
-
-        {/* <hr className='' style={{border:"1px solid #efefef", width:"100%", position:"absolute", left:"0", top:"5rem", zIndex:"-1" }}/> */}
     </nav>
   )
 }
