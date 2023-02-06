@@ -17,7 +17,7 @@ const SearchOverlay = (props) => {
     }, [isSearchOverlayShown])
 
     return (
-        <div className={`absolute bg-[rgba(250,250,250,0.93)] z-50 left-0 top-0 w-full h-full ease-in-out duration-150 transition-all ${isSearchOverlayShown ? " z-50 opacity-100" : "z-[-1] opacity-0"}`}>
+        <div className={`absolute bg-[rgba(250,250,250,0.93)] left-0 top-0 w-full h-full ease-in-out duration-150 transition-all ${isSearchOverlayShown ? " z-50 opacity-100" : "z-[-1] opacity-0"}`}>
             <button className="absolute text-3xl top-0 right-0 m-8 p-3" onClick={() => setIsSearchOverlayShown(false)}>
                 <VscChromeClose/>
             </button>
