@@ -1,9 +1,13 @@
 import React, { useContext, useEffect, useReducer } from 'react'
 import reducer from '../reducers/standard_reducer'
 
-// import {} from '../actions'
+import {
+  SIDEBAR_OPEN,
+  SIDEBAR_CLOSE,
+} from '../actions'
 
 const initialState = {
+  isSidebarOpen:false,
 }
 
 const StandardContext = React.createContext()
@@ -11,8 +15,12 @@ const StandardContext = React.createContext()
 export const StandardProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  const testFunc2 = _ => {
-    console.log('test func from standard context')
+  const openSidebar = _ => {
+    dispatch({type: SIDEBAR_OPEN})
+  }
+
+  const closeSidebar = _ => {
+    dispatch({type: SIDEBAR_CLOSE})
   }
 
 
@@ -20,7 +28,8 @@ export const StandardProvider = ({ children }) => {
     <StandardContext.Provider
       value={{
         ...state,
-        testFunc2,
+        openSidebar,
+        closeSidebar,
       }}
     >
       {children}

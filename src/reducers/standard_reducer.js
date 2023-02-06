@@ -1,16 +1,23 @@
-// import { } from '../actions'
+import {
+  SIDEBAR_OPEN,
+  SIDEBAR_CLOSE,
+} from '../actions'
 
 const standard_reducer = (state, action) => {
+
+    if(action.type === SIDEBAR_OPEN) {
+      let siteWrapper = document.querySelector(".site-wrapper")
+      siteWrapper.style.overflowY = "hidden"
+      return {...state, isSidebarOpen:true}
+    }
+    
+    if(action.type === SIDEBAR_CLOSE) {
+      let siteWrapper = document.querySelector(".site-wrapper") 
+      siteWrapper.style.overflowY = "initial"
+      return {...state, isSidebarOpen:false}
+    }
   
-    //   if(action.type === GENERATE_ORDER_NUMBER) {
-    //     let orderNumber = Math.round(Math.random() * 100000)
-  
-    //     return {...state, orderNumber:orderNumber}
-    //   }
-      
-    return 'standard reducer testing now'
-  
-      throw new Error(`No Matching "${action.type}" - action type`)
+    throw new Error(`No Matching "${action.type}" - action type`)
   
     }
   
