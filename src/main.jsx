@@ -7,7 +7,6 @@ import { StandardProvider } from './contexts/standard_context.jsx'
 import { BlogProvider } from './contexts/blog_context'
 
 
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
       <StandardProvider>
