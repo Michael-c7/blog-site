@@ -11,10 +11,22 @@
   --category--gaming:#eb3b5a;
 
 
+  --facebook--bg-color:#3B5999;
+  --google-plus--bg-color:#DD4B39;
+  --behanced--bg-color:#0B66FF;
+  --vimeo--bg-color:#1AB7EA;
+  --youtube--bg-color:#FE2905;
 
+  /* the width for the site container, on mobile */
   --smaller-main-width:calc(100% - 1rem);
 }
 
+
+.site-wrapper {
+  position:relative;
+  overflow-x:hidden;
+  height:100vh;
+}
 
 
 
@@ -76,10 +88,6 @@
 }
 
 
-.navbar--after {
-  /* background-color: rgb(155, 146, 146); */
-}
-
 .navbar--after::after {
   content:"";
   width:100%;
@@ -92,7 +100,6 @@
   top:4.125rem;
   z-index:-1;
 }
-
 
 @media screen and (max-width: 320px) {
   .navbar--after::after {
