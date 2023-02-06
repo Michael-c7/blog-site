@@ -7,11 +7,11 @@ const SearchOverlay = (props) => {
     const { isSearchOverlayShown, setIsSearchOverlayShown } = props
 
     React.useEffect(() => {
-        let body = document.querySelector("body")
+        let siteWrapper = document.querySelector(".site-wrapper")
         if(isSearchOverlayShown) {
-            body.style.overflow = "hidden"
+            siteWrapper.style.overflowY = "hidden"
         } else {
-            body.style.overflow = "initial"
+            siteWrapper.style.overflowY = "initial"
 
         }
     }, [isSearchOverlayShown])
