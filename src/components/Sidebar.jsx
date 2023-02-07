@@ -29,10 +29,10 @@ const Sidebar = (props) => {
                 })}
             </ul>
             {/* social media icons */}
-            <ul className="flex flex-row text-white mt-10">
+            <ul className="flex flex-row text-white mt-10 flex-wrap">
                 {socialMediaItems.map((el) => {
                     return (
-                        <li key={el.id} className={`p-3 mx-1 first-of-type:ml-0 rounded-full`}  style={{backgroundColor:`var(${el.bgColor})`}}>
+                        <li key={el.id} className={`p-3 mx-1 first-of-type:ml-0 rounded-full max-[320px]:m-1  max-[320px]:first-of-type:ml-1`}  style={{backgroundColor:`var(${el.bgColor})`}}>
                             {<el.icon/>}
                         </li>
                     )
