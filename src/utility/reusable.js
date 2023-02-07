@@ -17,31 +17,37 @@ export const navItems = [
       id:0,
       text:'Home',
       link:'/',
+      bgColor:'--category--home',
     },
     {
       id:1,
       text:'Science',
       link:'/category/science',
+      bgColor:'--category--science',
     },
     {
       id:2,
       text:'Gaming',
       link:'/category/gaming',
+      bgColor:'--category--gaming',
     },
     {
       id:3,
       text:'Business',
       link:'/category/business',
+      bgColor:'--category--business',
     },
     {
       id:4,
       text:'Movies',
       link:'/category/movies',
+      bgColor:'--category--movies',
     },
     {
       id:5,
       text:'Food',
       link:'/category/food',
+      bgColor:'--category--food',
     },
   ]
 
