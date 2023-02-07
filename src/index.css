@@ -85,6 +85,7 @@
   .dropdown-menu-container--closed {
     @apply opacity-0 -z-50;
   }
+
 }
 
 
@@ -147,6 +148,12 @@
 
 .footer-top-bit--after  > * {
   width:33.333333%;
+}
+
+@media screen and (max-width: 768px) {
+  .footer-top-bit--after  > * {
+    width:100%;
+  }
 }
 
 
