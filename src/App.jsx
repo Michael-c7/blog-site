@@ -1,5 +1,4 @@
-import { useState } from 'react'
-
+import React from 'react'
 import { BrowserRouter as Router,Route,Routes } from 'react-router-dom'
 
 import PrivateRoutes from './utility/PrivateRoutes'
@@ -22,6 +21,8 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Sidebar from './components/Sidebar'
 import Overlay from './components/Overlay'
+import SearchOverlay from './components/SearchOverlay'
+import ScrollToTop from './components/ScrollToTop'
 
 function App() {
 
@@ -29,8 +30,16 @@ function App() {
     <div className='site-wrapper'>
       <Router>
         <Navbar/>
+
         <Sidebar/>
+
+        <SearchOverlay/>
+
+        <ScrollToTop/>
+        
         <Overlay/>
+
+
         <Routes>
           {/* All private routes go in here */}
           <Route element={<PrivateRoutes/>}>
