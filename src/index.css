@@ -183,16 +183,13 @@
 
 
 
-
-
-
-.hero-trans--start {
+.hero-slider-transition--start {
   z-index: -1;
   opacity: 0;
   transition: z-index 0.30s step-end, opacity 0.30s linear;
 }
 
-.hero-trans--current {
+.hero-slider-transition--current {
   z-index: 1;
   opacity: 1;
   transition: z-index 0.30s step-start, opacity 0.30s linear;
