@@ -87,13 +87,13 @@ const HeroSlider = () => {
 
 
     return (
-        <article className="h-[550px] outer-width mx-auto my-12 rounded-lg bg-slate-300 relative">
+        <article className="h-[550px] my-12 rounded-lg relative">
             {/* the slides */}
             <ul className="slides">
                 {slides.map((el) => {
                     return (
                         <li key={el.id} className={`${currentSlideId === el.id ? "hero-slider-transition--current" : ""}  hero-slider-transition--start absolute rounded-lg w-full h-full text-white`}>
-                            <div className="top-0 left-0 w-full h-full absolute bg-center bg-cover bg-no-repeat" style={{backgroundImage: `url("${el.img}")`}}>
+                            <div className="top-0 left-0 w-full h-full absolute rounded-xl bg-center bg-cover bg-no-repeat" style={{backgroundImage: `url("${el.img}")`}}>
                                 <div className="absolute min-[425px]:mx-16 mx-0 min-[425px]:w-auto w-full" style={{transform:"translateY(-50%)", top:"50%"}}>
                                     <div className="w-full flex min-[425px]:justify-start justify-center">
                                         <Tag {...{bgColor:"rgb(224,141,25)", text:"tag test", link:`/category/${el.category}`}}/>
