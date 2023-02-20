@@ -18,7 +18,7 @@ const Sidebar = (props) => {
     const { scrollY } = useGetScrollY()
 
     return (
-        <aside className={`absolute top-0 right-0 h-[100%] bg-white drop-shadow w-[20rem] max-[320px]:w-[100%] px-8 py-10 z-50 transition-all duration-[375ms] ${isSidebarOpen ? "right-[0]" : "right-[-20rem]"}`} style={{top:`${scrollY}px`}}>
+        <aside className={`absolute top-0 right-0 h-[100%] bg-white drop-shadow w-[20rem] max-[320px]:w-[100%] px-8 py-10 z-50 transition-all duration-[375ms] ${isSidebarOpen ? "right-[0]" : "right-[-24rem]"}`} style={{top:`${scrollY}px`}}>
             <button className="relative text-3xl" style={{left:"100%", transform:"translate(-100%)"}} onClick={() => closeSidebar()}>
                 <VscChromeClose/>
             </button>
