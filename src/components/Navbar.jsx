@@ -1,42 +1,52 @@
-import React from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom";
-
-import SearchOverlay from "./SearchOverlay"
 
 import logo from "../assets/images/BizTech.png"
 import user from "../assets/images/defaultUser.png"
 // icons
 import { IoIosArrowDown, } from "react-icons/io";
 import { BiSearch, BiUser } from "react-icons/bi"
-import { AiOutlineHeart, AiOutlineEdit, AiOutlineForm, AiOutlineMenu } from "react-icons/ai"
+import { 
+  AiOutlineHeart,
+  AiOutlineEdit,
+  AiOutlineForm,
+  AiOutlineMenu
+} from "react-icons/ai"
 import { MdLogout } from "react-icons/md"
 
 import { navItems } from "../utility/reusable"
 
 import { useStandardContext } from "../contexts/standard_context";
 
-const Navbar = () => {
-  const { openSidebar } = useStandardContext()
+import useClickOff from "../hooks/useClickOff";
 
+
+
+
+const Navbar = () => {
+  const { openSidebar, openSearchOverlay } = useStandardContext()
 
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = React.useState(false)
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = React.useState(false)
-  const [isSearchOverlayShown, setIsSearchOverlayShown] = React.useState(false)
-
-
-  const [navbarHeight, setNavbarHeight] = React.useState(null)
-
-  const navbarRef = React.useRef(null)
-  React.useEffect(() => {
-    setNavbarHeight(navbarRef.current.clientHeight)
-  })
 
   let auth = true
 
 
+  const profileMenuRef = useRef(null)
+  const profileRef = useRef(null)
+  const categoriesMenuRef = useRef(null)
+  const categoriesProfileRef = useRef(null)
+
+
+// profile menu
+  useClickOff(profileMenuRef, profileRef, setIsDropdownMenuOpen)
+// categories menu
+  useClickOff(categoriesMenuRef, categoriesProfileRef, setIsCategoriesMenuOpen)
+
+
+
   return (
-    <nav ref={navbarRef} className={`bg-white py-4 flex-center flex-row outer-width mx-auto max-[320px]:flex-col navbar--after `}>
-        <SearchOverlay {...{isSearchOverlayShown:isSearchOverlayShown, setIsSearchOverlayShown:setIsSearchOverlayShown}}/>
+    <nav className={`navbar-bg--before bg-white py-4 flex-center flex-row outer-width mx-auto max-[320px]:flex-col navbar--after sticky top-0 z-40`}>
         <div className="left-side flex flex-row">
           <Link className="logo-container mr-3 max-[320px]:mr-3 max-[320px]:mb-2" to="/">
             <img src={logo}/>
@@ -44,12 +54,12 @@ const Navbar = () => {
 
           <ul className="flex flex-row relative">
             <li className="mx-2 font-medium relative hidden max-[830px]:block max-[530px]:hidden">
-              <button className="flex-center" onClick={() => setIsCategoriesMenuOpen(!isCategoriesMenuOpen)}>
+              <button ref={categoriesProfileRef} className="flex-center" onClick={() => setIsCategoriesMenuOpen(!isCategoriesMenuOpen)}>
                 <span>Categories</span>
                 <IoIosArrowDown className="text-zinc-500 top-[2px] relative text-xs ml-[1px]" />
               </button>
 
-              <ul className={`dropdown-menu-container left-0 right-auto p-0 ${isCategoriesMenuOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"}`}>
+              <ul ref={categoriesMenuRef} className={`dropdown-menu-container left-0 right-auto p-0 ${isCategoriesMenuOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"}`}>
               {navItems.map((el, index) => {
                 return (
                   <li className="hover:bg-slate-400 font-normal py-3 relative navItems-item--after" key={el.id}>
@@ -88,7 +98,7 @@ const Navbar = () => {
             </Link>
           ) : ""}
 
-          <button className="bg-gray-200 p-2 rounded-full flex-center text-[18px] relative" onClick={() => setIsSearchOverlayShown(true)}>
+          <button className="bg-gray-200 p-2 rounded-full flex-center text-[18px] relative" onClick={() => openSearchOverlay()}>
             <BiSearch/>
           </button>
 
@@ -96,17 +106,17 @@ const Navbar = () => {
             <AiOutlineMenu/>
           </button>
 
-          <button className="flex-center flex-row ml-3" onClick={() => setIsDropdownMenuOpen(!isDropdownMenuOpen)}>
+          <button ref={profileRef} className="flex-center flex-row ml-3" onClick={() => setIsDropdownMenuOpen(!isDropdownMenuOpen)}>
               <img src={user} className="mr-1 w-[32px]"/>
               <IoIosArrowDown className="text-zinc-500" />
           </button>
 
-          <div className={`dropdown-menu-container top-[55px] ${isDropdownMenuOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"} `}>
+          <div ref={profileMenuRef} className={`dropdown-menu-container top-[55px] ${isDropdownMenuOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"} `}>
           {/* Show when user is logged in */}
             {auth ? (
               <ul className="dropdown-menu text-zinc-500">
                 <li className="my-4 hover:text-zinc-900">
-                    <Link to="/" className="flex flex-row items-center">
+                    <Link to="/profile" className="flex flex-row items-center">
                       <BiUser className="mr-3 text-xl"/>
                       <span>Profile</span>
                     </Link>
@@ -118,7 +128,7 @@ const Navbar = () => {
                     </Link>
                 </li>
                 <li className="my-4 hover:text-zinc-900">
-                  <Link to="/" className="flex flex-row items-center">
+                  <Link to="/likedPosts" className="flex flex-row items-center">
                     <AiOutlineHeart className="mr-3 text-xl"/>
                     <span>Liked Posts</span>
                   </Link>
