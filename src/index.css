@@ -229,3 +229,17 @@
   /* transition: z-index 0.125s step-start, opacity 0.125s linear; */
   transition: all 0.25s ease;;
 }
+
+
+
+
+.top-of-the-week--before:before {
+  content:"";
+  position:absolute;
+  background:#FDEEDC;
+  width:300%;
+  left:-100%;
+  height:100%;
+  top:0%;
+  z-index:-1;
+}
