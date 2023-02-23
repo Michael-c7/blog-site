@@ -6,13 +6,16 @@ import {
   socialMediaItems,
 } from "../utility/reusable"
 
-import RecentPosts from './widgets/RecentPosts'
+import PostPreviewRow from "../components/widgets/postPreview/PostPreviewRow"
 
 const Footer = () => {
+  let recentPostsArr = Array.from({ length:2 })
+
 
   return (
     <footer className='footer-bg--before outer-width mx-auto text-white relative'>
       <section className='footer-top-bit--after relative w-full py-12 gap-10 flex flex-col md:flex-row'>
+        {/* about us section */}
         <div className='about-us-and-icons'>
           <div className='about-us'>
             <h2 className='font-bold mb-4 text-lg'>About Us</h2>
@@ -24,7 +27,7 @@ const Footer = () => {
             {socialMediaItems.map((el) => {
               return (
                 <li key={el.id} className='p-3 mx-1 first-of-type:ml-0 rounded-full text-white max-[320px]:my-1  max-[320px]:first-of-type:ml-1' style={{backgroundColor:`var(${el.bgColor})`}}>
-                  <Link to="/" className=''>
+                  <Link to="/" className=' bg-slate-50 w-full'>
                     <el.icon/>
                   </Link>
                 </li>
@@ -32,8 +35,19 @@ const Footer = () => {
             })}
           </ul>
         </div>
-        <RecentPosts/>
+        {/* Recent posts section */}
+        <div>
+          <h2 className='font-bold mb-4 text-lg'>Recent Posts</h2>
+          <div className='flex flex-col gap-6'>
+            {recentPostsArr.map((el, index) => {
+              return (
+                <PostPreviewRow key={index} {...{textColor:"#fff", direction:"row-reverse"}} />
+              )
+            })}
+          </div>
 
+        </div>
+        {/* categories section */}
         <div className='categories'>
           <h2 className='font-bold mb-4 text-lg'>Categories</h2>
           <ul className=''>
@@ -51,6 +65,7 @@ const Footer = () => {
           </ul>
         </div>
       </section>
+      {/* copyright section */}
       <section className='bottom-bit py-6'>
           <div className=' text-center'>&copy; Copyright {new Date().getFullYear()} BizTech. All Rights Reserved.</div>
       </section>
