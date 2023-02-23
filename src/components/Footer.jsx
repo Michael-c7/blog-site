@@ -23,17 +23,15 @@ const Footer = () => {
             BizTech is a blog offering diverse topics such as gaming, science, business, food, and movies. We aim to provide latest, relevant info in an engaging way. Our team is passionate and strives to deliver top content. Whether a gamer, science enthusiast, business professional, foodie, or movie buff, you'll find something of interest on BizTech. Stay tuned for an enjoyable read!
             </p>
           </div>
-          <ul className='social-icons flex flex-row mt-6 flex-wrap'>
+          <div className='social-icons flex flex-row mt-6 flex-wrap'>
             {socialMediaItems.map((el) => {
               return (
-                <li key={el.id} className='p-3 mx-1 first-of-type:ml-0 rounded-full text-white max-[320px]:my-1  max-[320px]:first-of-type:ml-1' style={{backgroundColor:`var(${el.bgColor})`}}>
-                  <Link to="/" className=' bg-slate-50 w-full'>
-                    <el.icon/>
-                  </Link>
-                </li>
+                <Link to='/' key={el.id} className='p-3 mx-1 first-of-type:ml-0 rounded-full text-white max-[320px]:my-1  max-[320px]:first-of-type:ml-1' style={{backgroundColor:`var(${el.bgColor})`}}>
+                  <el.icon/>
+                </Link>
               )
             })}
-          </ul>
+          </div>
         </div>
         {/* Recent posts section */}
         <div>
