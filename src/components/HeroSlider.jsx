@@ -86,7 +86,6 @@ const HeroSlider = () => {
     },[currentSlideId])
 
 
-
     return (
         <article className="h-[550px] my-12 rounded-lg relative">
             {/* the slides */}
@@ -94,28 +93,30 @@ const HeroSlider = () => {
                 {slides.map((el) => {
                     return (
                         <li key={el.id} className={`${currentSlideId === el.id ? "hero-slider-transition--current" : ""}  hero-slider-transition--start absolute rounded-lg w-full h-full text-white`}>
-                            <div className="top-0 left-0 w-full h-full absolute rounded-xl bg-center bg-cover bg-no-repeat" style={{backgroundImage: `url("${el.img}")`}}>
-                                <div className="absolute min-[425px]:mx-16 mx-0 min-[425px]:w-auto w-full" style={{transform:"translateY(-50%)", top:"50%"}}>
-                                    <div className="w-full flex min-[425px]:justify-start justify-center">
-                                        <Tag {...{bgColor:"rgb(224,141,25)", text:"tag test", link:`/category/${el.category}`}}/>
-                                    </div>
-                                    <h2 className="font-semibold min-[425px]:text-4xl text-3xl uppercase my-5 w-full min-[425px]:text-left text-center">
-                                        <Link to={`/article link goes here}`}>
-                                            {el.title.length <= titleCharacterLimit ? `${el.title}` : `${el.title.slice(0, titleCharacterLimit)}...`}
-                                        </Link>
-                                    </h2>
-                                    <div className="flex min-[425px]:flex-row flex-col items-center text-sm">
-                                        <Link to={`/author/${el.authorId}`} className="flex flex-row items-center min-[425px]:mb-0 mb-2">
-                                            <img src={el.authorImg} alt="author image" className="w-6 h-6 rounded-full object-cover"/>
-                                            <h2 className="min-[425px]:ml-2 ml-1 mr-3">{el.authorName}</h2>
-                                        </Link>
-                                        <span className="flex flex-row items-center">
-                                            <ImClock className="mr-1"/>
-                                            <p>{el.date}</p>
-                                        </span>
-                                    </div>
+                            <Link to="/link goes here" className="top-0  absolute w-full h-full rounded-xl">
+                                <img src={el.img} alt="alt text here" className="top-0 left-0 absolute w-full h-full rounded-xl object-cover" />
+                            </Link>
+                            <div className="absolute min-[425px]:mx-16 mx-0 min-[425px]:w-auto w-full" style={{transform:"translateY(-50%)", top:"50%"}}>
+                                <div className="w-full flex min-[425px]:justify-start justify-center z-40">
+                                    <Tag {...{bgColor:"rgb(224,141,25)", text:"tag test", link:`/category/${el.category}`}}/>
                                 </div>
+                                <h2 className="font-semibold min-[425px]:text-4xl text-3xl uppercase my-5 w-full min-[425px]:text-left text-center">
+                                 <Link to={`/article link goes here}`}>
+                                    {el.title.length <= titleCharacterLimit ? `${el.title}` : `${el.title.slice(0, titleCharacterLimit)}...`}
+                                 </Link>
+                                </h2>
+                                <div className="flex min-[425px]:flex-row flex-col items-center text-sm">
+                                    <Link to={`/author/${el.authorId}`} className="flex flex-row items-center min-[425px]:mb-0 mb-2">
+                                        <img src={el.authorImg} alt="author image" className="w-6 h-6 rounded-full object-cover"/>
+                                        <h2 className="min-[425px]:ml-2 ml-1 mr-3">{el.authorName}</h2>
+                                     </Link>
+                                    <span className="flex flex-row items-center">
+                                        <ImClock className="mr-1"/>
+                                        <p>{el.date}</p>
+                                     </span>
+                                 </div>
                             </div>
+
                         </li>
                     )
                 })}
