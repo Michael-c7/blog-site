@@ -67,6 +67,7 @@ const HeroSlider = () => {
 
     // auto slider
     React.useEffect(() => {
+        let slideTimeChangeInMilliseconds = 5000
         let timeout = setTimeout(() => {
             if(currentSlideId === slides.length - 1) {
                 setCurrentSlideId((currentState) => {
@@ -77,7 +78,7 @@ const HeroSlider = () => {
                     return currentState + 1
                 })
             }
-        }, 5000)
+        }, slideTimeChangeInMilliseconds)
         // cleanup 
         return (() => {
             clearTimeout(timeout)
