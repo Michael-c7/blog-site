@@ -5,6 +5,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import HeroSlider from '../components/HeroSlider'
 import EditorsChoice from '../components/EditorsChoice'
 import TopOfTheWeek from '../components/TopOfTheWeek'
+import MoreArticles from '../components/MoreArticles'
+
 
 const Home = () => {
   return (
@@ -12,6 +14,7 @@ const Home = () => {
       <HeroSlider/>
       <EditorsChoice/>
       <TopOfTheWeek/>
+      <MoreArticles/>
     </div>
   )
 }
