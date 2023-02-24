@@ -15,8 +15,8 @@ const MoreArticles = () => {
             <div className="col-span-2 mb-8 ">
             {testRowArr.map((el, index) => {
                     return (
-                        <div className="my-8 first-of-type:mt-0 last-of-type:mb-0">
-                            <PostPreviewRowBig key={index} direction={"md:flex-row flex-col"}/>
+                        <div className="my-8 first-of-type:mt-0 last-of-type:mb-0" key={index}>
+                            <PostPreviewRowBig  direction={"md:flex-row flex-col"}/>
                         </div>
                     )
                 })}
