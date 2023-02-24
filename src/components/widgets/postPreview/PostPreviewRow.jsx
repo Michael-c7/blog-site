@@ -15,20 +15,22 @@ have a reverse prop for reverse needs eg:recent posts
 /**
  * 
  * @param {*} props 
- * @param {string} direction - the flex direction 
+ * @param {string} direction - ether row or row-reverse
+ * @param {string} textColor - a css color eg:#fff, rgba(25,25,25,0.8),ect...
  * @returns 
  */
-const PostPreviewRow = (props, direction) => {
+const PostPreviewRow = (props) => {
+  // ${props.direction === "row-reverse" ? "flex-row-reverse" : "flex-row"}
   return (
-    <div className="flex items-center">
+    <div className={`flex items-center  ${props.direction ? props.direction : "flex-row"} ${props.direction === "flex-row-reverse" ? "justify-between" : ""}`}>
         <Link className="min-[995px]:w-1/2 w-24 h-24" to="/link to post">
           <img src={testImg} alt={"alt text here"} title={`alt text here`} className="w-full h-full rounded-xl object-cover"/>
         </Link>
 
-      <div className="ml-4">
+      <div className={`${props.direction === "flex-row-reverse" ? "ml-0" : "ml-3"}`}>
         <Tag {...{bgColor:"#ccc", link:"/test", text:"tag text"}}/>
         <Link to="/link to post here">
-          <h2 className="font-bold text-black my-1 leading-snug	">The Great Time For Enjoy City View On Mountain</h2>
+          <h2 className="font-bold text-black my-2 leading-snug	" style={{color:props.textColor}}>The Great Time For Enjoy City View On Mountain</h2>
         </Link>
         <Date/>
       </div>

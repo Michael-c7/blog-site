@@ -16,7 +16,7 @@ on the bottom
 
 
 
-const PostPreviewCol = () => {
+const PostPreviewCol = (props) => {
 
   const [articleTextCutoff, setArticleTextCutoff] = React.useState(126)
 
@@ -36,7 +36,9 @@ const PostPreviewCol = () => {
         <h2 className="text-2xl font-medium my-3">heading of PostPreviewCol</h2>
       </Link>
       <AuthorAndDate/>
-      <p className=" text-gray-500 my-3">{testText.length > articleTextCutoff ?  `${testText.slice(0, articleTextCutoff)}...` : testText}</p>
+      {props.showDescription ? "" : (
+        <p className=" text-gray-500 my-3">{testText.length > articleTextCutoff ? `${testText.slice(0, articleTextCutoff)}...` : testText}</p>
+      )}
     </section>
   )
 }
