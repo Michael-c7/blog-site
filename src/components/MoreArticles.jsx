@@ -1,7 +1,7 @@
-import React from 'react'
-import PostPreviewRowBig from './widgets/postPreview/PostPreviewRowBig'
-import InfoSidebar from './InfoSidebar'
-import PostPreviewCol from './widgets/postPreview/PostPreviewCol'
+import React from "react"
+import PostPreviewRowBig from "./widgets/postPreview/PostPreviewRowBig"
+import InfoSidebar from "./InfoSidebar"
+import PostPreviewCol from "./widgets/postPreview/PostPreviewCol"
 
 
 const MoreArticles = () => {
@@ -9,13 +9,13 @@ const MoreArticles = () => {
   let testBottomArr = Array.from({ length:4 })
 
   return (
-    <div className='bg-white my-12'>
-        <div className='min-[995px]:grid min-[995px]:grid-cols-3 flex flex-col gap-6 '>
+    <div className="bg-white my-10">
+        <div className="min-[995px]:grid min-[995px]:grid-cols-3 flex flex-col gap-8">
             {/* main articles */}
-            <div className='col-span-2 '>
+            <div className="col-span-2 mb-8 ">
             {testRowArr.map((el, index) => {
                     return (
-                        <PostPreviewRowBig key={index} direction={"md:flex-row  flex-col"}/>
+                        <PostPreviewRowBig key={index} direction={"md:flex-row flex-col"}/>
                     )
                 })}
             </div>
@@ -23,7 +23,7 @@ const MoreArticles = () => {
             <InfoSidebar/>
         </div>
         {/* bottom articles */}
-        <div className='min-[900px]:grid min-[900px]:grid-cols-4 gap-6 flex flex-col'>
+        <div className="min-[900px]:grid min-[900px]:grid-cols-4 gap-6 flex flex-col">
             {testBottomArr.map((el, index) => {
                 return (
                     <PostPreviewCol key={index} {...{showDescription:true}}/>
