@@ -24,7 +24,7 @@ const TopOfTheWeek = () => {
             </Link>
             <div className='absolute bottom-0 m-6'>
               <Tag {...{bgColor:"#ccc", link:"/test", text:"tag text"}}/>
-              <h2 className='text-white font-medium text-3xl my-2'>the title goes here</h2>
+              <h2 className='text-white font-medium md:text-3xl text-2xl my-2'>the title goes here</h2>
               <AuthorAndDate {...{textColor:"#fff"}}/>
             </div>
           </section>
