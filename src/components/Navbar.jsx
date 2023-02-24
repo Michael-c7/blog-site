@@ -62,7 +62,7 @@ const Navbar = () => {
               <ul ref={categoriesMenuRef} className={`dropdown-menu-container left-0 right-auto p-0 ${isCategoriesMenuOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"}`}>
               {navItems.map((el, index) => {
                 return (
-                  <li className="hover:bg-slate-400 font-normal py-3 relative navItems-item--after" key={el.id}>
+                  <li className="font-normal py-3 relative navItems-item--after" key={el.id}>
                     <Link className="px-2" to={el.link}>{el.text}</Link>
                   </li>
                 )
