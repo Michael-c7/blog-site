@@ -39,7 +39,7 @@ const Footer = () => {
           <div className='flex flex-col gap-6'>
             {recentPostsArr.map((el, index) => {
               return (
-                <PostPreviewRow key={index} {...{textColor:"#fff", direction:"row-reverse"}} />
+                <PostPreviewRow key={index} {...{textColor:"#fff", direction:"flex-row-reverse"}} />
               )
             })}
           </div>
@@ -48,12 +48,12 @@ const Footer = () => {
         {/* categories section */}
         <div className='categories'>
           <h2 className='font-bold mb-4 text-lg'>Categories</h2>
-          <ul className=''>
+          <ul>
             {/* Slice removes the first item which is home */}
             {navItems.slice(1,navItems.length).map((el) => {
               return (
                 <li key={el.id} className='categories-items--after relative py-3 flex flex-row justify-between'>
-                  <Link to={`${el.link}`} className=''>{el.text}</Link>
+                  <Link to={`${el.link}`}>{el.text}</Link>
                   <div className='rounded-full p-1 flex justify-center items-center text-center text-xs min-w-[1.5rem] min-h-[1.5rem]' 
                     style={{backgroundColor:`var(${el.bgColor})`}}
                   >13</div>
