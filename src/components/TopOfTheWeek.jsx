@@ -16,7 +16,7 @@ const TopOfTheWeek = () => {
     <article className='top-of-the-week--before relative py-10'>
       <h2 className="text-3xl font-medium mb-6">Top of the week</h2>
       <div>
-        <div className='min-[995px]:grid min-[995px]:grid-cols-3 gap-5 flex flex-col mb-12 '>
+        <div className='min-[995px]:grid min-[995px]:grid-cols-3 gap-6 flex flex-col mb-12 '>
           {/**main article here */}
           <section className='relative col-span-2'>
             <Link to="/to post here">
@@ -29,7 +29,7 @@ const TopOfTheWeek = () => {
             </div>
           </section>
           {/* sidebar articles here */}
-          <div className='grid grid-rows-4 gap-5'>
+          <div className='grid grid-rows-4 gap-6'>
             {testSideArr.map((el, index) => {
               return (
                 <PostPreviewRow key={index}/>
