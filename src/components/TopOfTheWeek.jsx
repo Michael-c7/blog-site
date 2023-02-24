@@ -13,7 +13,7 @@ const TopOfTheWeek = () => {
   let testSideArr = Array.from({ length:4 })
 
   return (
-    <article className='top-of-the-week--before relative py-8'>
+    <article className='top-of-the-week--before relative py-10'>
       <h2 className="text-3xl font-medium mb-6">Top of the week</h2>
       <div>
         <div className='min-[995px]:grid min-[995px]:grid-cols-3 gap-5 flex flex-col mb-12 '>
