@@ -14,7 +14,7 @@ const Footer = () => {
 
   return (
     <footer className='footer-bg--before outer-width mx-auto text-white relative'>
-      <section className='footer-top-bit--after relative w-full py-12 gap-10 flex flex-col md:flex-row'>
+      <section className='footer-top-bit--after relative w-full py-12 gap-10 flex flex-col md:flex-row  '>
         {/* about us section */}
         <div className='about-us-and-icons'>
           <div className='about-us'>
