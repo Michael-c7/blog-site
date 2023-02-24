@@ -1,7 +1,11 @@
 import React from "react"
 import { Link } from "react-router-dom"
 
-
+/**
+ * 
+ * @param {*} props bgColor: a color eg:#efefef, link: a link to the category eg: gaming, text: text for the text eg: gaming
+ * @returns 
+ */
 const Tag = (props) => {
   const { bgColor, link, text } = props
   
