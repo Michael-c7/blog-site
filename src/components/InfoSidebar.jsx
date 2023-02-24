@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom';
+import { socialMediaNumberFormatter } from '../utility/misc';
 // icons 
 import {
-    FaBeer,
     FaFacebookF,
     FaTwitter,
     FaInstagram,
@@ -115,7 +115,6 @@ const InfoSidebar = () => {
         },
     ]
 
-    const socialMediaNumberFormatter = Intl.NumberFormat("en", {notation:"compact"})
 
 
     const prevSlide = _ => {
@@ -137,6 +136,7 @@ const InfoSidebar = () => {
 
     // auto slider
     React.useEffect(() => {
+        let slideTimeChangeInMilliseconds = 7000
         let timeout = setTimeout(() => {
             if(sliderCurrentIndex === sliderSlidesArr.length - 1) {
                 setSliderCurrentIndex((currentState) => {
@@ -147,7 +147,7 @@ const InfoSidebar = () => {
                     return currentState + 1
                 })
             }
-        }, 5000)
+        }, slideTimeChangeInMilliseconds)
         // cleanup 
         return (() => {
             clearTimeout(timeout)
