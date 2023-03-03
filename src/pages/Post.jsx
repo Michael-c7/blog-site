@@ -7,7 +7,7 @@ import InfoSidebar from "../components/InfoSidebar"
 
 import useClickOff from "../hooks/useClickOff";
 
-import { generateUniqueId } from '../utility/misc'
+import { generateUniqueId, getTimeDifference } from '../utility/misc'
 
 import { FaComment, FaRegHeart } from "react-icons/fa"
 import { RxDotsVertical } from "react-icons/rx"
@@ -56,37 +56,45 @@ const Post = () => {
 
     // this function will be called on button click
     const handleClick = (id) => {
-        /*
-          if the id args match an id from looping
-          through the original obj of the comments data
-          then set isOpen to true else set isOpen
-          to false, for all of them
-        */  
-
-
-      // setIsDropdownOpen([
-      //   {id: '52e29d6d-bead-476a-8047-e70843882285', isOpen: true},
-      //   {id: 'f0bc4460-30db-4754-9028-09c72fd722bc', isOpen: false}
-      // ])
+      let newItems = testCommentData.map((el, index) => {
+        if(el.uniqueId === id) {
+          return {
+            id:el.uniqueId,
+            isOpen:!el.isOpen,
+          }
+        } else {
+          return {
+            id:el.uniqueId,
+            isOpen:false,
+          }
+        }
+      })
+      setIsDropdownOpen(newItems)
     }
 
 
   let postACommentText = useRef(null)
-  // let testCommentAmount = Array.from({ length:2 })
-  let [testCommentAmount, setTestCommentAmount] = useState([
+ 
+
+  let [testCommentData, setTestCommentData] = useState([
     {
-      text:"item 1",
-      UniqueId:generateUniqueId(),
+      text:"this is a test comment 1. Lorem, ipsum dolor sit amet consectetur?",
+      uniqueId:generateUniqueId(),
+      name:"john smith",
+      dateCreated:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)"
     },
     {
-      text:"item 2",
-      UniqueId:generateUniqueId(),
+      text:"this is a test comment 2. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Id in ab, temporibus et praesentium reiciendis accusantium voluptate assumenda suscipit incidunt possimus ipsum facere. Vitae harum tempore doloremque saepe nam repudiandae?",
+      uniqueId:generateUniqueId(),
+      name:"fatima patel",
+      dateCreated:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)"
     }
   ])
 
 
   const cancelBtn = _ => {
     setCurrentUserCommentText("")
+    setIsEditingEnabled(false)
   }
 
   const createEditedComment = () => {
@@ -101,6 +109,14 @@ const Post = () => {
   }
 
 
+  const deleteComment = (id) => {
+    // deletes the comment locally in the dom
+    let filteredComments = testCommentData.filter((el) => el.uniqueId !== id)
+    setTestCommentData(filteredComments)
+    // delete the comments in the database [NEED TO ADD]
+  }
+
+
 // comment
   // useClickOff(commentMenuRef, dotsBtnRef, setIsCommentDropdownShown)
 
@@ -111,20 +127,19 @@ const Post = () => {
 
   useEffect(() => {
     // getting and setting the dropdown items data
-    let items = testCommentAmount.map((el, index) => {
-      
+    let items = testCommentData.map((el, index) => {
       return {
-        id:el.UniqueId,
+        id:el.uniqueId,
         isOpen:false,
       }
     })
 
     setIsDropdownOpen(items)
-  },[testCommentAmount])
+  },[testCommentData])
 
 
   useEffect(() => {
-    console.log(isDropdownOpen)
+    // console.log(isDropdownOpen)
   }, [isDropdownOpen])
 
 
@@ -190,45 +205,47 @@ const Post = () => {
             {/* comments */}
             <ul className='w-full my-6 '>
               {/* comment */}
-              {testCommentAmount.map((el, index) => {
-                const { UniqueId } = el
-                // let isOpen = isDropdownOpen.filter((el) => el.id === UniqueId)[0]?.isOpen
-
+              {testCommentData.map((el, index) => {
+                const { uniqueId } = el
+                let isOpen = isDropdownOpen.filter((el) => el.id === uniqueId)[0]?.isOpen
+                /*loop through my data and create a commentMenuRef and dotsBtnRef for each one */
+                //  useClickOff(commentMenuRef, dotsBtnRef, setIsCommentDropdownShown)
+                
                 return (
-                  <li ref={(ref) => setRef(ref, index)} data-uniqueid={el.UniqueId}  className='flex flex-row gap-4 w-full my-6 relative ' key={index}>
+                  <li ref={(ref) => setRef(ref, index)} data-uniqueid={el.uniqueId}  className='flex flex-row gap-4 w-full my-6 relative ' key={index}>
                   <Link to="/author link goes here" className='rounded-full w-14 h-12 '>
                     <img src={testImg} alt="alt text" className='rounded-full w-12 h-12'/>
                   </Link>
                   <div id="container-test" className='w-full'>
                     <header className='flex flex-row items-center w-full '>
                       <Link to="/link to author here">
-                        <h2 className='font-medium  mr-2'>John smith</h2>
+                        <h2 className='font-medium  mr-2'>{el.name}</h2>
                       </Link>
                       <p className=' text-slate-500 text-sm'>9 months ago</p>
                       {isUserComment ? (
-                        <button className='dots-btn ml-auto' ref={dotsBtnRef} onClick={() => handleClick(el.UniqueId)}>
+                        <button className='dots-btn ml-auto' ref={dotsBtnRef} onClick={() => handleClick(el.uniqueId)}>
                           <RxDotsVertical/>
                         </button>
                       ) : ""}
                       {/* comment dropdown menu */}
-                      <div ref={commentMenuRef} className={`dropdown-menu-container ${1== 0 ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"} top-[30px] w-28 flex`}>
+                      <div ref={commentMenuRef} className={`dropdown-menu-container ${isOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"} top-[30px] w-28 flex`}>
                         <ul className=' w-full'>
                           <li className='mb-4 w-full'>
-                            <button className='flex flex-row items-center  w-full'>
+                            <button className='flex flex-row items-center  w-full' type='button'>
                               <AiOutlineEdit/>
                               <span className='ml-2'>Edit</span>
                             </button>
                           </li>
                           <li className='mt-4'>
-                            <button className='flex flex-row items-center w-full text-red-600'>
+                            <button className='flex flex-row items-center w-full text-red-600' type='button' onClick={() => deleteComment(uniqueId)}>
                               <BiTrash/>
-                              <span className='ml-2'>Delete</span>
+                              <span className='ml-2' >Delete</span>
                             </button>
                           </li>
                         </ul>
                       </div>
                     </header>
-                    <p>{testComment1}</p>
+                    <p>{el.text}</p>
                   </div>
                 </li>
                 )
