@@ -37,6 +37,8 @@ const Post = () => {
 
   let [isCommentDropdownShown, setIsCommentDropdownShown] = useState(false)
 
+  let [wordLimitAmount, setWordLimitAmount] = useState(1000)
+
 
 
   let [currentUserCommentText, setCurrentUserCommentText] = useState("")
@@ -266,23 +268,28 @@ const Post = () => {
           </section>
 
           {/* comments section */}
-          <section className='p-6 bg-slate-100 rounded-xl'>
+          <section className='p-6 bg-slate-100 rounded'>
             {/* post a comment */}
             <div className={`${testCommentData.length < 1 ? "mb-0" : "mb-12"}`}>
               <div className='flex flex-row gap-4'>
-                <Link to="/cat123" className='rounded-full w-14 h-12 '>
+                <Link to="/author link here" className='rounded-full w-14 h-12 '>
                   <img src={testImg} alt="alt text" className='rounded-full w-full h-full'/>
                 </Link>
-                <textarea onChange={() => setCurrentUserCommentText(postACommentText.current.value)} ref={postACommentText} value={currentUserCommentText} maxLength={1000} placeholder="Join the discussion and leave a comment!" className=" resize-y w-full h-24 border border-gray-300 rounded-sm p-2"></textarea>
+                <textarea onChange={() => setCurrentUserCommentText(postACommentText.current.value)} ref={postACommentText} value={currentUserCommentText} maxLength={wordLimitAmount} placeholder="Join the discussion and leave a comment!" className=" resize-y w-full h-24 border border-gray-300 rounded-sm p-2"></textarea>
               </div>
-              <div className='flex flex-row justify-end gap-4 mt-3'>
-                {isEditingEnabled ? (
-                  <button className='bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700' disabled={currentUserCommentText.length >= 1 ? false : true} type='button' onClick={() => editComment()}>Update Comment</button>
-                ) : (
-                  <button className='bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700' disabled={currentUserCommentText.length >= 1 ? false : true} type='button' onClick={() => postComment()}>Post comment</button>
-                )}
-                <button className='bg-white text-black border-2 border-black rounded-sm py-2 px-3' onClick={() => cancelBtn()}>Cancel</button>
+              <div className='flex min-[425px]:flex-row flex-col min-[425px]:justify-between justify-center items-center mt-3  min-[425px]:ml-0  ml-16'>
+                <p className='min-[425px]:ml-16 ml-0 min-[425px]:mb-0 mb-4'>{currentUserCommentText.length} / {wordLimitAmount}</p>
+
+                <div className='flex min-[425px]:flex-row flex-col gap-4'>
+                  {isEditingEnabled ? (
+                    <button className='bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700' disabled={currentUserCommentText.length >= 1 ? false : true} type='button' onClick={() => editComment()}>Update Comment</button>
+                  ) : (
+                    <button className='bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700' disabled={currentUserCommentText.length >= 1 ? false : true} type='button' onClick={() => postComment()}>Post comment</button>
+                  )}
+                  <button className='bg-white text-black border-2 border-black rounded-sm py-2 px-3' onClick={() => cancelBtn()}>Cancel</button>
+                </div>
               </div>
+
             </div>
             {/* comments */}
             <ul className='w-full my-6 '>
