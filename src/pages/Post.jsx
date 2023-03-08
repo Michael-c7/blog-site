@@ -35,31 +35,24 @@ const Post = () => {
   */
   let isUserComment = true
 
-  let [isCommentDropdownShown, setIsCommentDropdownShown] = useState(false)
+  let testAuthorDesc = "this is a test author description. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Id in ab, temporibus et praesentium reiciendis accusantium voluptate assumenda suscipit incidunt possimus ipsum facere. Vitae harum?"
 
   let [wordLimitAmount, setWordLimitAmount] = useState(1000)
-
-
 
   let [currentUserCommentText, setCurrentUserCommentText] = useState("")
   let [isEditingEnabled, setIsEditingEnabled] = useState(false)
   let [currentCommentId, setCurrentCommentId] = useState(null)
 
-  const commentMenuRef = useRef(null)
-  const dotsBtnRef = useRef(null)
+  let [refsForComments,setRefsForComments] = useState([])
 
+  let [currentId, setCurrentId] = useState(null)
+  let [currentRefsState, setCurrentRefsState] = useState([])
 
-  const myRefs = useRef([])
-  // for the re-render
-  const [refState, setRefsState] = useState("")
+  let postACommentText = useRef(null)
 
   // multiple
   let [isDropdownOpen, setIsDropdownOpen] = useState([])
 
-  // this function will be called for each element
-  const setRef = (ref, index) => {
-    myRefs.current[index] = ref;
-  };
 
     // this function will be called on button click
     const handleClick = (id) => {
@@ -67,7 +60,7 @@ const Post = () => {
         if(el.uniqueId === id) {
           return {
             id:el.uniqueId,
-            isOpen:!el.isOpen,
+            isOpen:false,
           }
         } else {
           return {
@@ -77,10 +70,11 @@ const Post = () => {
         }
       })
       setIsDropdownOpen(newItems)
+      setCurrentId(id)
     }
 
 
-  let postACommentText = useRef(null)
+  
 
 
   const closeAllDropdown = () => {
@@ -164,8 +158,6 @@ const Post = () => {
     // edit the comment in the database [NEED TO ADD]
   }
 
-
-
   const postComment = () => {
     // post the comment locally in the dom
     let newItem = {
@@ -187,9 +179,7 @@ const Post = () => {
     // removes the text form the input & sets isEditingEnabled to false
     cancelBtn()
     // post the comment in the database [NEED TO ADD]
-
   }
-
 
   const deleteComment = (id) => {
     // deletes the comment locally in the dom
@@ -197,14 +187,6 @@ const Post = () => {
     setTestCommentData(filteredComments)
     // delete the comment in the database [NEED TO ADD]
   }
-
-
-// comment
-  // useClickOff(commentMenuRef, dotsBtnRef, setIsCommentDropdownShown)
-
-
-  let testComment1 = "this is a test comment. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Id in ab, temporibus et praesentium reiciendis accusantium voluptate assumenda suscipit incidunt possimus ipsum facere. Vitae harum tempore doloremque saepe nam repudiandae?"
-
 
 
   useEffect(() => {
@@ -220,14 +202,78 @@ const Post = () => {
   },[testCommentData])
 
 
-  useEffect(() => {
-    // console.log(isDropdownOpen)
-  }, [isDropdownOpen])
+
+
+  // set the refs for the individual comment
+  useState(() => {
+    setRefsForComments(testCommentData.map(el => {
+      return {
+        uniqueId:el.uniqueId,
+        dotRef:React.createRef(),
+        dropdownMenuRef:React.createRef(),
+      }
+    }))
+  })
+
+
+
 
   useEffect(() => {
-    // console.log(currentUserCommentText)
-  },[currentUserCommentText])
+    let currentItem = refsForComments.filter((el) => el.uniqueId === currentId)[0]
+    setCurrentRefsState(
+      {dotRef:currentItem?.dotRef, dropdownMenuRef:currentItem?.dropdownMenuRef}
+    )
 
+  }, [refsForComments,currentId])
+
+
+
+
+  // dots should be toggle, menu is remain true / do nothing and else is close menu
+  const offClickPost = event => {
+    let currentComment = event.target.closest("#post-comment")
+    let currentId = currentComment?.getAttribute("data-uniqueid")
+    let currentDots = event.target.closest(".dots-btn")
+    // let currentMenu = currentComment?.childNodes[1]?.childNodes[0]?.childNodes[3]
+    let currentMenu = currentDots?.parentNode?.childNodes[3]
+
+    let newItems = testCommentData.map((el) => {
+      if(el.uniqueId === currentId) {
+        let currentIsOpen = isDropdownOpen.filter((el) => el.id === currentId)[0]?.isOpen
+
+        return {
+          id:el.uniqueId,
+          isOpen:currentIsOpen ? false : true,
+        }
+      } else {
+        return {
+          id:el.uniqueId,
+          isOpen:false,
+        }
+      }
+    })
+    
+    if(currentDots) {
+      // toggle
+      setIsDropdownOpen(newItems)
+    
+    } else if(currentMenu) {
+      console.log("menu")
+
+    } else {
+      // turn false / close menu
+      closeAllDropdown()
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener("click", offClickPost);
+      
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("click", offClickPost);
+    };
+  })
 
   return (
     <article className="outer-width mx-auto">
@@ -262,7 +308,7 @@ const Post = () => {
               </Link>
               <div className='flex-auto'>
                 <h3 className='text-xl font-bold mb-1 capitalize'><Link to="/author link here">john johnson</Link></h3>
-                <p>{testComment1}</p>
+                <p>{testAuthorDesc}</p>
               </div>
             </div>
           </section>
@@ -289,7 +335,6 @@ const Post = () => {
                   <button className='bg-white text-black border-2 border-black rounded-sm py-2 px-3' onClick={() => cancelBtn()}>Cancel</button>
                 </div>
               </div>
-
             </div>
             {/* comments */}
             <ul className='w-full my-6 '>
@@ -297,11 +342,10 @@ const Post = () => {
               {testCommentData.map((el, index) => {
                 const { uniqueId } = el
                 let isOpen = isDropdownOpen.filter((el) => el.id === uniqueId)[0]?.isOpen
-                /*loop through my data and create a commentMenuRef and dotsBtnRef for each one */
-                //  useClickOff(commentMenuRef, dotsBtnRef, setIsCommentDropdownShown)
-                
+                let currentRefs = refsForComments.filter((el) => el.uniqueId === uniqueId)[0]
+             
                 return (
-                  <li ref={(ref) => setRef(ref, index)} data-uniqueid={el.uniqueId}  className='flex flex-row gap-4 w-full my-8 relative' key={index}>
+                  <li id="post-comment" data-uniqueid={el.uniqueId} className='flex flex-row gap-4 w-full my-8 relative' key={index}>
                   <Link to="/author link goes here" className='rounded-full w-14 h-12 '>
                     <img src={el.profileImg} alt="alt text" className='rounded-full w-12 h-12 object-cover'/>
                   </Link>
@@ -313,12 +357,12 @@ const Post = () => {
                       <p className='text-slate-500 text-sm'>{getTimeDifference(el.dateCreated, Date())}</p>
                       {el.hasBeenEdited ? <span className='text-slate-500 text-sm ml-1'>(edited)</span> : ""}
                       {isUserComment ? (
-                        <button className='dots-btn ml-auto' ref={dotsBtnRef} onClick={() => handleClick(el.uniqueId)}>
+                        <button className='dots-btn ml-auto' ref={currentRefs?.dotRef}>
                           <RxDotsVertical/>
                         </button>
                       ) : ""}
                       {/* comment dropdown menu */}
-                      <div ref={commentMenuRef} className={`dropdown-menu-container ${isOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"} top-[30px] w-28 flex`}>
+                      <div ref={currentRefs?.dropdownMenuRef} className={`dropdown-menu-container ${isOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"} top-[30px] w-28 flex`}>
                         <ul className=' w-full'>
                           <li className='mb-4 w-full'>
                             <button className='flex flex-row items-center w-full' type='button' onClick={() => {
