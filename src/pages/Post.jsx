@@ -328,7 +328,7 @@ const Post = () => {
                         </button>
                       ) : ""}
                       {/* comment dropdown menu */}
-                      <div ref={currentRefs?.dropdownMenuRef} className={`dropdown-menu-container ${isOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"} top-[30px] w-28 flex`}>
+                      <div ref={currentRefs?.dropdownMenuRef} className={`dropdown-menu-container ${isOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed hidden"} top-[30px] w-28 flex`}>
                         <ul className=' w-full'>
                           <li className='mb-4 w-full'>
                             <button className='flex flex-row items-center w-full' type='button' onClick={() => {
