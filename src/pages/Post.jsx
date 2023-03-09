@@ -1,30 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import AuthorAndDate from '../components/widgets/AuthorAndDate'
 import Tag from '../components/widgets/Tag'
 import TestText from "../components/TestText"
-import InfoSidebar from "../components/InfoSidebar"
-
-import useClickOff from "../hooks/useClickOff";
-
 import { generateUniqueId, getTimeDifference, generateRandomName } from '../utility/misc'
-
-import { FaComment, FaRegHeart } from "react-icons/fa"
-import { RxDotsVertical } from "react-icons/rx"
-
-import { AiOutlineEdit } from "react-icons/ai"
-import { BiTrash } from "react-icons/bi"
-
-import testImg from "../assets/images/testImg1.jpg"
-import testImg2 from "../assets/images/testImg2.jpg"
-
-
-import testAuthorImg from "../assets/images/testAuthorImg1.jpg"
+import InfoSidebar from "../components/InfoSidebar"
 import Author from '../components/widgets/Author'
 // import this as DateWidget so it doesn't conflict w/ the Date object
 import DateWidget from '../components/widgets/Date'
 
-let textText2 = "welcome Mauris mattis auctor cursus. Phasellus tellus tellus, imperdiet ut imperdiet eu, iaculis a sem. Donec vehicula luctus nunc in laoreet. Aliquam erat volutpat. Suspendisse vulputate porttitor condimentum."
+// icons
+import { FaComment, FaRegHeart } from "react-icons/fa"
+import { RxDotsVertical } from "react-icons/rx"
+import { AiOutlineEdit } from "react-icons/ai"
+import { BiTrash } from "react-icons/bi"
+// test / placeholder images
+import testImg from "../assets/images/testImg1.jpg"
+import testImg2 from "../assets/images/testImg2.jpg"
+import testAuthorImg from "../assets/images/testAuthorImg1.jpg"
+
+
 
 
 const Post = () => {
@@ -54,27 +48,7 @@ const Post = () => {
   let [isDropdownOpen, setIsDropdownOpen] = useState([])
 
 
-    // this function will be called on button click
-    const handleClick = (id) => {
-      let newItems = testCommentData.map((el, index) => {
-        if(el.uniqueId === id) {
-          return {
-            id:el.uniqueId,
-            isOpen:false,
-          }
-        } else {
-          return {
-            id:el.uniqueId,
-            isOpen:false,
-          }
-        }
-      })
-      setIsDropdownOpen(newItems)
-      setCurrentId(id)
-    }
 
-
-  
 
 
   const closeAllDropdown = () => {
@@ -131,10 +105,10 @@ const Post = () => {
 
   const editComment = (arr) => {
     // edit the comment locally in the dom
-    // 1. get index of current comment in testCommentData
+    // get index of current comment in testCommentData
     const currentIndex = testCommentData.findIndex(el => el.uniqueId === currentCommentId)
 
-    // 2. get current item and update it w/ the text form textarea
+    // get current item and update it w/ the text form textarea
     let oldCurrentItem = testCommentData.filter((el) => el.uniqueId === currentCommentId)[0]
 
     let newCurrentItem = {
@@ -146,9 +120,8 @@ const Post = () => {
       hasBeenEdited:true,
     }
     
-    // 3. get all old item minus current item
+    // get all old item minus current item
     let allOldItemsMinusCurrent = testCommentData.filter((el) => el.uniqueId !== currentCommentId)
-
     allOldItemsMinusCurrent.splice(currentIndex,0,newCurrentItem)
     setTestCommentData(allOldItemsMinusCurrent)
 
@@ -215,27 +188,22 @@ const Post = () => {
     }))
   })
 
-
-
-
   useEffect(() => {
     let currentItem = refsForComments.filter((el) => el.uniqueId === currentId)[0]
     setCurrentRefsState(
       {dotRef:currentItem?.dotRef, dropdownMenuRef:currentItem?.dropdownMenuRef}
     )
-
   }, [refsForComments,currentId])
 
 
 
 
   // dots should be toggle, menu is remain true / do nothing and else is close menu
-  const offClickPost = event => {
+  const handleCommentMenuInteraction = event => {
     let currentComment = event.target.closest("#post-comment")
     let currentId = currentComment?.getAttribute("data-uniqueid")
     let currentDots = event.target.closest(".dots-btn")
-    // let currentMenu = currentComment?.childNodes[1]?.childNodes[0]?.childNodes[3]
-    let currentMenu = currentDots?.parentNode?.childNodes[3]
+    let currentMenu = document.querySelector(".dropdown-menu-container--open")
 
     let newItems = testCommentData.map((el) => {
       if(el.uniqueId === currentId) {
@@ -254,24 +222,22 @@ const Post = () => {
     })
     
     if(currentDots) {
-      // toggle
+      // toggle open / closed
       setIsDropdownOpen(newItems)
-    
-    } else if(currentMenu) {
-      console.log("menu")
-
+    } else if(currentMenu.contains(event.target)) {
+      // stay open / do nothing
     } else {
-      // turn false / close menu
+      // close menu
       closeAllDropdown()
     }
   }
 
   useEffect(() => {
-    document.addEventListener("click", offClickPost);
+    document.addEventListener("click", handleCommentMenuInteraction);
       
     // Cleanup the event listener when the component unmounts
     return () => {
-      document.removeEventListener("click", offClickPost);
+      document.removeEventListener("click", handleCommentMenuInteraction);
     };
   })
 
