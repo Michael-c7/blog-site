@@ -19,6 +19,8 @@ import testImg2 from "../assets/images/testImg2.jpg"
 import testAuthorImg from "../assets/images/testAuthorImg1.jpg"
 
 
+// profanity filter
+import swearjar from "swearjar-extended2"
 
 
 const Post = () => {
@@ -121,7 +123,7 @@ const Post = () => {
   const postComment = () => {
     // post the comment locally in the dom
     let newItem = {
-      text:currentUserCommentText,
+      text:swearjar.censor(currentUserCommentText),
       id:generateUniqueId(),
       // get the name from the current logged in user, for test use fake name
       name:generateRandomName(),
@@ -155,7 +157,7 @@ const Post = () => {
     let oldCurrentItem = testCommentData.filter((el) => el.id === currentCommentId)[0]
 
     let newCurrentItem = {
-      text:currentUserCommentText,
+      text:swearjar.censor(currentUserCommentText),
       id:oldCurrentItem.id,
       name:oldCurrentItem.name,
       dateCreated:oldCurrentItem.dateCreated,
