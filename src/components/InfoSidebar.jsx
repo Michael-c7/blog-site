@@ -25,7 +25,7 @@ import moviesBgImage from "../assets/images/categories/movies.jpg"
 import scienceBgImage from "../assets/images/categories/science.jpg"
 
 
-const InfoSidebar = () => {
+const InfoSidebar = (props) => {
     let testRecentArr = Array.from({ length:3 })
     let sliderSlidesArr = Array.from({ length:4 })
 
@@ -111,7 +111,7 @@ const InfoSidebar = () => {
             iconColor:"#FE2905",
             link:"/",
             followers:15000,
-            followerText:"subscribers",
+            followerText:"followers",
         },
     ]
 
@@ -157,7 +157,7 @@ const InfoSidebar = () => {
 
 
   return (
-    <div className='mb-8 relative'>
+    <div className='mb-0 relative '>
         <div className='sticky top-0'>
             {/* social media group */}
             <div className='grid grid-cols-4 grid-rows-2 gap-1'>
