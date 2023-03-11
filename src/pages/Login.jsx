@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import GeneralHeading from '../components/GeneralHeading'
 
 const Login = () => {
   const [loginStateData, setLoginStateData] = React.useState({
@@ -12,7 +13,8 @@ const Login = () => {
   }, [loginStateData])
 
   return (
-    <div className="h-[75vh] flex flex-col justify-center items-center">
+    <div className="flex flex-col">
+      <GeneralHeading/>
       <form className="form-card">
         <div className="form-input-container">
           <label className="form-label" htmlFor="login-email">Email Address</label>
