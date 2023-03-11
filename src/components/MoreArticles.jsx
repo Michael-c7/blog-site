@@ -10,9 +10,9 @@ const MoreArticles = () => {
 
   return (
     <div className="bg-white my-10">
-        <div className="min-[995px]:grid min-[995px]:grid-cols-3 flex flex-col gap-8">
+        <div className="min-[995px]:grid min-[995px]:grid-cols-3 flex flex-col gap-8 mb-8">
             {/* main articles */}
-            <div className="col-span-2 mb-8 ">
+            <div className="col-span-2">
             {testRowArr.map((el, index) => {
                     return (
                         <div className="my-8 first-of-type:mt-0 last-of-type:mb-0" key={index}>
@@ -28,7 +28,7 @@ const MoreArticles = () => {
         <div className="min-[900px]:grid min-[900px]:grid-cols-4 gap-6 flex flex-col">
             {testBottomArr.map((el, index) => {
                 return (
-                    <PostPreviewCol key={index} {...{showDescription:true}}/>
+                    <PostPreviewCol key={index} {...{hideDescription:true}}/>
                 )
             })}
         </div>
