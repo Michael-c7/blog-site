@@ -26,6 +26,7 @@
   position:relative;
   overflow-x:hidden;
   height:100vh;
+  /* background:green; */
 }
 
 
@@ -256,4 +257,23 @@
 
 .mini-slider--next {
   transform: translateX(100%);
+}
+
+
+
+
+
+
+
+
+.general-card {
+  opacity: 0;
+  transform: translateY(100px);
+  transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+}
+
+
+.general-card--visible {
+  opacity: 1;
+  transform: translateY(0);
 }
