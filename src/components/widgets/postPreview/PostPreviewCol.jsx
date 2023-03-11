@@ -36,7 +36,7 @@ const PostPreviewCol = (props) => {
         <h2 className="text-2xl font-medium my-3">heading of PostPreviewCol</h2>
       </Link>
       <AuthorAndDate/>
-      {props.showDescription ? "" : (
+      {props.hideDescription ? "" : (
         <p className=" text-gray-500 my-3">{testText.length > articleTextCutoff ? `${testText.slice(0, articleTextCutoff)}...` : testText}</p>
       )}
     </section>
