@@ -1,13 +1,12 @@
 import React from 'react'
-
 import GeneralPageComponent from '../components/GeneralPageComponent'
 
-const Author = () => {
+const LikedPosts = () => {
   return (
     <>
-      <GeneralPageComponent {...{headingText:"test author name"}}/>
+      <GeneralPageComponent {...{headingText:"test liked posts"}}/>
     </>
   )
 }
 
-export default Author
+export default LikedPosts
