@@ -1,8 +1,11 @@
 import React from 'react'
+import GeneralPageComponent from '../components/GeneralPageComponent'
 
 const Category = () => {
   return (
-    <div>Category</div>
+    <>
+      <GeneralPageComponent {...{headingText:"test category posts"}}/>
+    </>
   )
 }
 
