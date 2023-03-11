@@ -5,7 +5,7 @@ import TestText from "../components/TestText"
 import { generateUniqueId, getTimeDifference, generateRandomName } from "../utility/misc"
 import InfoSidebar from "../components/InfoSidebar"
 import Author from "../components/widgets/Author"
-// import this as DateWidget so it doesn"t conflict w/ the Date object
+// import this as DateWidget so it doesn't conflict w/ the Date object
 import DateWidget from "../components/widgets/Date"
 
 // icons
@@ -17,7 +17,6 @@ import { BiTrash } from "react-icons/bi"
 import testImg from "../assets/images/testImg1.jpg"
 import testImg2 from "../assets/images/testImg2.jpg"
 import testAuthorImg from "../assets/images/testAuthorImg1.jpg"
-
 
 // profanity filter
 import swearjar from "swearjar-extended2"
@@ -231,7 +230,7 @@ const Post = () => {
     if(currentDots) {
       // toggle open / closed
       setIsDropdownOpen(newItems)
-    } else if(currentMenu.contains(event.target)) {
+    } else if(currentMenu?.contains(event.target)) {
       // stay open / do nothing
     } else {
       // close menu
@@ -313,6 +312,8 @@ const Post = () => {
                 </div>
               </div>
             </div>
+            {testCommentData.length <= 0 && <h2 className="mt-12 text-center  text-lg">Leave a comment and start the discussion!</h2>}
+            
             {/* comments */}
             <ul className="w-full my-6 ">
               {/* comment */}
