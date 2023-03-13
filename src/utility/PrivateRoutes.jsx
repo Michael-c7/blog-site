@@ -4,7 +4,7 @@ import { Outlet, Navigate  } from 'react-router-dom'
 
 const PrivateRoutes = () => {
     // auth var is temp until you get actual auth from firebase
-    let auth = false
+    let auth = true
     return (
         auth ? <Outlet/> : <Navigate to="/login"/>
     )
