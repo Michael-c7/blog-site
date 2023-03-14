@@ -89,3 +89,43 @@ export const socialMediaItems = [
     text:"youtube",
   },
 ]
+
+
+
+
+
+// images
+
+const defaultImagesRaw = import.meta.glob('../assets/images/defaultImages/*.{jpg,jpeg,png,gif,webp}');
+
+const defaultImages = Object.entries(defaultImagesRaw).map(([path]) => ({
+  src:path,
+}))
+
+import defaultImg1 from '../assets/images/defaultImages/pexels-chan-walrus-958545.jpg'
+import defaultImg2 from '../assets/images/defaultImages/pexels-chokniti-khongchum-2280571.jpg'
+import defaultImg3 from '../assets/images/defaultImages/pexels-christina-morillo-1181605.jpg'
+import defaultImg4 from '../assets/images/defaultImages/pexels-jeshootscom-442576.jpg'
+import defaultImg5 from '../assets/images/defaultImages/pexels-johannes-plenio-1423600.jpg'
+import defaultImg6 from '../assets/images/defaultImages/pexels-lukas-kloeppel-466685.jpg'
+import defaultImg7 from '../assets/images/defaultImages/pexels-pixabay-207529.jpg'
+import defaultImg8 from '../assets/images/defaultImages/pexels-pixabay-2166.jpg'
+import defaultImg9 from '../assets/images/defaultImages/pexels-pixabay-276452.jpg'
+import defaultImg10 from '../assets/images/defaultImages/pexels-tima-miroshnichenko-7991135.jpg'
+import defaultImg11 from'../assets/images/defaultImages/pexels-yan-krukau-9069301.jpg'
+import defaultImg12 from '../assets/images/defaultImages/sid-balachandran-_9a-3NO5KJE-unsplash.jpg'
+
+export const defaultImgData =  [
+  {src:defaultImg1},
+  {src:defaultImg2},
+  {src:defaultImg3},
+  {src:defaultImg4},
+  {src:defaultImg5},
+  {src:defaultImg6},
+  {src:defaultImg7},
+  {src:defaultImg8},
+  {src:defaultImg9},
+  {src:defaultImg10},
+  {src:defaultImg11},
+  {src:defaultImg12},
+]
