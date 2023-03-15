@@ -43,14 +43,15 @@ const CreateAPost = () => {
     - remove image [X]
     - add different image [X]
     - get all data into createPost function [X]
-
     - add uniqueId to post [X]
     - fix style to look good [X]
     - create mobile version [X]
 
-    - get real images from api(s)
+    - get real images from api(s) [DOING NOW]
 
     - search functionality w/ api's
+
+    - return nad display result plus error checking
 
     - switch between api's
 
@@ -230,7 +231,7 @@ const CreateAPost = () => {
                 <div className="grid grid-cols-2 gap-3 h-full px-3 ">
                   {dropdownImages.map((el, index) => {
                     return (
-                      <button key={index} className=" bg-orange-500" onClick={(e) => {
+                      <button key={index} onClick={(e) => {
                         chooseImage(e.target)
                       }}>
                         <img src={el.src} alt="alt text here" className="w-full h-full object-cover" />
