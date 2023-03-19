@@ -12,11 +12,9 @@ import { BiSearch, BiTrash } from "react-icons/bi"
 import { RiCloseLine } from "react-icons/ri"
 
 const CreateAPost = () => {
-  const [postTitle, setPostTitle] = useState("")
   const [postTitleMaxChar, setPostTitleMaxChar] = useState(100)
-  const [postTag, setPostTag] = useState("")
-  const [postText, setPostText] = useState("")
   const [postTextMaxChar, setPostTextMaxChar] = useState(5000)
+  const [postInfo, setPostInfo] = useState({postTitle:"", postTag:"", postText:""})
 
   const [isImageDropdownOpen, setIsImageDropdownOpen] = useState(false)
   const [isImagePreviewShown, setIsImagePreviewShown] = useState(false)
@@ -26,7 +24,6 @@ const CreateAPost = () => {
   // eg: 5 / 50 request per hour (unsplashed)
   const [imageRequestAmountText, setImageRequestAmountText] = useState("")
   const [unsplashedRequestData, setUnsplashedRequestData] = useState({remaining:"", limit:""})
-  const [pexelsRequestData, setPexelsRequestData] = useState({remaining:"", limit:""})
 
   const [dropdownImages, setDropdownImages] = useState(defaultImgData)
   const [currentPage, setCurrentPage] = useState(1)
@@ -44,17 +41,24 @@ const CreateAPost = () => {
 
   /*
   TODO:
-    - get real images from api(s) []
-  
-    - implement infinite scroll []
+    - get real images from api(s) [X]
+    - search functionality w/ api's [X]
+    - return and display result [X]
+    - plus error checking [X]
 
-    - search functionality w/ api's
+    - fix ui bug where the text to show request amount doesn't show,
+    to fix have to get it independency
+    and update the way it used to on
+    imageSourceSelect, dropdownImages update in a useEffect),
+    not just w/ search
 
-    - return and display result plus error checking / plus display the errors
+    - debounce search to use up less tokens
+    
+    - plus display the errors
 
     - switch between api's
 
-    - update the per hour counter w/ real data for each api call (unsplashed, pexels)
+    - update the per hour counter w/ real data for each api call (unsplashed)
     
     - compress images chosen image in createPost function
       - could use: https://tinypng.com/developers (500 images a month free)
@@ -89,18 +93,18 @@ const CreateAPost = () => {
     }
 
     // get post title
-    if(postTitle) {
-      data = {...data, title:postTitle}
+    if(postInfo.title) {
+      data = {...data, title:postInfo.title}
     }
     
     // get post tag
-    if(postTag) {
-      data = {...data, tag:postTag}
+    if(postInfo.postTag) {
+      data = {...data, tag:postInfo.postTag}
     }
 
     // get post text
-    if(postText) {
-      data = {...data, text:postText}
+    if(postInfo.postText) {
+      data = {...data, text:postInfo.postText}
     }
     console.log(data)
     // compress chosen image [NEED TO ADD]
@@ -114,9 +118,7 @@ const CreateAPost = () => {
  
 
 
-  // create different function for unsplashed and for pexels
-
-  const getUnsplashedData = async () => {
+  const fetchUnsplashedImages = async () => {
     /*
     data to get: image, alt text, how much request used & available
     */
@@ -166,45 +168,14 @@ const CreateAPost = () => {
 
 
 
-  const getPexelsData = async () => {
-    /*
-    data to get: image, alt text, how much request used & available
-    */
-    let baseUrl = "https://api.pexels.com/v1/"
-    let apiKey = import.meta.env.VITE_PEXELS_API_KEY
-
-    const headers = {
-      'Authorization': apiKey,
-      'Content-Type': 'application/json'
-    };
-    
-    try {
-      const response = await fetch(url, { headers });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      console.log(data);
-      
-      // get data we need, and set it , setDropdownImages()
-
-     
-    } catch (error) {
-      console.error('There was a problem fetching the data:', error);
-      setErrorInfo({isError:true, errorMessage:error})
-    }
-  }
-
-
-
-
-
   const closeDropdown = () => {
     setIsImageDropdownOpen(false)
     setImageSourceSelect("default")
     setSearchImageText("")
     setDropdownImages(defaultImgData)
   }
+
+
 
 
 
@@ -217,18 +188,9 @@ const CreateAPost = () => {
       if(searchImageText === "") {
         setDropdownImages(defaultImgData)
       } else {
-        getUnsplashedData()
+        fetchUnsplashedImages()
       }
     }
-
-    if(imageSourceSelect === "pexels") {
-      if(searchImageText === "") {
-        setDropdownImages(defaultImgData)
-      } else {
-        // getPexelsData()
-      }
-    }
-
     // console.log(imageSourceSelect)
   }, [imageSourceSelect, searchImageText])
 
@@ -238,16 +200,21 @@ const CreateAPost = () => {
     // determine and set the request amt text
     if(imageSourceSelect === "unsplashed") {
       // get request amount from unsplashed api
-      let unsplashedRequestAmount = 12
-      let unsplashedRequestTotal = 50
-      setImageRequestAmountText(`${unsplashedRequestAmount} / ${unsplashedRequestTotal} per hour (unsplashed)`)
+      let clientId = `client_id=${import.meta.env.VITE_UNSPLASHED_ACCESS_KEY}`
+
+      fetch(`https://api.unsplash.com/photos/?${clientId}`,{
+        method: 'HEAD'
+      })
+      .then(response => {
+        const remaining = response.headers.get('x-ratelimit-remaining');
+        const limit = response.headers.get('x-ratelimit-limit');
+        // set here
+        setUnsplashedRequestData({...unsplashedRequestData, remaining, limit})
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      }); 
       // 5 / 50 request per hour (unsplashed)
-      
-    } else if(imageSourceSelect === "pexels") {
-      // get request amount from pexels api
-      let pexelsRequestAmount = 17
-      let pexelsRequestTotal = 200
-      setImageRequestAmountText(`${pexelsRequestAmount} / ${pexelsRequestTotal} per hour (pexels)`)
 
       
     } else if(imageSourceSelect === "default") {
@@ -255,16 +222,6 @@ const CreateAPost = () => {
     }
   },[imageSourceSelect, dropdownImages])
 
-
-
-  
-  
-
-
-
-
-  
-  // console.log(import.meta.env.VITE_UNSPLASHED_ACCESS_KEY)
 
 
   
@@ -311,12 +268,14 @@ const CreateAPost = () => {
                     <BiSearch/>
                   </div>
                   <input className="bg-slate-100 w-full focus:outline-none focus:border-transparent" placeholder="search for an image" value={searchImageText} onChange={(e) => setSearchImageText(e.target.value)} />
+                  <button className="text-lg px-0 bg-gray-100 min-[376px]:text-slate-500 text-slate-700 min-[376px]:bg-transparent" onClick={() => setSearchImageText("")}>
+                    <RiCloseLine/>
+                  </button>
                 </div>
                 <div className="px-2 min-[376px]:py-0 py-6 ">
                   {/* goes here */}
                   <select id="image-source" value={imageSourceSelect} onChange={(e) => setImageSourceSelect(e.target.value)}>
                     <option value="unsplashed">Unsplashed</option>
-                    <option value="pexels">Pexels</option>
                     <option value="default">Default</option>
                   </select>
                 </div>
@@ -338,28 +297,27 @@ const CreateAPost = () => {
                 </div>
               </section>
             </div> 
-            <div className={`mt-4 flex items-center ${isImagePreviewShown ? "justify-between" : "justify-end"}  w-full`}>
+            <div className={`mt-4 flex items-center ${isImagePreviewShown ? "justify-between" : "justify-end"} w-full`}>
                 {isImagePreviewShown ? (
                   <button ref={imageDropdownMenuRef}  onClick={() => setIsImageDropdownOpen(true)} className="bg-white font-semibold rounded-sm py-2 px-3 border border-gray-300">Add Different Image</button>
                 ) : ""}
                 {imageSourceSelect === "unsplashed" ? <p>{unsplashedRequestData.remaining} / {unsplashedRequestData.limit} per hour (unsplashed)</p> : ""}
-                {imageSourceSelect === "pexels" ? <p>{imageRequestAmountText.remaining} / {imageRequestAmountText.limit} per hour (pexels)</p> : ""}
                 {imageSourceSelect === "default" ? <p>no request limit (default images)</p> : ""}
-
               </div>
           </div>
           {/* post title */}
           <div className="my-6">
             <h2 className="mb-2 font-semibold ">Add title</h2>
-            <input className="w-full p-2 rounded-sm border border-gray-300" value={postTitle} maxLength={postTitleMaxChar} onChange={(e) => setPostTitle(e.target.value)}/>
-            <p className="mt-3 w-full text-end">{postTitle.length} / {postTitleMaxChar}</p>
+            <input className="w-full p-2 rounded-sm border border-gray-300" value={postInfo.postTitle} maxLength={postTitleMaxChar} onChange={(e) => setPostInfo({...postInfo,postTitle:e.target.value }) }/>
+            <p className="mt-3 w-full text-end">{postInfo.postTitle.length} / {postTitleMaxChar}</p>
           </div>
 
           {/* select a tag for the post */}
           <div className="flex flex-col my-6">
             <label htmlFor="tags" className="mb-2 font-semibold">Select a tag:</label>
-            <select id="tags" name="tags" className="w-full p-2 rounded-sm border border-gray-300" value={postTag} onChange={(e) => {
-              setPostTag(e.target.value)
+            <select id="tags" name="tags" className="w-full p-2 rounded-sm border border-gray-300" value={postInfo.postTag} onChange={(e) => {
+              // setPostTag(e.target.value)
+              setPostInfo({...postInfo,postTag:e.target.value })
               setSearchImageText("")
             }}>
               <option value="">--Select a tag--</option>
@@ -375,14 +333,15 @@ const CreateAPost = () => {
           {/* post text */}
           <div className="my-6">
             <h2 className="mb-2  font-semibold">Add text</h2>
-            <textarea className="w-full h-72 p-2 rounded-sm border border-gray-300" value={postText} onChange={(e) => setPostText(e.target.value)} placeholder="Write your story here..." maxLength={postTextMaxChar}></textarea>
+            <textarea className="w-full h-72 p-2 rounded-sm border border-gray-300" value={postInfo.postText} onChange={(e) => setPostInfo({...postInfo,postText:e.target.value })} placeholder="Write your story here..." maxLength={postTextMaxChar}></textarea>
           </div>
 
+              
           {/* publish / create the post */}
           <div className="mb-6 flex justify-between w-full">
             {/* <button className="bg-white text-black border-2 border-black rounded-sm py-2 px-3">Cancel</button> */}
-            <p>{postText.length} / {postTextMaxChar}</p>
-            <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" type="button" disabled={isImagePreviewShown && currentImage && postTitle && postTag && postText ? false : true} onClick={() => createPost()}>Create Post</button>
+            <p>{postInfo.postText.length} / {postTextMaxChar}</p>
+            <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" type="button" disabled={isImagePreviewShown && currentImage && postInfo.postText && postInfo.postTag && postInfo.postText ? false : true} onClick={() => createPost()}>Create Post</button>
           </div>
         </div>
 
