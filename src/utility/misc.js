@@ -65,6 +65,15 @@ export function getTimeDifference(date1, date2) {
 
 
 
+  let timerId;
+
+  export function debounce(func, delay) {
+    clearTimeout(timerId);
+    timerId = setTimeout(func, delay);
+  }
+
+
+
 
 
 
