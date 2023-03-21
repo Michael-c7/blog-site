@@ -1,45 +1,58 @@
-import React, { useState, useRef, useEffect } from "react"
-import GeneralPageHeading from "../components/GeneralHeading"
-import ErrorComponent from "../components/Error"
-import useClickOff from "../hooks/useClickOff"
+import React, { useState, useRef, useEffect } from "react";
+import GeneralPageHeading from "../components/GeneralHeading";
+import ErrorComponent from "../components/Error";
+import useClickOff from "../hooks/useClickOff";
+import { debounce } from "../utility/misc";
+import { defaultImgData } from "../utility/reusable";
+import testImg1 from "../assets/images/testImg1.jpg";
+import { generateUniqueId } from "../utility/misc";
+import Loading from "../components/Loading"
 
-import { debounce } from "../utility/misc"
+// Importing icons
+import { MdOutlineAddPhotoAlternate } from "react-icons/md";
+import { BiSearch, BiTrash } from "react-icons/bi";
+import { RiCloseLine } from "react-icons/ri";
 
-import { defaultImgData } from "../utility/reusable"
-import testImg1 from "../assets/images/testImg1.jpg"
-import { generateUniqueId } from "../utility/misc"
-// icons
-import { MdOutlineAddPhotoAlternate } from "react-icons/md"
-import { BiSearch, BiTrash } from "react-icons/bi"
-import { RiCloseLine } from "react-icons/ri"
+
 
 const CreateAPost = () => {
-  const [postTitleMaxChar, setPostTitleMaxChar] = useState(100)
-  const [postTextMaxChar, setPostTextMaxChar] = useState(5000)
-  const [postInfo, setPostInfo] = useState({postTitle:"", postTag:"", postText:""})
+  // State variables for post information and character limits
+  const [postTitleMaxChar, setPostTitleMaxChar] = useState(100);
+  const [postTextMaxChar, setPostTextMaxChar] = useState(5000);
+  const [postInfo, setPostInfo] = useState({ postTitle: "", postTag: "", postText: "" });
 
-  const [isImageDropdownOpen, setIsImageDropdownOpen] = useState(false)
-  const [isImagePreviewShown, setIsImagePreviewShown] = useState(false)
-  const [currentImage, setCurrentImage] = useState("")
-  const [searchImageText, setSearchImageText] = useState("")
-  const [imageSourceSelect, setImageSourceSelect] = useState("default")
-  const [unsplashedRequestData, setUnsplashedRequestData] = useState({remaining:50, limit:50})
+  // State variables for image dropdown and preview
+  const [isImageDropdownOpen, setIsImageDropdownOpen] = useState(false);
+  const [isImagePreviewShown, setIsImagePreviewShown] = useState(false);
+  const [currentImage, setCurrentImage] = useState("");
+  const [searchImageText, setSearchImageText] = useState("");
+  const [imageSourceSelect, setImageSourceSelect] = useState("default");
+  const [unsplashedRequestData, setUnsplashedRequestData] = useState({ remaining: 50, limit: 50 });
 
-  const [dropdownImages, setDropdownImages] = useState(defaultImgData)
-  const [currentPage, setCurrentPage] = useState(1)
+  // State variables for image dropdown content and pagination
+  const [dropdownImages, setDropdownImages] = useState(defaultImgData);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const [isLoadingDropdownImages, setIsLoadingDropdownImages] = useState(false)
-  const [errorInfo, setErrorInfo] = useState({isError:false,errorMessage:""})
+  // State variables for loading and error handling
+  const [isLoadingDropdownImages, setIsLoadingDropdownImages] = useState(false);
+  const [errorInfo, setErrorInfo] = useState({ isError: false, errorMessage: "" });
 
-  const openImageDropdownRef = useRef(null)
-  const imageDropdownMenuRef = useRef(null)
+  // Refs for image dropdown and search input
+  const openImageDropdownRef = useRef(null);
+  const imageDropdownMenuRef = useRef(null);
+  const searchInputRef = useRef(null);
 
 
   // for image select dropdown menu
   // useClickOff(imageDropdownMenuRef,openImageDropdownRef, setIsImageDropdownOpen)
 
 
-
+  const clearSearchInput = _ => {
+    // clear input
+    searchInputRef.current.value = ""
+    // clear state
+    setSearchImageText("")
+  }
 
 
   const chooseImage = (data) => {
@@ -56,7 +69,7 @@ const CreateAPost = () => {
   const closeDropdown = () => {
     setIsImageDropdownOpen(false)
     setImageSourceSelect("default")
-    setSearchImageText("")
+    clearSearchInput()
     setDropdownImages(defaultImgData)
   }
 
@@ -67,6 +80,8 @@ const CreateAPost = () => {
   const createPost = () => {
     let data = {
       id:generateUniqueId(),
+      dateCreated:new Date(),
+      // author:"get current logged in user for author",
     }
 
     // get post image
@@ -100,29 +115,32 @@ const CreateAPost = () => {
 
 
   const fetchImagesUnsplashed = async () => {
+    // Set up URL with API and user input parameters
     let baseUrl = "https://api.unsplash.com"
     let photoSearchUrl = "search/photos"
     let currentPageUrl = `page=${currentPage}`
     let queryUrl = `query=${searchImageText}&orientation=landscape`
     let clientId = `client_id=${import.meta.env.VITE_UNSPLASHED_ACCESS_KEY}`
     let fullUrlUnsplashed = `${baseUrl}/${photoSearchUrl}?${currentPageUrl}&${queryUrl}&${clientId}`
-
+  
     try {
       setIsLoadingDropdownImages(true)
+      // Fetch data from Unsplash API
       const response = await fetch(fullUrlUnsplashed);
+      // Check for errors in response
       if (!response.ok) {
-        throw new Error('Network response was not ok');
         setIsLoadingDropdownImages(false)
         setErrorInfo({isError:true, errorMessage:error.message})
+        throw new Error('Network response was not ok');
       }
       const data = await response.json()
-
-      // get rate limit
+  
+      // get rate limit from API response headers
       const remaining = response.headers.get('x-ratelimit-remaining');
       const limit = response.headers.get('x-ratelimit-limit');
       setUnsplashedRequestData({...unsplashedRequestData, remaining, limit})
-
-      
+  
+      // Refine the data received from the API to match the format of the dropdownImages state
       let refinedData = data?.results.map((el) => {
         return {
           description:el.alt_description,
@@ -136,7 +154,8 @@ const CreateAPost = () => {
       })
       setIsLoadingDropdownImages(false)
       setErrorInfo({isError:false, errorMessage:""})
-
+  
+      // Update the dropdownImages state with refined data
       setDropdownImages(refinedData)
      
     } catch (error) {
@@ -144,8 +163,8 @@ const CreateAPost = () => {
       setIsLoadingDropdownImages(false)
       setErrorInfo({isError:true, errorMessage:error.message})
     }
-  }
- 
+  }  
+
 
 
   
@@ -159,43 +178,75 @@ const CreateAPost = () => {
 
 
 
-  useEffect(() => {
-    if(imageSourceSelect === "unsplashed" && searchImageText) {
-      fetchImagesUnsplashed()
-    }
+// image search functionality
+useEffect(() => {
+  // If the selected image source is Unsplash and there is search text, fetch images from the Unsplash API
+  if (imageSourceSelect === "unsplashed" && searchImageText) {
+    fetchImagesUnsplashed();
+  }
 
-    if(imageSourceSelect === "default") {
-      setDropdownImages(defaultImgData)
-    }
-  }, [imageSourceSelect, searchImageText])
+  // If the selected image source is the default image source and there is search text
+  if (imageSourceSelect === "default" && searchImageText) {
+    // Filter the defaultImgData to find images that match the search text
+    let filteredDefaultImgData = defaultImgData.filter((el) => {
+      if (el.description.toLowerCase().indexOf(searchImageText.toLowerCase()) !== -1) {
+        return el;
+      }
+    });
+    // Update the dropdownImages state with the filtered results
+    setDropdownImages(filteredDefaultImgData);
+  } else if (imageSourceSelect === "default" && !searchImageText) {
+    // If there is no search text, set the dropdownImages state back to the defaultImgData
+    setDropdownImages(defaultImgData);
+  }
+}, [imageSourceSelect, searchImageText]);
 
 
-  useEffect(() => {
-    if(unsplashedRequestData.remaining <= 0) {
-      setImageSourceSelect("default")
-    }
-  }, [imageSourceSelect])
+
+
+// kick user to default images if the amount of api tokens is used up
+useEffect(() => {
+  // If there are no remaining tokens, switch back to the default image source and show an error message
+  if (unsplashedRequestData.remaining <= 0) {
+    setImageSourceSelect("default");
+    setErrorInfo({
+      isError: true,
+      errorMessage: "Ran out of request tokens for the Unsplash API. Tokens will refresh in approximately 1 hour."
+    });
+  }
+}, [unsplashedRequestData.remaining]);
+
 
 
 
   // get request amount and limit from unsplashed api 
   useEffect(() => {
-    // determine and set the request amt text
-    if(imageSourceSelect === "unsplashed") {
-      // get request amount from unsplashed api
-      let clientId = `client_id=${import.meta.env.VITE_UNSPLASHED_ACCESS_KEY}`
+    // If the selected image source is Unsplash, fetch the request amount from the API
+    if (imageSourceSelect === "unsplashed") {
+      // Construct the client ID header using the access key from the environment variables
+      let clientId = `client_id=${import.meta.env.VITE_UNSPLASHED_ACCESS_KEY}`;
 
+      // Send a HEAD request to the Unsplash API to get the remaining and limit of the API request quota
       fetch(`https://api.unsplash.com/stats/total?${clientId}`, { method: 'HEAD' })
-      .then(response => {
-        const remaining = response.headers.get('x-ratelimit-remaining');
-        const limit = response.headers.get('x-ratelimit-limit');
-        setUnsplashedRequestData({...unsplashedRequestData, remaining, limit})
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      }); 
+        .then(response => {
+          // Extract the remaining and limit values from the response headers
+          const remaining = response.headers.get('x-ratelimit-remaining');
+          const limit = response.headers.get('x-ratelimit-limit');
+
+          // Update the unsplashedRequestData state with the new values
+          setUnsplashedRequestData({...unsplashedRequestData, remaining, limit});
+        })
+        .catch(error => {
+          // Log any errors that occur while making the API request
+          console.error('Error:', error);
+        });
     }
-  },[imageSourceSelect, dropdownImages])
+  }, [imageSourceSelect, dropdownImages]);
+
+
+
+
+
 
   return (
     <>
@@ -210,7 +261,6 @@ const CreateAPost = () => {
               <div className="flex rounded-sm w-full h-[450px] text-white">
                 <div className="absolute w-full flex justify-end p-2">
                   <button className="text-2xl bg-gray-800 bg-opacity-75 w-10 h-10 rounded-full flex items-center justify-center" onClick={() => {
-                    // setCurrentImage("")
                     setIsImagePreviewShown(false)
                   }}>
                     <BiTrash/>
@@ -238,17 +288,27 @@ const CreateAPost = () => {
                   <div className="top-[2px] relative text-slate-500 text-lg mr-1">
                     <BiSearch/>
                   </div>
-                  <input className="bg-slate-100 w-full focus:outline-none focus:border-transparent" placeholder="search for an image"  onChange={(e) => {
-                    debounce(function() {
+                  <input className="bg-slate-100 w-full focus:outline-none focus:border-transparent" ref={searchInputRef} placeholder="search for an image"  onChange={(e) => {
+                    /*
+                    in milliseconds,
+                    750 is what felt responsive
+                    but also slow enough not to use up
+                    to many api tickets
+                    */
+                    let debounceTime = 750
+                    if(imageSourceSelect === "default") {
                       setSearchImageText(e.target.value)
-                    }, 750)
+                    } else {
+                      debounce(function() {
+                        setSearchImageText(e.target.value)
+                      }, debounceTime)
+                    }
                   }} />
-                  <button className="text-lg px-0 bg-gray-100 min-[376px]:text-slate-500 text-slate-700 min-[376px]:bg-transparent" onClick={() => setSearchImageText("")}>
+                  <button className="text-lg px-0 bg-gray-100 min-[376px]:text-slate-500 text-slate-700 min-[376px]:bg-transparent" onClick={() => clearSearchInput()}>
                     <RiCloseLine/>
                   </button>
                 </div>
                 <div className="px-2 min-[376px]:py-0 py-6 ">
-                  {/* goes here */}
                   <select id="image-source" value={imageSourceSelect} onChange={(e) => setImageSourceSelect(e.target.value)}>
                     <option value="unsplashed" disabled={unsplashedRequestData.remaining <= 0 ? true : false}>Unsplashed</option>
                     <option value="default">Default</option>
@@ -259,9 +319,10 @@ const CreateAPost = () => {
                 </button>
               </header>
               <section className="my-4 h-full overflow-auto before:content-[''] before:absolute before:w-full before:h-[2px] before:bg-slate-100 before:left-0">
-                {errorInfo.isError == true && imageSourceSelect === "unsplashed" ? (
+                {errorInfo.isError == true ? (
                   <ErrorComponent errorMessage={errorInfo.errorMessage}/>
                 ) : ""}
+                {dropdownImages.length <= 0 ? <p className="mt-4 mx-4 text-center">No results found</p> : ""}
                 <div className="grid grid-cols-2 gap-3 h-full px-3 ">
                   {!isLoadingDropdownImages ? dropdownImages.map((el, index) => {
                     return (
@@ -271,7 +332,11 @@ const CreateAPost = () => {
                         <img src={el.image} alt={el.description} title={el.description} className="w-full h-full object-cover" />
                       </button>
                     )
-                  }) : <h2>Loading...</h2>}
+                  }) : (
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                      <Loading/>
+                    </div>
+                  )}
                 </div>
               </section>
             </div> 
@@ -296,7 +361,7 @@ const CreateAPost = () => {
             <select id="tags" name="tags" className="w-full p-2 rounded-sm border border-gray-300" value={postInfo.postTag} onChange={(e) => {
               // setPostTag(e.target.value)
               setPostInfo({...postInfo,postTag:e.target.value })
-              setSearchImageText("")
+              clearSearchInput()
             }}>
               <option value="">--Select a tag--</option>
               <option value="science">Science</option>
@@ -307,13 +372,11 @@ const CreateAPost = () => {
             </select>
           </div>
 
-
           {/* post text */}
           <div className="my-6">
             <h2 className="mb-2  font-semibold">Add text</h2>
             <textarea className="w-full h-72 p-2 rounded-sm border border-gray-300" value={postInfo.postText} onChange={(e) => setPostInfo({...postInfo,postText:e.target.value })} placeholder="Write your story here..." maxLength={postTextMaxChar}></textarea>
           </div>
-
               
           {/* publish / create the post */}
           <div className="mb-6 flex justify-between w-full">
@@ -322,7 +385,6 @@ const CreateAPost = () => {
             <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" type="button" disabled={isImagePreviewShown && currentImage && postInfo.postText && postInfo.postTag && postInfo.postText ? false : true} onClick={() => createPost()}>Create Post</button>
           </div>
         </div>
-
       </div>
     </>
   )
