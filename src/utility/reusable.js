@@ -114,18 +114,26 @@ import defaultImg9 from '../assets/images/defaultImages/pexels-pixabay-276452.jp
 import defaultImg10 from '../assets/images/defaultImages/pexels-tima-miroshnichenko-7991135.jpg'
 import defaultImg11 from'../assets/images/defaultImages/pexels-yan-krukau-9069301.jpg'
 import defaultImg12 from '../assets/images/defaultImages/sid-balachandran-_9a-3NO5KJE-unsplash.jpg'
+import defaultImg13 from "../assets/images/defaultImages/pexels-stacey-koenitz-r-2425011.jpg"
+import defaultImg14 from "../assets/images/defaultImages/pexels-fauxels-3184292.jpg"
+import defaultImg15 from "../assets/images/defaultImages/pexels-robin-stickel-70497.jpg"
+import defaultImg16 from "../assets/images/defaultImages/pexels-lucas-pezeta-2398354.jpg"
 
 export const defaultImgData =  [
-  {src:defaultImg1},
-  {src:defaultImg2},
-  {src:defaultImg3},
-  {src:defaultImg4},
-  {src:defaultImg5},
-  {src:defaultImg6},
-  {src:defaultImg7},
-  {src:defaultImg8},
-  {src:defaultImg9},
-  {src:defaultImg10},
-  {src:defaultImg11},
-  {src:defaultImg12},
+  {image:defaultImg1},
+  {image:defaultImg2},
+  {image:defaultImg3},
+  {image:defaultImg4},
+  {image:defaultImg5},
+  {image:defaultImg6},
+  {image:defaultImg7},
+  {image:defaultImg8},
+  {image:defaultImg9},
+  {image:defaultImg10},
+  {image:defaultImg11},
+  {image:defaultImg12},
+  {image:defaultImg13},
+  {image:defaultImg14},
+  {image:defaultImg15},
+  {image:defaultImg16},
 ]
