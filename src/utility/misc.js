@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-
+import Compressor from 'compressorjs';
 /*
 put miscellaneous function that have
 no specific place here
@@ -74,12 +74,50 @@ export function getTimeDifference(date1, date2) {
 
 
 
+    // takes an imageUrl and setState as arguments.
+    export const convertImageToBlob = async (imageUrl, setState) => {
+      try {
+        // This function uses the fetch API to get the binary data of the given imageUrl.
+        const response = await fetch(imageUrl);
+        // This converts the binary data into a Blob object.
+        const blob = await response.blob();
+        // This creates a URL for the Blob object.
+        const blobUrl = URL.createObjectURL(blob);
+        // This sets the blobUrl as the value of the given setState function.
+        setState(blobUrl)
+        // This returns the blobUrl, although it is not currently used in the code.
+        return blobUrl
+      } catch (error) {
+        // If an error occurs, it is logged to the console for debugging purposes.
+        console.error(error);
+      }
+    };
 
-
-
-
-
-
+  // blob args can be a Blob or a File
+  // takes a Blob object and setState as arguments.
+  export function compressImage(blob, setState) {
+    // If no Blob object is provided, the function returns immediately.
+    if (!blob) {
+      return;
+    }
+    // This code uses the Compressor.js library to compress the given Blob object
+    // with a quality setting of 0.6. The resulting compressed image is then converted
+    // to a data URL and set as the value of the given setState function.
+    new Compressor(blob,{
+      quality: 0.6,
+      success(result) {
+        const reader = new FileReader();
+        reader.onload = function() {
+          const dataURL = reader.result;
+          setState(dataURL)
+        };
+        reader.readAsDataURL(result);
+      },
+      error(err) {
+        console.error(err.message);
+      },
+    })
+  }
 
 
 
