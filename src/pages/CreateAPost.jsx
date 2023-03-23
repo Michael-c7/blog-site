@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import GeneralPageHeading from "../components/GeneralHeading";
 import ErrorComponent from "../components/Error";
 import useClickOff from "../hooks/useClickOff";
-import { debounce } from "../utility/misc";
+import { debounce, convertImageToBlob, compressImage } from "../utility/misc";
 import { defaultImgData } from "../utility/reusable";
 import testImg1 from "../assets/images/testImg1.jpg";
 import { generateUniqueId } from "../utility/misc";
@@ -43,6 +43,11 @@ const CreateAPost = () => {
   const searchInputRef = useRef(null);
 
 
+  //
+  const [currentImageBlob, setCurrentImageBlob] = useState("")
+  const [currentImageCompressed, setCurrentImageCompressed] = useState("")
+
+
   // for image select dropdown menu
   // useClickOff(imageDropdownMenuRef,openImageDropdownRef, setIsImageDropdownOpen)
 
@@ -76,6 +81,39 @@ const CreateAPost = () => {
 
 
 
+  /*
+  getting the currentImage ready to be
+  compressed by converting the image
+  into a blob, so it can processed
+  */
+  useEffect(() => {
+    // This function takes the currentImage and converts it to a Blob object,
+    // which is a type of file format used to store binary data.
+    // The resulting Blob object is set as the value of setCurrentImageBlob.
+    if(currentImage) {
+      convertImageToBlob(currentImage, setCurrentImageBlob)
+    }
+  },[currentImage])
+
+  // compresses the currentImage to get a smaller file size for my image file
+  useEffect(() => {
+    /*
+    This function uses the fetch API to get
+    the binary data of the currentImageBlob
+    (which is a blob this is different than a Blob object)
+     */
+    // It then converts this binary data into a Blob object
+    if(currentImageBlob) {
+
+      fetch(currentImageBlob).then(res => res.blob()).then(blob => {
+        // This function compresses the given Blob object and sets the compressed version
+        // as the value of setCurrentImageCompressed.
+        compressImage(blob, setCurrentImageCompressed)
+      })
+    }
+  },[currentImageBlob, currentImageCompressed])
+
+
 
   const createPost = () => {
     let data = {
@@ -85,8 +123,8 @@ const CreateAPost = () => {
     }
 
     // get post image
-    if(isImagePreviewShown && currentImage) {
-      data = {...data, image:currentImage}
+    if(isImagePreviewShown && currentImage && currentImageCompressed) {
+      data = {...data, image:currentImageCompressed}
     }
 
     // get post title
@@ -104,8 +142,6 @@ const CreateAPost = () => {
       data = {...data, text:postInfo.postText}
     }
     console.log(data)
-    // compress chosen image [NEED TO ADD]
-
     // create / send the post to the database [NEED TO ADD]
   }
 
