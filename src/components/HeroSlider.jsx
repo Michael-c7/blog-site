@@ -87,7 +87,7 @@ const HeroSlider = () => {
 
 
     return (
-        <article className="h-[550px] my-12 rounded-lg relative">
+        <article className="h-[600px] my-12 rounded-lg relative">
             {/* the slides */}
             <ul className="slides">
                 {slides.map((el) => {
