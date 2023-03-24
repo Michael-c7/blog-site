@@ -277,7 +277,7 @@ useEffect(() => {
           console.error('Error:', error);
         });
     }
-  }, [imageSourceSelect, dropdownImages]);
+  }, [imageSourceSelect]);
 
 
 
