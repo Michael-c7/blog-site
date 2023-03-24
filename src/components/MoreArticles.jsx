@@ -10,7 +10,7 @@ const MoreArticles = () => {
 
   return (
     <div className="bg-white my-10">
-        <div className="min-[995px]:grid min-[995px]:grid-cols-3 flex flex-col gap-8 mb-8">
+        <div className="min-[995px]:grid min-[995px]:grid-cols-3 flex flex-col gap-28 mb-8">
             {/* main articles */}
             <div className="col-span-2">
             {testRowArr.map((el, index) => {
