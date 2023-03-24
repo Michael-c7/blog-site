@@ -34,7 +34,8 @@
 @layer components {
   /*general rules*/
   .outer-width {
-    @apply lg:w-[1000px] w-[var(--smaller-main-width)];
+    /* change this to 1140px ,then fix the breakpoint negatively effected by it */
+    @apply min-[1220px]:w-[1200px] w-[var(--smaller-main-width)];
   }
   
   @media screen and (max-width: 1500px) {
