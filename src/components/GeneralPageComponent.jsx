@@ -6,7 +6,7 @@ import PostPreviewCol from "./widgets/postPreview/PostPreviewCol"
 import GeneralPageCard from "./GeneralPageCard"
 
 
-const GeneralPageComponent = ({headingText}) => {
+const GeneralPageComponent = ({headingText, isGeneralHeadingShown = true}) => {
     // have ten articles / PostPreviewCol per page
     let testArr = Array.from({ length:10 })
     let testBtnAmt = Array.from({ length:8 })
@@ -17,7 +17,7 @@ const GeneralPageComponent = ({headingText}) => {
 
     return (
         <div>
-            <GeneralHeading text={headingText}/>
+            {isGeneralHeadingShown ? <GeneralHeading text={headingText}/> : ""}
             <div className="outer-width mx-auto">
                 <div className="relative min-[990px]:grid min-[990px]:grid-cols-3 min-[990px]:my-12 my-6 gap-12 flex flex-col">
                     <div className="col-span-2 relative ">
