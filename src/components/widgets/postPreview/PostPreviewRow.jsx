@@ -23,11 +23,11 @@ const PostPreviewRow = (props) => {
   // ${props.direction === "row-reverse" ? "flex-row-reverse" : "flex-row"}
   return (
     <div className={`flex items-center  ${props.direction ? props.direction : "flex-row"} ${props.direction === "flex-row-reverse" ? "justify-between" : ""}`}>
-        <Link className="min-[995px]:w-1/2 w-24 h-24  max-[800px]:shrink-0" to="/link to post">
-          <img src={testImg} alt={"alt text here"} title={`alt text here`} className="w-full h-full rounded-xl object-cover "/>
+        <Link className="w-24 h-24 flex-shrink-0" to="/link to post">
+          <img src={testImg} alt={"alt text here"} title={`alt text here`} className="w-full h-full rounded-xl object-cover  "/>
         </Link>
 
-      <div className={`${props.direction === "flex-row-reverse" ? "ml-0" : "ml-3"}`}>
+      <div className={`${props.direction === "flex-row-reverse" ? "ml-0 mr-3" : "ml-3 mr-0"}`}>
         <Tag {...{bgColor:"#ccc", link:"/test", text:"tag text"}}/>
         <Link to="/link to post here">
           <h2 className="font-bold text-black my-2 leading-snug	" style={{color:props.textColor}}>The Great Time For Enjoy City View On Mountain</h2>
