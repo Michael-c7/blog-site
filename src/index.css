@@ -148,18 +148,6 @@ body {
 
 
 
-.top-of-the-week--before:before {
-  content:"";
-  position:absolute;
-  background:#FDEEDC;
-  width:300%;
-  left:-100%;
-  height:100%;
-  top:0%;
-  z-index:-1;
-}
-
-
 
 .mini-slider--prev {
   transform: translateX(-100%);
@@ -173,10 +161,6 @@ body {
 .mini-slider--next {
   transform: translateX(100%);
 }
-
-
-
-
 
 
 
