@@ -16,7 +16,7 @@ const Footer = () => {
     <footer className="bg-black text-white relative">
         <div className="relative after:content-[''] after:absolute after:bg-zinc-800 after:w-full after:h-px after:bottom-0">
           <div className="outer-width mx-auto">
-            <section className="footer-top-bit--after relative w-full py-12 gap-10 flex flex-col md:flex-row ">
+            <section className=" relative w-full py-12 gap-10 flex flex-col  md:grid md:grid-cols-3">
               {/* about us section */}
               <div className="about-us-and-icons">
                 <div className="about-us">
@@ -54,7 +54,7 @@ const Footer = () => {
                   {/* Slice removes the first item which is home */}
                   {navItems.slice(1,navItems.length).map((el) => {
                     return (
-                      <li key={el.id} className="categories-items--after relative py-3 flex flex-row justify-between">
+                      <li key={el.id} className="relative py-3 flex flex-row justify-between after:content-[''] after:absolute after:bg-zinc-800 after:w-full after:left-0 after:h-px after:bottom-0">
                         <Link to={`${el.link}`}>{el.text}</Link>
                         <div className="rounded-full p-1 flex justify-center items-center text-center text-xs min-w-[1.5rem] min-h-[1.5rem]" 
                           style={{backgroundColor:`var(${el.bgColor})`}}
@@ -68,11 +68,11 @@ const Footer = () => {
           </div>
         </div>
         {/* copyright section */}
-        <section className="outer-width mx-auto py-6">
-          <div>
+        <div className="outer-width mx-auto py-6">
+          <section>
             <div className="text-center">&copy; Copyright {new Date().getFullYear()} BizTech. All Rights Reserved.</div>
-          </div>
-        </section>
+          </section>
+        </div>
     </footer>
   )
 }
