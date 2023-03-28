@@ -11,8 +11,6 @@ const ScrollToTop = () => {
 
 
     React.useEffect(() => {
-        console.log(scrollY)
-
         if(scrollY <= amtToScroll) {
             // show
             setIsShown(false)
