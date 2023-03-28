@@ -4,14 +4,13 @@ const useGetScrollY = () => {
     const [scrollY, setScrollY] = useState(0);
 
     const handleScroll = _ => {
-        setScrollY(document.querySelector(".site-wrapper").scrollTop)
-    }
-
-    useEffect(() => {
-        document.querySelector(".site-wrapper").addEventListener("scroll", handleScroll);
-
-        return (() => document.querySelector(".site-wrapper").removeEventListener("scroll", handleScroll))
-    })
+        setScrollY(window.scrollY)
+      }
+    
+      useEffect(() => {
+        window.addEventListener("scroll", handleScroll);
+        return (() => window.removeEventListener("scroll", handleScroll))
+      })
 
     return { scrollY }
 }

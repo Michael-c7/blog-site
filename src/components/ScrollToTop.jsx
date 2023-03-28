@@ -11,6 +11,8 @@ const ScrollToTop = () => {
 
 
     React.useEffect(() => {
+        console.log(scrollY)
+
         if(scrollY <= amtToScroll) {
             // show
             setIsShown(false)
@@ -21,7 +23,7 @@ const ScrollToTop = () => {
     },[scrollY])
 
     return (
-        <button onClick={() => document.querySelector(".site-wrapper").scrollTo({ top: 0, behavior: 'smooth' })} className={`fixed bg-[rgba(0,0,0,0.8)] text-white p-2 text-2xl rounded  right-8 bottom-4 transition-all ${isShown ? "opacity-100 z-40" : "opacity-0 -z-40"}`}>
+        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`fixed bg-[rgba(0,0,0,0.8)] text-white p-2 text-2xl rounded right-8 bottom-4 transition-all ${isShown ? "opacity-100 z-40" : "opacity-0 -z-40"}`}>
             <MdOutlineKeyboardArrowUp />
         </button>
     )
