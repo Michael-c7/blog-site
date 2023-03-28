@@ -28,7 +28,8 @@ const Navbar = () => {
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = React.useState(false)
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = React.useState(false)
 
-  let auth = true
+  // temp var
+  let auth = false
 
 
   const profileMenuRef = useRef(null)
