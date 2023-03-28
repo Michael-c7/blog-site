@@ -48,7 +48,7 @@
   }
 
   .form-input-container {
-    @apply flex flex-col mb-4;
+    @apply flex flex-col mb-4 ;
   }
 
   .form-label {
@@ -56,7 +56,7 @@
   }
 
   .form-input {
-    @apply border border-gray-300 rounded py-1;
+    @apply border border-gray-300 rounded p-2;
   }
 
   .form-primary-btn {
