@@ -16,9 +16,20 @@ const SignUp = () => {
     <div className="flex flex-col">
       <GeneralHeading text={"Sign up"}/>
       <form className="form-card">
+        {/* username is the unique address for the user eg: author/@johnSmith */}
+        <div className="form-input-container">
+          <label className="form-label" htmlFor="login-username">Username</label>
+          <input className="form-input" name="login-username" id="login-username" type="text" placeholder="eg: johnSmith123abc" onChange={(e) => setSignUpStateData({...signUpStateData, username:e.target.value})}/>
+          <p>@john123abc is available</p>
+        </div>
+        {/* display name is whats in the author eg: john smith */}
+        <div className="form-input-container">
+          <label className="form-label" htmlFor="login-displayname">Display name</label>
+          <input className="form-input" name="login-displayname" id="login-displayname" type="text" placeholder="eg: john smith" onChange={(e) => setSignUpStateData({...signUpStateData, displayName:e.target.value})}/>
+        </div>
         <div className="form-input-container">
           <label className="form-label" htmlFor="login-email">Email Address</label>
-          <input className="form-input" name="login-email" id="login-email" type="email" onChange={(e) => setSignUpStateData({...signUpStateData, email:e.target.value})}/>
+          <input className="form-input" name="login-email" id="login-email" type="email" placeholder="eg: johnsmith@gmail.com" onChange={(e) => setSignUpStateData({...signUpStateData, email:e.target.value})}/>
         </div>
         <div className="form-input-container">
           <label className="form-label" htmlFor="login-password">Password</label>
