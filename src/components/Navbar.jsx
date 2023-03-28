@@ -8,7 +8,6 @@ import { IoIosArrowDown, } from "react-icons/io";
 import { BiSearch, BiUser } from "react-icons/bi"
 import { 
   AiOutlineHeart,
-  AiOutlineEdit,
   AiOutlineForm,
   AiOutlineMenu
 } from "react-icons/ai"
