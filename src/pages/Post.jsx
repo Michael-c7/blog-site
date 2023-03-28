@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import Tag from "../components/widgets/Tag"
 import TestText from "../components/TestText"
-import { generateUniqueId, getTimeDifference, generateRandomName } from "../utility/misc"
+import { generateUniqueId, getTimeDifference, generateRandomName, socialMediaNumberFormatter } from "../utility/misc"
 import InfoSidebar from "../components/InfoSidebar"
 import Author from "../components/widgets/Author"
 // import this as DateWidget so it doesn't conflict w/ the Date object
 import DateWidget from "../components/widgets/Date"
 
 // icons
-import { FaComment, FaRegHeart } from "react-icons/fa"
+import { FaComment, FaRegHeart, FaEye } from "react-icons/fa"
 import { RxDotsVertical } from "react-icons/rx"
 import { AiOutlineEdit } from "react-icons/ai"
 import { BiTrash } from "react-icons/bi"
@@ -264,11 +264,18 @@ const Post = () => {
               <DateWidget {...{textColor:"#000"}}/>
               <div className="flex items-center text-sm mx-3">
                 <FaComment className="text-xs mr-1"/>
-                <p>0 comments</p>
+                {/* this is a temp test number */}
+                <p>{socialMediaNumberFormatter.format(25000)} comments</p>
               </div>
               <div className="flex items-center text-sm ">
                 <FaRegHeart className="text-xs mr-1"/>
-                <p>4</p>
+                {/* this is a temp test number */}
+                <p>{socialMediaNumberFormatter.format(30000)}</p>
+              </div>
+              <div className="flex items-center text-sm mx-3">
+                <FaEye className="mr-1"/>
+                {/* this is a temp test number */}
+                <p>{socialMediaNumberFormatter.format(20000)}</p>
               </div>
             </div>
           </header>
