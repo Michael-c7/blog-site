@@ -22,19 +22,6 @@
 }
 
 
-.site-wrapper {
-  position:relative;
-  overflow-x:hidden;
-  /* height:100vh; */
-  /* min-height:100vh; */
-  /* overflow-y: scroll; */
-  /* height: 100vh; */
-}
-
-body {
-  /* overflow-x: hidden; */
-}
-
 
 
 @layer components {
@@ -145,8 +132,6 @@ body {
   /* transition: z-index 0.125s step-start, opacity 0.125s linear; */
   transition: all 0.25s ease;;
 }
-
-
 
 
 .mini-slider--prev {

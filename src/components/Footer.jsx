@@ -16,7 +16,7 @@ const Footer = () => {
     <footer className="bg-black text-white relative">
         <div className="relative after:content-[''] after:absolute after:bg-zinc-800 after:w-full after:h-px after:bottom-0">
           <div className="outer-width mx-auto">
-            <section className=" relative w-full py-12 gap-10 flex flex-col  md:grid md:grid-cols-3">
+            <section className=" relative w-full py-12 gap-10 flex flex-col md:grid md:grid-cols-3">
               {/* about us section */}
               <div className="about-us-and-icons">
                 <div className="about-us">
@@ -75,6 +75,7 @@ const Footer = () => {
         </div>
     </footer>
   )
+
 }
 
 export default Footer

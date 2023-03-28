@@ -26,25 +26,10 @@ import ScrollToTop from './components/ScrollToTop'
 import LikedPosts from './pages/LikedPosts';
 
 function App() {
-  const [wrapperHeight, setWrapperHeight] = useState(window.innerHeight);
 
-  useEffect(() => {
-    function handleResize() {
-      setWrapperHeight(window.innerHeight);
-      console.log(window.innerHeight)
-    }
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-
-    // style={{ height: `${wrapperHeight}px` }}
-  }, []);
 
   return (
-    <div className='site-wrapper'>
+    <>
       <Router>
         <Navbar/>
 
@@ -55,7 +40,6 @@ function App() {
         <ScrollToTop/>
         
         <Overlay/>
-
 
         <Routes>
           {/* All private routes go in here */}
@@ -76,7 +60,7 @@ function App() {
         </Routes>
         <Footer/>
       </Router>
-    </div>
+    </>
   )
 }
 

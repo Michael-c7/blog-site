@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom';
-import { socialMediaNumberFormatter } from '../utility/misc';
+import React, { useEffect } from "react"
+import { Link } from "react-router-dom";
+import { socialMediaNumberFormatter } from "../utility/misc";
 // icons 
 import {
     FaFacebookF,
@@ -11,7 +11,7 @@ import {
     FaRedditAlien,
     FaTwitch,
     FaYoutube,
-} from 'react-icons/fa';
+} from "react-icons/fa";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri"
 
 
@@ -157,35 +157,35 @@ const InfoSidebar = (props) => {
 
 
   return (
-    <div className='mb-0 relative '>
-        <div className='sticky top-0'>
+    <div className="mb-0 relative ">
+        <div className="sticky top-0">
             {/* social media group */}
-            <div className='grid grid-cols-4 grid-rows-2 gap-1'>
+            <div className="grid grid-cols-4 grid-rows-2 gap-1">
                 {socialMediaGroupList.map((el, index) => {
                     return (
                         <Link to={el.link} key={index} className=" bg-slate-50 p-3 flex text-center flex-col justify-center center">
-                            <el.icon className='self-center text-xl' style={{color:el.iconColor}}/>
-                            <div className='text-sm font-bold mt-1'>{socialMediaNumberFormatter.format(el.followers)}</div>
-                            <p className='text-xs'>{el.followerText}</p>
+                            <el.icon className="self-center text-xl" style={{color:el.iconColor}}/>
+                            <div className="text-sm font-bold mt-1">{socialMediaNumberFormatter.format(el.followers)}</div>
+                            <p className="text-xs">{el.followerText}</p>
                         </Link>
                     )
                 })}
             </div>
             {/* categories group */}
-            <section className='flex flex-col gap-3 my-10'>
+            <section className="flex flex-col gap-3 my-10">
                 {categoriesList.map((el, index) => {
                     return (
-                        <Link to={`${el.link}`} key={index} className='bg-slate-500 p-4 rounded-xl flex justify-between bg-no-repeat bg-center bg-cover' style={{backgroundImage:`url(${el.bgImg})`, boxShadow:"inset 0px 0px 75px 17px rgba(0,0,0,0.75)"}}>
-                            <span className='text-white capitalize'>{el.name}</span>
-                            <span className='bg-white p-1 rounded-full w-8 flex justify-center items-center'>{el.amount}</span>
+                        <Link to={`${el.link}`} key={index} className="bg-slate-500 p-4 rounded-xl flex justify-between bg-no-repeat bg-center bg-cover" style={{backgroundImage:`url(${el.bgImg})`, boxShadow:"inset 0px 0px 75px 17px rgba(0,0,0,0.75)"}}>
+                            <span className="text-white capitalize">{el.name}</span>
+                            <span className="bg-white p-1 rounded-full w-8 flex justify-center items-center">{el.amount}</span>
                         </Link>
                     )
                 })} 
             </section>
             {/* recent posts */}
             <div>
-                <h2 className=' font-semibold text-3xl mb-2'>Recent Posts</h2>
-                <div className='flex flex-col gap-6'>
+                <h2 className=" font-semibold text-3xl mb-2">Recent Posts</h2>
+                <div className="flex flex-col gap-6">
                 {testRecentArr.map((el, index) => {
                     return (
                         <PostPreviewRow key={index} direction={"flex-row-reverse"}/>
@@ -194,29 +194,29 @@ const InfoSidebar = (props) => {
                 </div>
             </div>
             {/* mini slider  */}
-            <div className='relative my-8 h-[375px] '>
-                <div className='absolute z-30 mt-5 mr-4 right-0 text-white text-xl'>
-                    <button onClick={() => prevSlide()} className='bg-[rgba(10,10,10,0.30)] rounded-full p-2 mx-1'>
+            <div className="relative my-8 h-[375px] ">
+                <div className="absolute z-30 mt-5 mr-4 right-0 text-white text-xl">
+                    <button onClick={() => prevSlide()} className="bg-[rgba(10,10,10,0.30)] rounded-full p-2 mx-1">
                         <RiArrowLeftSLine/>
                     </button>
-                    <button onClick={() => nextSlide()} className='bg-[rgba(10,10,10,0.30)] rounded-full p-2 mx-1'>
+                    <button onClick={() => nextSlide()} className="bg-[rgba(10,10,10,0.30)] rounded-full p-2 mx-1">
                         <RiArrowRightSLine/>
                     </button>
                 </div>
                 {/* slides */}
-                <div className='w-full h-full relative overflow-hidden rounded-xl'>
+                <div className="w-full h-full relative overflow-hidden rounded-xl">
                     {/* slide */}
                     {sliderSlidesArr.map((el, index) => {
-                        let slidePosition = 'mini-slider--next'
+                        let slidePosition = "mini-slider--next"
 
                         if (sliderCurrentIndex === index) {
-                        slidePosition = 'mini-slider--current';
+                        slidePosition = "mini-slider--current";
                         }
                         if 
                         (sliderCurrentIndex === index - 1 || 
                         (index === 0 && sliderCurrentIndex === sliderSlidesArr.length - 1)
                         ) {
-                        slidePosition = 'mini-slider--prev';
+                        slidePosition = "mini-slider--prev";
                         }
 
                         return (

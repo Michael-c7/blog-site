@@ -1,5 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
-import PostPreviewCol from './widgets/postPreview/PostPreviewCol';
+// Importing necessary dependencies
+import { useEffect, useState, useRef } from "react";
+import PostPreviewCol from "./widgets/postPreview/PostPreviewCol";
 
 
 
@@ -7,6 +8,9 @@ const GeneralPageCard = () => {
     const [isVisible, setIsVisible] = useState(false);
     const cardRef = useRef(null);
 
+    /* Setting up intersection observer to
+    detect when the component is
+    visible in the viewport */
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
           if (entry.isIntersecting) {
@@ -26,10 +30,11 @@ const GeneralPageCard = () => {
         };
       }, []);
 
-      const cardClassName = `general-card ${isVisible ? 'general-card--visible' : ''}`;
       
+      /* Creating a dynamic class name based on the isVisible state */
+      /* Rendering the component with the PostPreviewCol component as a child */
       return (
-        <div ref={cardRef} className={cardClassName}>
+        <div ref={cardRef} className={`general-card ${isVisible ? "general-card--visible" : ""}`}>
             <PostPreviewCol hideDescription={true}/>
         </div>
     )
