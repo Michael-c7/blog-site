@@ -28,7 +28,7 @@ const Footer = () => {
                 <div className="social-icons flex flex-row mt-6 flex-wrap">
                   {socialMediaItems.map((el) => {
                     return (
-                      <Link to="/" key={el.id} className="p-3 mx-1 first-of-type:ml-0 rounded-full text-white max-[320px]:my-1  max-[320px]:first-of-type:ml-1" style={{backgroundColor:`var(${el.bgColor})`}}>
+                      <Link to="/" key={el.id} className="p-3 m-1 first-of-type:ml-0 rounded-full text-white max-[320px]:my-1 max-[320px]:first-of-type:ml-1" style={{backgroundColor:`var(${el.bgColor})`}}>
                         <el.icon/>
                       </Link>
                     )
