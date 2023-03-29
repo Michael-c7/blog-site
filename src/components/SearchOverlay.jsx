@@ -19,7 +19,7 @@ const SearchOverlay = () => {
     },[isSidebarOverlayOpen])
 
     return (
-        <div className={`absolute w-full h-full top-0 bg-gray-100 ${isSidebarOverlayOpen ? "opacity-80 z-50" : " opacity-0 -z-50"}`} style={{top:`${scrollY}px`}}>
+        <div className={`absolute w-full h-full top-0 bg-gray-100 ${isSidebarOverlayOpen ? "opacity-80 z-50 block" : "opacity-0 -z-50 hidden"}`} style={{top:`${scrollY}px`}}>
             <button className="absolute text-3xl top-0 right-0 m-8 p-3 z-10" onClick={() => closeSearchOverlay()}>
                 <VscChromeClose/>
             </button>
