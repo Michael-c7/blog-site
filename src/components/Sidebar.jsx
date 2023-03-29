@@ -6,19 +6,14 @@ import { navItems } from '../utility/reusable'
 import { socialMediaItems } from '../utility/reusable'
 import { useStandardContext } from "../contexts/standard_context"
 
-import useGetScrollY from "../hooks/useGetScrollY"
-
-
 const Sidebar = (props) => {
     const {
         isSidebarOpen,
         closeSidebar,
     } = useStandardContext()
 
-    const { scrollY } = useGetScrollY()
-
     return (
-        <aside className={`fixed top-0 right-0 h-[100%] bg-white drop-shadow w-[20rem] max-[320px]:w-[100%] px-8 py-10 z-50 transition-all duration-[375ms] ${isSidebarOpen ? "right-[0]" : "right-[-24rem]"}`} style={{top:`${scrollY}px`}}>
+        <aside className={`fixed top-0 right-0 h-[100%] bg-white drop-shadow w-[20rem] max-[320px]:w-[100%] px-8 py-10 z-50 transition-all duration-[375ms] ${isSidebarOpen ? "right-[0]" : "right-[-24rem]"}`} >
             <button className="relative text-3xl" style={{left:"100%", transform:"translate(-100%)"}} onClick={() => closeSidebar()}>
                 <VscChromeClose/>
             </button>
