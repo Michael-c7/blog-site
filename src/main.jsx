@@ -6,12 +6,18 @@ import './index.css'
 import { StandardProvider } from './contexts/standard_context.jsx'
 import { BlogProvider } from './contexts/blog_context'
 
+import { AuthContextProvider } from './Auth/AuthContext'
+
+import TestText from './components/TestText'
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <AuthContextProvider>
       <StandardProvider>
         <BlogProvider>
           <App />
         </BlogProvider>
       </StandardProvider>
+    </AuthContextProvider>
   </React.StrictMode>,
 )
