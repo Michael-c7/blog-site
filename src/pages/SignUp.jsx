@@ -1,8 +1,6 @@
 import React from 'react'
 import { Link } from "react-router-dom"
 import GeneralHeading from '../components/GeneralHeading'
-import { GrCheckmark, GrClose } from "react-icons/gr"
-
 
 const SignUp = () => {
   const [signUpStateData, setSignUpStateData] = React.useState({
