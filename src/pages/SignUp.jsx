@@ -1,8 +1,16 @@
 import React from 'react'
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import GeneralHeading from '../components/GeneralHeading'
 
+import { useAuthContext } from "../Auth/AuthContext"
+
 const SignUp = () => {
+  const { registerUser } = useAuthContext()
+  const navigate = useNavigate();
+  
+  // temp var
+  let isUsernameAvailable = true
+
   const [signUpStateData, setSignUpStateData] = React.useState({
     username:"",
     displayName:"",
@@ -10,19 +18,6 @@ const SignUp = () => {
     password:"",
   })
 
-  const onSubmit = e => {
-    e.preventDefault()
-    // submit data to firebase here
-    console.log(signUpStateData)
-  }
-
-  // React.useEffect(() => {
-  //   console.log(signUpStateData)
-  // }, [signUpStateData])
-
-
-  // temp var
-  let isUsernameAvailable = true
 
   const isSubmitAllowed = (
     signUpStateData.username
@@ -31,6 +26,17 @@ const SignUp = () => {
     && signUpStateData.email
     && signUpStateData.password
   )
+
+  const onSubmit = e => {
+    e.preventDefault()
+
+    if(isSubmitAllowed) {
+      registerUser(signUpStateData.email, signUpStateData.password)
+      navigate("/")
+    }
+  }
+
+
 
   return (
     <div className="flex flex-col">
@@ -59,7 +65,7 @@ const SignUp = () => {
         </div>
         <p className='text-center'>Have an account? <Link className="text-blue-500"  to="/login">Login</Link></p>
         
-        <button className={`form-primary-btn  ${isSubmitAllowed ? "opacity-100" : " opacity-50"}`} disabled={isSubmitAllowed ? false : true} type="submit">Sign Up</button>
+        <button className={`form-primary-btn ${isSubmitAllowed ? "opacity-100" : " opacity-50"}`} disabled={isSubmitAllowed ? false : true} type="submit">Sign Up</button>
       </form>
     </div>
   )
