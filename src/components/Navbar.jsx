@@ -19,17 +19,16 @@ import { useStandardContext } from "../contexts/standard_context";
 
 import useClickOff from "../hooks/useClickOff";
 
-
+import { useAuthContext } from "../Auth/AuthContext"
 
 
 const Navbar = () => {
+  const { isLoggedIn, logoutUser } = useAuthContext()
+
   const { openSidebar, openSearchOverlay } = useStandardContext()
 
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = React.useState(false)
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = React.useState(false)
-
-  // temp var
-  let auth = false
 
 
   const profileMenuRef = useRef(null)
@@ -42,7 +41,6 @@ const Navbar = () => {
   useClickOff(profileMenuRef, profileRef, setIsDropdownMenuOpen)
 // categories menu
   useClickOff(categoriesMenuRef, categoriesProfileRef, setIsCategoriesMenuOpen)
-
 
 
 
@@ -83,15 +81,15 @@ const Navbar = () => {
           </div>
 
           <div className="right-side flex flex-row items-center relative">
-            {!auth ? (
+            {!isLoggedIn ? (
               <Link className="mr-4 max-[530px]:hidden" to="/signUp">Sign Up</Link>
             ) : ""}
 
-            {!auth ? (
+            {!isLoggedIn ? (
               <Link className="mr-4 max-[530px]:hidden" to="/login">Login</Link>
             ) : ""}
 
-            {auth ? (
+            {isLoggedIn ? (
               <Link className="flex flex-row self-center mr-3 max-[530px]:hidden" to="/createAPost">
                 <div className="flex flex-row self-center mr-1">
                   <AiOutlineForm/>
@@ -115,7 +113,7 @@ const Navbar = () => {
 
             <div ref={profileMenuRef} className={`dropdown-menu-container top-[55px] ${isDropdownMenuOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"} `}>
             {/* Show when user is logged in */}
-              {auth ? (
+              {isLoggedIn ? (
                 <ul className="dropdown-menu text-zinc-500">
                   <li className="my-4 hover:text-zinc-900">
                       <Link to="/profile" className="flex flex-row items-center">
@@ -136,15 +134,18 @@ const Navbar = () => {
                     </Link>
                   </li>
                   <li className="my-4 hover:text-zinc-900">
-                    <Link to="/" className="flex flex-row items-center">
+                    <button className="flex flex-row items-center" onClick={() => {
+                      logoutUser()
+                      setIsDropdownMenuOpen(false)
+                    }}>
                       <MdLogout className="mr-3 text-xl"/>
                       <span>Sign Out</span>
-                    </Link>
+                    </button>
                   </li>
                 </ul>
               ) : ""}
             {/* Show when user is logged out */}
-                {!auth ? (
+                {!isLoggedIn ? (
                   <div className="text-center">
                     <h2 className="font-medium">Get started on BizTech</h2>
                     <Link to="/login" className="flex flex-row justify-center items-center my-4 form-primary-btn text-sm mx-0">
