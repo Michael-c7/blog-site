@@ -41,7 +41,8 @@ const Login = () => {
           <label className="form-label" htmlFor="login-password">Password</label>
           <input className="form-input" name="login-password" id="login-password" type="password" onChange={(e) => setLoginStateData({...loginStateData, password:e.target.value})}/>
         </div>
-        <p className="text-center">Don't have an account? <Link className="text-blue-500"  to="/signUp">Sign Up</Link></p>
+        <p className="text-center my-1">Don't have an account? <Link className="text-blue-500" to="/signUp">Sign Up</Link></p>
+        <p className="text-center my-1">Forgot your password? <Link className="text-blue-500" to="/signUp">Recover Password</Link></p>
         <button className={`form-primary-btn ${isSubmitAllowed ? "opacity-100" : " opacity-50"}`} disabled={isSubmitAllowed ? false : true} type="submit">Login</button>
       </form>
     </div>
