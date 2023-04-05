@@ -18,7 +18,7 @@ export const useAuthContext = () => useContext(AuthContext)
 export const AuthContextProvider = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [isAuthLoading, setIsAuthLoading] = useState(false)
-    const [isAuthError, setAuthError] = useState(false)
+    const [isAuthError, setIsAuthError] = useState(false)
     const [AuthErrorMsg, setAuthErrorMsg] = useState("")
     const [user, setUser] = useState(null)
 
@@ -34,7 +34,6 @@ export const AuthContextProvider = ({children}) => {
             currentUser ? setUser(currentUser) : setUser(null)
             currentUser ? setIsLoggedIn(true) : setIsLoggedIn(false)
             console.log(currentUser)
-            // setError("")
             setIsAuthLoading(false)
         });
         return unsubscribe;
@@ -49,15 +48,15 @@ export const AuthContextProvider = ({children}) => {
             // Signed in 
             const user = userCredential.user;
             console.log(user)
-            // ...
+            setIsAuthError(false)
+            setAuthErrorMsg("")
           })
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
             console.error(errorCode,errorMessage)
-            setAuthError(true)
+            setIsAuthError(true)
             setAuthErrorMsg(errorMessage)
-            // ..
           });
     }
 
@@ -70,13 +69,14 @@ export const AuthContextProvider = ({children}) => {
             // Signed in 
             const user = userCredential.user;
             console.log(user)
-            // ...
+            setIsAuthError(false)
+            setAuthErrorMsg("")
           })
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
             console.error(errorCode,errorMessage)
-            setAuthError(true)
+            setIsAuthError(true)
             setAuthErrorMsg(errorMessage)
           });
     }
@@ -86,8 +86,12 @@ export const AuthContextProvider = ({children}) => {
     const logoutUser = () => {
       signOut(AppAuth).then(function() {
         // Sign-out successful.
+        setIsAuthError(false)
+        setAuthErrorMsg("")
       }).catch(function(error) {
         // An error happened.
+        setIsAuthError(true)
+        setAuthErrorMsg(error.message)
       });
     }
 
@@ -97,13 +101,12 @@ export const AuthContextProvider = ({children}) => {
       sendPasswordResetEmail(getAuth(), email)
       .then(() => {
         // Password reset email sent!
-        // ..
-        console.log("password reset email sent!")
+        setIsAuthError(false)
+        setAuthErrorMsg("")
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
+        setIsAuthError(true)
+        setAuthErrorMsg(error.message)
         console.error(errorMessage)
       });
     }
@@ -121,7 +124,7 @@ export const AuthContextProvider = ({children}) => {
     const contextValue = {
         isLoggedIn,
         isAuthLoading,
-        isAuthError,
+        isAuthError,setIsAuthError,
         AuthErrorMsg,
         user,
         testFunc,
