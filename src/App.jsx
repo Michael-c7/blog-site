@@ -25,14 +25,21 @@ import Overlay from "./components/Overlay"
 import SearchOverlay from "./components/SearchOverlay"
 import ScrollToTop from "./components/ScrollToTop"
 import LikedPosts from "./pages/LikedPosts";
+import ErrorComponent from "./components/Error";
+
+import { useAuthContext } from "./Auth/AuthContext"
 
 function App() {
+  const { isAuthError, AuthErrorMsg } = useAuthContext()
+
 
 
   return (
     <>
       <Router>
         <Navbar/>
+
+        {isAuthError ? <ErrorComponent errorMessage={AuthErrorMsg}/> : ""}
 
         <Sidebar/>
 
