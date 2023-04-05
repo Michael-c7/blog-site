@@ -4,13 +4,14 @@ import GeneralHeading from '../components/GeneralHeading'
 import { useAuthContext } from "../Auth/AuthContext"
 
 const Login = () => {
-  const { signInUser } = useAuthContext()
+  const { signInUser, isAuthError, setIsAuthError } = useAuthContext()
   const navigate = useNavigate();
 
   const [loginStateData, setLoginStateData] = React.useState({
     email:'',
     password:'',
   })
+
 
   const isSubmitAllowed = (
     loginStateData.email
@@ -23,7 +24,11 @@ const Login = () => {
     
     if(isSubmitAllowed) {
       signInUser(loginStateData.email, loginStateData.password)
-      navigate("/")
+      // checks to see if the email exists / if their are any errors
+      if(isAuthError === true) {
+        navigate("/")
+        setIsAuthError(false)
+      }
     }
   }
 

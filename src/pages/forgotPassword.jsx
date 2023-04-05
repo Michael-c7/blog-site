@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import GeneralHeading from '../components/GeneralHeading'
 import { useAuthContext } from "../Auth/AuthContext"
 
+
 const forgotPassword = () => {
-  const { forgotPassword } = useAuthContext()
+  const { forgotPassword, isAuthError,setIsAuthError } = useAuthContext()
   const [emailState, setEmailState] = React.useState("")
+  const [RecoveryEmailSent, setRecoveryEmailSent] = React.useState(false)
 
   const isSubmitAllowed = (
     emailState
@@ -13,23 +15,30 @@ const forgotPassword = () => {
 
   const onSubmit = e => {
     e.preventDefault()
-    
     if(isSubmitAllowed) {
-        forgotPassword(emailState)
+      forgotPassword(emailState)
+      // checks to see if the email exists / if their are any errors
+      if(isAuthError === true) {
         setEmailState("")
-        // show success banner that says 
-        /*Success! Your password recovery request
-        has been received and a recovery email has
-        been sent to the email address associated
-        with your account.
-        Please check your inbox shortly 
-        and follow the instructions in the
-        email to reset your password. */
+        setRecoveryEmailSent(true)
+      }
     }
   }
 
 
   return (
+    <div className='relative'>
+    {/* <ErrorComponent /> */}
+    {RecoveryEmailSent ? (
+    <div className="flex flex-col">
+      <GeneralHeading text={"Recover Password"}/>
+      <form className="form-card" onSubmit={onSubmit}>
+        <h2 className="text-center font-semibold text-lg">Email Sent</h2>
+        <p className="my-2">A recovery email has been sent to the email address associated with your account. Make sure to check your spam folder!</p>
+        <button className={`form-primary-btn`} type="button" onClick={() => setRecoveryEmailSent(false)}>Ok</button>
+      </form>
+    </div>
+    ) : (
     <div className="flex flex-col">
       <GeneralHeading text={"Recover Password"}/>
       <form className="form-card" onSubmit={onSubmit}>
@@ -41,6 +50,8 @@ const forgotPassword = () => {
         <p className="text-center my-1">Have have an account? <Link className="text-blue-500"  to="/login">Login</Link></p>
         <button className={`form-primary-btn ${isSubmitAllowed ? "opacity-100" : " opacity-50"}`} disabled={isSubmitAllowed ? false : true} type="submit">Send recovery email</button>
       </form>
+    </div>
+    )}
     </div>
   )
 }
