@@ -1,13 +1,29 @@
 import React from 'react'
-import { BiErrorCircle } from "react-icons/bi"
+import { BiErrorCircle, BiX } from "react-icons/bi"
+import { useAuthContext } from "../Auth/AuthContext"
+
+/**
+ * Error component that displays an error message
+ * @param {object} props - The props object
+ * @param {string} props.errorMessage - The error message to display
+ * @returns {JSX.Element} - The Error component
+ */
 const Error = (props) => {
+  const { isAuthError, setIsAuthError } = useAuthContext()
+
   return (
-    <div className="bg-red-600 text-white px-4 py-4 mx-3 my-2 flex flex-row flex-wrap items-center">
-    <div className="mr-1 text-lg">
-      <BiErrorCircle/>
-    </div>
-    <h2>{props.errorMessage ? props.errorMessage : "There was an error"}</h2>
-  </div>
+    <>
+      <div className={`error-msg grid grid-cols-[auto_1fr_auto] bg-red-600 text-white absolute w-full py-4 px-1 items-center z-40 break-all`}>
+        <div className="text-2xl">
+          <BiErrorCircle/>
+        </div>
+        <div className='msg-here mx-3'>{props.errorMessage ? props.errorMessage : "An error occurred."}</div>
+        <button className="text-4xl relative top-[2px] ml-auto h-full" onClick={() => setIsAuthError(false)}>
+          <BiX/>
+        </button>
+      </div>
+    </>
+
   )
 }
 
