@@ -8,7 +8,16 @@ import {
     signOut,
 } from "firebase/auth";
 
-import { AppAuth } from "../Auth/firebase"
+import { AppAuth, db } from "../Auth/firebase"
+import { 
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  writeBatch
+} from "firebase/firestore"; 
+
+
 
 const AuthContext = createContext({})
 
@@ -21,7 +30,7 @@ export const AuthContextProvider = ({children}) => {
     const [isAuthError, setIsAuthError] = useState(false)
     const [AuthErrorMsg, setAuthErrorMsg] = useState("")
     const [user, setUser] = useState(null)
-
+    const [isUsernameAvailable, setIsUsernameAvailable] = useState(false)
 
     const testFunc = _ => {
         console.log("this is the test func")
@@ -41,8 +50,43 @@ export const AuthContextProvider = ({children}) => {
 
 
 
-    const registerUser = (email, password) => {
-        // const auth = getAuth();
+    const checkUsernameAvailability = async (username) => {
+      // Create a document reference for the given username in the "usernames" collection
+      const docRef = doc(db, "usernames", username);
+      // Retrieve a document snapshot for the given username
+      const docSnap = await getDoc(docRef);
+
+      // Check if the document snapshot exists for the given username
+      if (docSnap.exists()) {
+        setIsUsernameAvailable(false)
+      } else {
+        // docSnap.data() will be undefined in this case
+        setIsUsernameAvailable(true)
+      }
+    }
+
+
+
+
+    const CreateUserAndUsername = async (username, userUid, displayName) => {
+      // Get a new write batch
+      const batch = writeBatch(db)
+
+      // create refs for both documents
+      const userDoc = doc(db, "users", userUid)
+      const usernameDoc =  doc(db, "usernames", username)
+
+      // commit both docs together as a batch write
+      batch.set(userDoc, { username })
+      batch.set(usernameDoc, { uid:userUid, displayName })
+
+      // Commit the batch
+      await batch.commit();
+    }
+
+
+
+    const registerUser = (email, password, username, displayName) => {
         createUserWithEmailAndPassword(AppAuth, email, password)
           .then((userCredential) => {
             // Signed in 
@@ -50,6 +94,10 @@ export const AuthContextProvider = ({children}) => {
             console.log(user)
             setIsAuthError(false)
             setAuthErrorMsg("")
+
+            // put the custom name batch write stuff here
+            CreateUserAndUsername(username, user.uid, displayName)
+            
           })
           .catch((error) => {
             const errorCode = error.code;
@@ -63,7 +111,6 @@ export const AuthContextProvider = ({children}) => {
 
 
     const signInUser = (email, password) => {
-        // const auth = getAuth();
         signInWithEmailAndPassword(AppAuth, email, password)
           .then((userCredential) => {
             // Signed in 
@@ -132,6 +179,8 @@ export const AuthContextProvider = ({children}) => {
         signInUser,
         logoutUser,
         forgotPassword,
+        checkUsernameAvailability,
+        isUsernameAvailable,
     }
 
     return (
