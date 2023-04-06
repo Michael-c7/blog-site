@@ -1,11 +1,17 @@
-import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import GeneralHeading from '../components/GeneralHeading'
 import { useAuthContext } from "../Auth/AuthContext"
 
+import useNavigateOnAuth from '../hooks/useNavigateOnAuth';
+
 const Login = () => {
-  const { signInUser, isAuthError, setIsAuthError } = useAuthContext()
-  const navigate = useNavigate();
+  const {
+  signInUser,
+  isAuthError,
+  setIsAuthError,
+  signInGuestAccount,
+} = useAuthContext()
 
   const [loginStateData, setLoginStateData] = React.useState({
     email:'',
@@ -24,13 +30,14 @@ const Login = () => {
     
     if(isSubmitAllowed) {
       signInUser(loginStateData.email, loginStateData.password)
-      // checks to see if the email exists / if their are any errors
       if(isAuthError) {
-        navigate("/")
         setIsAuthError(false)
       }
     }
   }
+
+  // redirects the user to the home page after logging in
+  useNavigateOnAuth()
 
   
 
@@ -48,6 +55,7 @@ const Login = () => {
         </div>
         <p className="text-center my-1">Don't have an account? <Link className="text-blue-500" to="/signUp">Sign Up</Link></p>
         <p className="text-center my-1">Forgot your password? <Link className="text-blue-500" to="/forgotpassword">Recover Password</Link></p>
+        <p className='text-center'>Just curious? <button className="text-blue-500" type="button" onClick={signInGuestAccount}>Try a demo account</button></p>
         <button className={`form-primary-btn ${isSubmitAllowed ? "opacity-100" : " opacity-50"}`} disabled={isSubmitAllowed ? false : true} type="submit">Login</button>
       </form>
     </div>

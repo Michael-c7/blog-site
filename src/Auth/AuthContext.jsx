@@ -18,7 +18,6 @@ import {
 } from "firebase/firestore"; 
 
 
-
 const AuthContext = createContext({})
 
 export const useAuthContext = () => useContext(AuthContext)
@@ -42,7 +41,8 @@ export const AuthContextProvider = ({children}) => {
         const unsubscribe = onAuthStateChanged(AppAuth, currentUser => {
             currentUser ? setUser(currentUser) : setUser(null)
             currentUser ? setIsLoggedIn(true) : setIsLoggedIn(false)
-            console.log(currentUser)
+            // console.log(currentUser)
+
             setIsAuthLoading(false)
         });
         return unsubscribe;
@@ -130,6 +130,29 @@ export const AuthContextProvider = ({children}) => {
 
 
 
+    const signInGuestAccount = _ => {
+      let guestEmail = import.meta.env.VITE_GUEST_USER_EMAIL
+      let guestPassword = import.meta.env.VITE_GUEST_USER_PASSWORD
+
+      signInWithEmailAndPassword(AppAuth, guestEmail, guestPassword)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        console.log(user)
+        setIsAuthError(false)
+        setAuthErrorMsg("")
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error(errorCode,errorMessage)
+        setIsAuthError(true)
+        setAuthErrorMsg(errorMessage)
+      });
+    }
+
+
+
     const logoutUser = () => {
       signOut(AppAuth).then(function() {
         // Sign-out successful.
@@ -177,6 +200,7 @@ export const AuthContextProvider = ({children}) => {
         testFunc,
         registerUser,
         signInUser,
+        signInGuestAccount,
         logoutUser,
         forgotPassword,
         checkUsernameAvailability,

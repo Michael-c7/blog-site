@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import GeneralHeading from '../components/GeneralHeading'
 import { debounce } from "../utility/misc"
 import { useAuthContext } from "../Auth/AuthContext"
+import useNavigateOnAuth from '../hooks/useNavigateOnAuth';
 
 const SignUp = () => {
   const { 
@@ -10,9 +11,8 @@ const SignUp = () => {
     checkUsernameAvailability,
     isUsernameAvailable,
     isAuthError,
+    signInGuestAccount,
   } = useAuthContext()
-  const navigate = useNavigate();
-
 
   const [signUpStateData, setSignUpStateData] = React.useState({
     username:"",
@@ -20,8 +20,6 @@ const SignUp = () => {
     email:"",
     password:"",
   })
-
-  
 
 
   const isSubmitAllowed = (
@@ -49,11 +47,14 @@ const SignUp = () => {
     if(isSubmitAllowed) {
       registerUser(signUpStateData.email, signUpStateData.password, signUpStateData.username, signUpStateData.displayName)
       if(isAuthError) {
-        navigate("/")
         setIsAuthError(false)
       }
     }
   }
+
+
+  // redirects the user to the home page after logging in
+  useNavigateOnAuth()
 
 
 
@@ -88,6 +89,7 @@ const SignUp = () => {
           <input className="form-input" name="login-password" id="login-password" type="password" onChange={(e) => setSignUpStateData({...signUpStateData, password:e.target.value})}/>
         </div>
         <p className='text-center'>Have an account? <Link className="text-blue-500"  to="/login">Login</Link></p>
+        <p className='text-center'>Just curious? <button className="text-blue-500" type="button" onClick={signInGuestAccount}>Try a demo account</button></p>
         
         <button className={`form-primary-btn ${isSubmitAllowed ? "opacity-100" : " opacity-50"}`} disabled={isSubmitAllowed ? false : true} type="submit">Sign Up</button>
       </form>
