@@ -1,12 +1,13 @@
 import React from 'react'
 import { Outlet, Navigate  } from 'react-router-dom'
+import { useAuthContext } from "../Auth/AuthContext"
 
 
 const PrivateRoutes = () => {
-    // auth var is temp until you get actual auth from firebase
-    let auth = true
+  const { isLoggedIn } = useAuthContext()
+
     return (
-        auth ? <Outlet/> : <Navigate to="/login"/>
+        isLoggedIn ? <Outlet/> : <Navigate to="/login"/>
     )
 }
 
