@@ -9,6 +9,7 @@ const SignUp = () => {
     registerUser,
     checkUsernameAvailability,
     isUsernameAvailable,
+    isAuthError,
   } = useAuthContext()
   const navigate = useNavigate();
 
@@ -47,7 +48,10 @@ const SignUp = () => {
 
     if(isSubmitAllowed) {
       registerUser(signUpStateData.email, signUpStateData.password, signUpStateData.username, signUpStateData.displayName)
-      navigate("/")
+      if(isAuthError) {
+        navigate("/")
+        setIsAuthError(false)
+      }
     }
   }
 
