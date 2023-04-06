@@ -25,7 +25,7 @@ const Login = () => {
     if(isSubmitAllowed) {
       signInUser(loginStateData.email, loginStateData.password)
       // checks to see if the email exists / if their are any errors
-      if(isAuthError === true) {
+      if(isAuthError) {
         navigate("/")
         setIsAuthError(false)
       }
