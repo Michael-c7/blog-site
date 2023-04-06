@@ -1,15 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom"
 import GeneralHeading from '../components/GeneralHeading'
-
+import { debounce } from "../utility/misc"
 import { useAuthContext } from "../Auth/AuthContext"
 
 const SignUp = () => {
-  const { registerUser } = useAuthContext()
+  const { 
+    registerUser,
+    checkUsernameAvailability,
+    isUsernameAvailable,
+  } = useAuthContext()
   const navigate = useNavigate();
-  
-  // temp var
-  let isUsernameAvailable = true
+
 
   const [signUpStateData, setSignUpStateData] = React.useState({
     username:"",
@@ -17,6 +19,8 @@ const SignUp = () => {
     email:"",
     password:"",
   })
+
+  
 
 
   const isSubmitAllowed = (
@@ -27,11 +31,22 @@ const SignUp = () => {
     && signUpStateData.password
   )
 
+  
+
+  useEffect(() => {
+    checkUsernameAvailability(signUpStateData.username)
+  },[signUpStateData.username])
+
+
+
+
+
+
   const onSubmit = e => {
     e.preventDefault()
 
     if(isSubmitAllowed) {
-      registerUser(signUpStateData.email, signUpStateData.password)
+      registerUser(signUpStateData.email, signUpStateData.password, signUpStateData.username, signUpStateData.displayName)
       navigate("/")
     }
   }
@@ -45,7 +60,12 @@ const SignUp = () => {
         {/* username is the unique address for the user eg: author/@johnSmith */}
         <div className="form-input-container">
           <label className="form-label" htmlFor="login-username">Username</label>
-          <input className="form-input" name="login-username" id="login-username" type="text" placeholder="eg: johnSmith123abc" onChange={(e) => setSignUpStateData({...signUpStateData, username:e.target.value})}/>
+          <input className="form-input" autoComplete='off' maxLength={50} name="login-username" id="login-username" type="text" placeholder="eg: johnSmith123abc" onChange={(e) => {
+            let debounceTimeInMilliseconds = 500
+            debounce(async function() {
+              setSignUpStateData({...signUpStateData, username:e.target.value.toLowerCase().replace(/\s/g, "")})
+            }, debounceTimeInMilliseconds)
+          }}/>
           {signUpStateData.username ? (
           <p className={`${isUsernameAvailable ? "text-green-600" : "text-red-600"}`}>@{signUpStateData.username} {isUsernameAvailable ? " is available" : " is already taken"}</p>
           ) : ""}
@@ -53,11 +73,11 @@ const SignUp = () => {
         {/* display name is not unique and whats in the author eg: john smith */}
         <div className="form-input-container">
           <label className="form-label" htmlFor="login-displayname">Display name</label>
-          <input className="form-input" name="login-displayname" id="login-displayname" type="text" placeholder="eg: john smith" onChange={(e) => setSignUpStateData({...signUpStateData, displayName:e.target.value})}/>
+          <input className="form-input" name="login-displayname" id="login-displayname" type="text" placeholder="eg: john smith" onChange={(e) => setSignUpStateData({...signUpStateData, displayName:e.target.value.trim()})}/>
         </div>
         <div className="form-input-container">
           <label className="form-label" htmlFor="login-email">Email Address</label>
-          <input className="form-input" name="login-email" id="login-email" type="email" placeholder="eg: johnsmith@gmail.com" onChange={(e) => setSignUpStateData({...signUpStateData, email:e.target.value})}/>
+          <input className="form-input" name="login-email" id="login-email" type="email" placeholder="eg: johnsmith@gmail.com" onChange={(e) => setSignUpStateData({...signUpStateData, email:e.target.value.trim()})}/>
         </div>
         <div className="form-input-container">
           <label className="form-label" htmlFor="login-password">Password</label>
