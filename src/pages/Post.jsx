@@ -2,11 +2,21 @@ import React, { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import Tag from "../components/widgets/Tag"
 import TestText from "../components/TestText"
-import { generateUniqueId, getTimeDifference, generateRandomName, socialMediaNumberFormatter } from "../utility/misc"
+import { 
+  generateUniqueId,
+  getTimeDifference,
+  generateRandomName,
+  socialMediaNumberFormatter,
+} from "../utility/misc"
 import InfoSidebar from "../components/InfoSidebar"
 import Author from "../components/widgets/Author"
 // import this as DateWidget so it doesn't conflict w/ the Date object
 import DateWidget from "../components/widgets/Date"
+// using for just the post click off, not comments click off
+import useClickOff from "../hooks/useClickOff"
+
+import useGetScrollY from "../hooks/useGetScrollY"
+
 
 // icons
 import { FaComment, FaRegHeart, FaEye } from "react-icons/fa"
@@ -20,6 +30,7 @@ import testAuthorImg from "../assets/images/testAuthorImg1.jpg"
 
 // profanity filter
 import swearjar from "swearjar-extended2"
+import AreYouSureModal from "../components/AreYouSureModal"
 
 
 const Post = () => {
@@ -38,6 +49,16 @@ const Post = () => {
   let [currentCommentId, setCurrentCommentId] = useState(null)  
   // an array of object eg: [{ id:1234, isOpen:false }, { id:678, isOpen:true }]
   let [isDropdownOpen, setIsDropdownOpen] = useState([])
+  // for the post dropdown, a boolean
+  let [isPostDropdownOpen, setIsPostDropdownOpen] = useState(false)
+  // for the post itself
+  let [isDeletePostModalOpen, setIsDeletePostModalOpen] = useState(false)
+  // for the post comments
+  let [isDeleteCommentModalOpen, setIsDeleteCommentModalOpen] = useState(false)
+
+  let postDropdownDotsRef = React.useRef(null)
+  let postDropdownMenuRef = React.useRef(null)
+
   
   let postACommentText = useRef(null)
 
@@ -247,18 +268,57 @@ const Post = () => {
     };
   })
 
+  // for the post dots / menu
+  useClickOff(postDropdownMenuRef, postDropdownDotsRef, setIsPostDropdownOpen)
+
 
 
 
 
   return (
+    <>
+    {/* for the post dropdown menu */}
+    <AreYouSureModal {...{isOpen:isDeletePostModalOpen, setIsOpen:setIsDeletePostModalOpen, confirmFunction:"", headingText:"Are you sure you want to delete this post?", }}/>
+
+    {/* for the comment dropdown menu */}
+    <AreYouSureModal {...{isOpen:isDeleteCommentModalOpen, setIsOpen:setIsDeleteCommentModalOpen, confirmFunction:deleteComment,confirmFunctionArgs:currentCommentId, headingText:"Are you sure you want to delete this comment?", }}/>
+
     <article className="outer-width mx-auto">
       <div className="min-[990px]:grid min-[990px]:grid-cols-3 min-[990px]:my-12 my-6 gap-12 flex flex-col">
         <div className="col-span-2">
           {/* main post content section */}
           <header className="mb-4">
             <Tag {...{bgColor:"#ccc", link:"/test", text:"tag text"}}/>
-            <h2 className="font-bold text-4xl my-4">this is the test post title</h2>
+            <div className="relative">
+              <div className="flex items-center">
+                <h2 className="font-bold text-4xl my-4">this is the test post title</h2>
+                {isUserComment ? (
+                  <button className="dots-btn ml-auto" ref={postDropdownDotsRef} onClick={() => setIsPostDropdownOpen(!isPostDropdownOpen)}>
+                    <RxDotsVertical/>
+                  </button>
+                ) : ""}
+              </div>
+                {/* post dropdown menu */}
+                <div  ref={postDropdownMenuRef} className={`dropdown-menu-container ${isPostDropdownOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed hidden"} top-[60px] w-28 flex`}>
+                  <ul className="w-full">
+                    {/* <li className="mb-4 w-full">
+                      <button className="flex flex-row items-center w-full" type="button" onClick={() => console.log("post edit btn here")}>
+                         <AiOutlineEdit/>
+                         <span className="ml-2">Edit</span>
+                      </button>
+                    </li> */}
+                    <li className="mt-0">
+                      <button className="flex flex-row items-center w-full text-red-600" type="button" onClick={() => {
+                        setIsPostDropdownOpen(false)
+                        setIsDeletePostModalOpen(true)
+                      }}>
+                        <BiTrash/>
+                        <span className="ml-2">Delete</span>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+            </div>
             <div className="flex flex-col gap-1 min-[375px]:flex-row min-[375px]:gap-0 items-center">
               <Author {...{textColor:"#000"}}/>
               <DateWidget {...{textColor:"#000"}}/>
@@ -319,10 +379,10 @@ const Post = () => {
                 </div>
               </div>
             </div>
-            {testCommentData.length <= 0 && <h2 className="mt-12 text-center  text-lg">Leave a comment and start the discussion!</h2>}
+            {testCommentData.length <= 0 && <h2 className="mt-12 text-center text-lg">Leave a comment and start the discussion!</h2>}
             
             {/* comments */}
-            <ul className="w-full my-6 ">
+            <ul className="w-full my-6">
               {/* comment */}
               {testCommentData.map((el, index) => {
                 const { id } = el
@@ -355,7 +415,10 @@ const Post = () => {
                             </button>
                           </li>
                           <li className="mt-4">
-                            <button className="flex flex-row items-center w-full text-red-600" type="button" onClick={() => deleteComment(id)}>
+                            <button className="flex flex-row items-center w-full text-red-600" type="button" onClick={() => {
+                              setIsDeleteCommentModalOpen(true)
+                              setCurrentCommentId(id)
+                            }}>
                               <BiTrash/>
                               <span className="ml-2">Delete</span>
                             </button>
@@ -375,6 +438,7 @@ const Post = () => {
         <InfoSidebar/>
       </div>
     </article>
+  </>
   )
 }
 
