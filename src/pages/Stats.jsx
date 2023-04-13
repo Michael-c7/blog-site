@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, {  useState, useEffect } from 'react'
 import GeneralHeading from '../components/GeneralHeading'
 
 import { socialMediaNumberFormatter } from '../utility/misc'
@@ -86,7 +86,7 @@ export const viewsBarGraphOptions = {
 
 
 // horizontal bar card (side to side)
-export const horizontalBarGraphOptions = {
+export const verticalBarGraphOptions = {
   indexAxis: 'y',
   elements: {
     bar: {
@@ -116,6 +116,7 @@ export const horizontalBarGraphOptions = {
 
 // pie chart options
 export const pieChartOptions = {
+  responsive: true,
   layout: {
     padding: {
       left:chartPadding.left,
@@ -124,12 +125,6 @@ export const pieChartOptions = {
       top:20,
     }
   }
-}
-
-
-// world map options
-export const worldMapOptions = {
-  
 }
 
 
@@ -150,10 +145,17 @@ const Stats = () => {
 
 
   // state
-  let [dataSelectTime, setDataSelectTime] = React.useState("last-year") 
-  let [dataTimeLabels, setDataTimeLabels] = React.useState(monthsArr)
-  let [isWorldMapLoaded, setWorldMapLoaded] = React.useState(false)
-  let [worldMapData, setWorldMapData] = React.useState("")
+  let [dataSelectTime, setDataSelectTime] = useState("last-year") 
+  let [dataTimeLabels, setDataTimeLabels] = useState(monthsArr)
+  let [isWorldMapLoaded, setWorldMapLoaded] = useState(false)
+  // views, likes, comments
+  let [breakdownByCategoryType, setBreakdownByCategoryType] = useState("views")
+
+  // data state
+  let [viewsByCountryData, setViewsByCountryData] = useState("")
+  let [viewsOverTimeData, setViewsOverTimeData] = useState("")
+  let [viewsByTimeZoneData, setViewsByTimeZoneData] = useState("")
+  let [breakdownByCategory, setBreakdownByCategory] = useState("")
 
 
   // views bar graph
@@ -170,7 +172,7 @@ const Stats = () => {
 
 
 // horizontal bar graph
-const horizontalBarGraphData = {
+const verticalBarGraphData = {
   labels:timeZoneArr,
   datasets: [
     {
@@ -211,16 +213,25 @@ const pieChartData = {
 };
 
 
-// 
+// setup data, by dataSelectTime change
+useEffect(() => {
+  setViewsOverTimeData(faker.datatype.number({ min: 0, max: 1000 }))
+  setViewsByTimeZoneData(faker.datatype.number({ min: 0, max: 1000 }))
+  setBreakdownByCategory(faker.datatype.number({ min: 0, max: 1000 }))
+}, [dataSelectTime])
+
+// setup data by
+useEffect(() => {
+  setBreakdownByCategory(faker.datatype.number({ min: 0, max: 1000 }))
+}, [breakdownByCategoryType])
 
 
 
 
-// Fetch data and create chart using useEffect hook
+// Fetch data and create world map chart
 useEffect(() => {
   let isCanceled = false; // variable to keep track of whether component is unmounted before chart is created
   setWorldMapLoaded(false); // set state variable to false before fetching data
-
   // Fetch geographical data
   fetch('https://cdn.jsdelivr.net/npm/world-atlas/countries-50m.json')
     .then((r) => r.json())
@@ -265,14 +276,22 @@ useEffect(() => {
       if(!isCanceled) {
         console.error(error); // log error to console
       }
+      // console.error(error); // log error to console
+
     });
 
   setWorldMapLoaded(true); // set state variable to true after chart is created
 
+  // cleanup function to set isCanceled to true when component is unmounted
   return () => {
-    isCanceled = true; // cleanup function to set isCanceled to true when component is unmounted
+    isCanceled = true;
   };
-}, []);
+}, [dataSelectTime]);
+
+
+
+
+
 
 
 
@@ -344,29 +363,32 @@ useEffect(() => {
             </div>
           </li>
         </ul>
-
-        <div className="bg-white p-4">
-          <h2 className="text-3xl font-semibold pb-8 pt-6 px-4">Views by Country</h2>
+        {/* world map / views by country */}
+        <div className="bg-white p-4 relative">
+          <h2 className="md:text-2xl text-xl font-semibold pb-8 pt-0">Views by Country</h2>
           {isWorldMapLoaded ? <canvas id="canvas-world-map"></canvas> : <h2 className="text-center text-4xl">Loading...</h2>}
         </div>
 
-        <div className="py-12 flex gap-14">
-          <div className="flex-1 flex flex-col gap-y-8">
-            <div className="bg-white h-1/2">
+        <div className="py-12 md:grid md:grid-cols-2 flex flex-col gap-8">
+          <div className="flex flex-col gap-y-8">
+            {/* horizontal bar / views over time */}
+            <div className="bg-white h-1/2 relative">
               <h2 className="text-xl font-semibold p-4">Views over time</h2>
               <Bar options={viewsBarGraphOptions} data={viewBarGraphData}/>
             </div>
-            <div className="bg-white h-1/2">
+            {/* vertical bar graph / views by time zone */}
+            <div className="bg-white h-1/2 relative">
               <header className="text-xl font-semibold p-4">
                 <h2 className="text-xl font-semibold">Views by time zone</h2>
               </header>
-              <Bar options={horizontalBarGraphOptions} data={horizontalBarGraphData} />
+              <Bar options={verticalBarGraphOptions} data={verticalBarGraphData}/>
             </div>
           </div>
-          <div className="flex-1 bg-white ">
-            <div className="flex justify-between p-4">
-              <h2 className=" text-xl font-semibold">Breakdown by Category</h2>
-              <select className=" border-[1px] border-black">
+          {/* pie chart / break down by category */}
+          <div className="bg-white relative">
+            <div className="flex justify-between min-[375px]:flex-row flex-col p-4">
+              <h2 className="text-xl font-semibold min-[375px]:text-left text-center">Breakdown by Category</h2>
+              <select className=" border-[1px] border-black min-[375px]:my-0 my-4" value={breakdownByCategoryType} onChange={(e) => setBreakdownByCategoryType(e.target.value)}>
                 <option value="views">Views</option>
                 <option value="likes">Likes</option>
                 <option value="comments">Comments</option>
@@ -375,6 +397,8 @@ useEffect(() => {
             <Pie options={pieChartOptions} data={pieChartData}/>
           </div>
         </div>
+
+
       </div>
     </div>
   )
