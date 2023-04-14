@@ -1,19 +1,14 @@
-import React, {  useState, useEffect } from 'react'
-import GeneralHeading from '../components/GeneralHeading'
-
-import { socialMediaNumberFormatter } from '../utility/misc'
-
-import { getAllCategories, getAllCategoryBgColors } from "../utility/reusable"
-
-import { 
+import React, { useState, useEffect } from 'react';
+import GeneralHeading from '../components/GeneralHeading';
+import { socialMediaNumberFormatter } from '../utility/misc';
+import { getAllCategories, getAllCategoryBgColors } from '../utility/reusable';
+import { faker } from '@faker-js/faker';
+import {
   FaComment,
   FaHeart,
   FaEye,
   FaUserFriends,
-  FaSearch,
-} from "react-icons/fa"
-
-
+} from 'react-icons/fa';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -24,21 +19,13 @@ import {
   Legend,
   ArcElement,
 } from 'chart.js';
-
 import { Bar, Pie } from 'react-chartjs-2';
-
-import { faker } from '@faker-js/faker';
-
-import * as ChartGeo from 'chartjs-chart-geo'
-// import Chart from 'chart.js/auto';
+import * as ChartGeo from 'chartjs-chart-geo';
 import { Chart } from 'chart.js';
 import { ChoroplethController, GeoFeature, ColorScale, ProjectionScale } from 'chartjs-chart-geo';
+import zoomPlugin from 'chartjs-plugin-zoom';
 
-// register controller in chart.js and ensure the defaults are set
-// Chart.register(ChoroplethController, GeoFeature, ColorScale, ProjectionScale);
-
-
-ChartJS.register(
+Chart.register(
   CategoryScale,
   LinearScale,
   BarElement,
@@ -46,19 +33,21 @@ ChartJS.register(
   Tooltip,
   Legend,
   ArcElement,
-  ChoroplethController, GeoFeature, ColorScale, ProjectionScale,
+  ChoroplethController,
+  GeoFeature,
+  ColorScale,
+  ProjectionScale,
+  zoomPlugin
 );
 
 // in pixels, 1rem = 16px
-let oneRemInPixels = 16
+let oneRemInPixels = 16;
 let chartPadding = {
-  left:oneRemInPixels * 2,
-  right:oneRemInPixels * 2,
-  bottom:oneRemInPixels * 2,
-  top:oneRemInPixels * 2,
-}
-
-
+  left: oneRemInPixels * 2,
+  right: oneRemInPixels * 2,
+  bottom: oneRemInPixels * 2,
+  top: oneRemInPixels * 2,
+};
 
 // views bar graph stuff(vertical bar graph)
 export const viewsBarGraphOptions = {
@@ -66,7 +55,7 @@ export const viewsBarGraphOptions = {
   plugins: {
     legend: {
       position: 'top',
-      display:false,
+      display: false,
     },
     title: {
       display: false,
@@ -75,15 +64,13 @@ export const viewsBarGraphOptions = {
   },
   layout: {
     padding: {
-      left:chartPadding.left,
-      right:chartPadding.right,
-      bottom:chartPadding.bottom,
-      top:chartPadding.top,
-    }
-  }
+      left: chartPadding.left,
+      right: chartPadding.right,
+      bottom: chartPadding.bottom,
+      top: chartPadding.top,
+    },
+  },
 };
-
-
 
 // horizontal bar card (side to side)
 export const verticalBarGraphOptions = {
@@ -97,7 +84,7 @@ export const verticalBarGraphOptions = {
   plugins: {
     legend: {
       position: 'right',
-      display:false,
+      display: false,
     },
     title: {
       display: false,
@@ -106,12 +93,12 @@ export const verticalBarGraphOptions = {
   },
   layout: {
     padding: {
-      left:chartPadding.left,
-      right:chartPadding.right,
-      bottom:chartPadding.bottom,
-      top:chartPadding.top,
-    }
-  }
+      left: chartPadding.left,
+      right: chartPadding.right,
+      bottom: chartPadding.bottom,
+      top: chartPadding.top,
+    },
+  },
 };
 
 // pie chart options
@@ -119,13 +106,13 @@ export const pieChartOptions = {
   responsive: true,
   layout: {
     padding: {
-      left:chartPadding.left,
-      right:chartPadding.right,
-      bottom:chartPadding.bottom,
-      top:20,
-    }
-  }
-}
+      left: chartPadding.left,
+      right: chartPadding.right,
+      bottom: chartPadding.bottom,
+      top: 20,
+    },
+  },
+};
 
 
 
@@ -156,6 +143,20 @@ const Stats = () => {
   let [viewsOverTimeData, setViewsOverTimeData] = useState("")
   let [viewsByTimeZoneData, setViewsByTimeZoneData] = useState("")
   let [breakdownByCategory, setBreakdownByCategory] = useState("")
+
+
+
+  // setup data, by dataSelectTime change
+  useEffect(() => {
+    setViewsOverTimeData(faker.datatype.number({ min: 0, max: 1000 }))
+    setViewsByTimeZoneData(faker.datatype.number({ min: 0, max: 1000 }))
+    setBreakdownByCategory(faker.datatype.number({ min: 0, max: 1000 }))
+  }, [dataSelectTime])
+
+  // setup data by
+  useEffect(() => {
+    setBreakdownByCategory(faker.datatype.number({ min: 0, max: 1000 }))
+  }, [breakdownByCategoryType])
 
 
   // views bar graph
@@ -213,33 +214,37 @@ const pieChartData = {
 };
 
 
-// setup data, by dataSelectTime change
+
+
+
+const [chartInstance, setChartInstance] = useState(null);
+
+// This code initializes an effect using the useEffect() hook that executes whenever 
+// the `dataSelectTime` variable changes. It fetches a JSON file of world atlas data, 
+// processes it to extract country features, and renders a choropleth map using the 
+// Chart.js library. The effect also sets the state variables `worldMapLoaded` and 
+// `chartInstance`, and returns a cleanup function that cancels the effect.
 useEffect(() => {
-  setViewsOverTimeData(faker.datatype.number({ min: 0, max: 1000 }))
-  setViewsByTimeZoneData(faker.datatype.number({ min: 0, max: 1000 }))
-  setBreakdownByCategory(faker.datatype.number({ min: 0, max: 1000 }))
-}, [dataSelectTime])
+  let isCanceled = false;
 
-// setup data by
-useEffect(() => {
-  setBreakdownByCategory(faker.datatype.number({ min: 0, max: 1000 }))
-}, [breakdownByCategoryType])
+  // If a chart instance already exists, destroy it and set the chart instance variable to null.
+  if (chartInstance) {
+    chartInstance.destroy();
+    setChartInstance(null);
+  }
 
+  // Set the `worldMapLoaded` state variable to false.
+  setWorldMapLoaded(false);
 
-
-
-// Fetch data and create world map chart
-useEffect(() => {
-  let isCanceled = false; // variable to keep track of whether component is unmounted before chart is created
-  setWorldMapLoaded(false); // set state variable to false before fetching data
-  // Fetch geographical data
+  // Fetch the JSON file of world atlas data.
   fetch('https://cdn.jsdelivr.net/npm/world-atlas/countries-50m.json')
     .then((r) => r.json())
     .then((data) => {
-      const countries = ChartGeo.topojson.feature(data, data.objects.countries).features; // process data to get country features
+      // Process the data to extract country features.
+      const countries = ChartGeo.topojson.feature(data, data.objects.countries).features;
 
       if (!isCanceled) {
-        // Create chart using Chart.js library
+        // If the effect is not canceled, create a new Chart.js choropleth map instance.
         const myChart = new Chart(document.getElementById('canvas-world-map').getContext('2d'), {
           type: 'choropleth',
           data: {
@@ -249,7 +254,7 @@ useEffect(() => {
                 label: 'Countries',
                 data: countries.map((d) => ({
                   feature: d,
-                  value: faker.datatype.number({ min: 0, max: 1000 }), // set random value for each country
+                  value: faker.datatype.number({ min: 0, max: 1000 }),
                 })),
               },
             ],
@@ -270,23 +275,26 @@ useEffect(() => {
             },
           },
         });
+
+        // Set the `chartInstance` state variable to the new Chart.js chart instance.
+        setChartInstance(myChart);
       }
     })
     .catch((error) => {
       if(!isCanceled) {
         console.error(error); // log error to console
       }
-      // console.error(error); // log error to console
-
     });
 
-  setWorldMapLoaded(true); // set state variable to true after chart is created
+  // Set the `worldMapLoaded` state variable to true.
+  setWorldMapLoaded(true);
 
-  // cleanup function to set isCanceled to true when component is unmounted
+  // Return a cleanup function that sets the `isCanceled` variable to true.
   return () => {
     isCanceled = true;
   };
 }, [dataSelectTime]);
+
 
 
 
@@ -303,7 +311,7 @@ useEffect(() => {
     <div className="bg-gray-200">
       <GeneralHeading text={`${tempUsername ? tempUsername : "unknown"}'s Stats`}/>
       <div className="outer-width mx-auto">
-        {/* select time*/}
+        {/* select time */}
         <div className={`flex gap-8 relative pb-0 pt-12 px-2 min-[425px]:flex-row flex-col`}>
           <button className={`${dataSelectTime === "last-24-hours" ? "relative before:content-[''] before:absolute before:bg-blue-600 before:h-[3px] min-[425px]:before:left-[-0.5rem] before:left-[0rem] before:bottom-[-0.25rem] min-[425px]:before:w-[calc(100%_+_1rem)] before:w-full text-blue-600" : "text-gray-700"}`} onClick={() => {
             setDataSelectTime("last-24-hours") 
@@ -365,7 +373,7 @@ useEffect(() => {
         </ul>
         {/* world map / views by country */}
         <div className="bg-white p-4 relative">
-          <h2 className="md:text-2xl text-xl font-semibold pb-8 pt-0">Views by Country</h2>
+          <h2 className="md:text-2xl text-xl font-semibold  p-2">Views by Country</h2>
           {isWorldMapLoaded ? <canvas id="canvas-world-map"></canvas> : <h2 className="text-center text-4xl">Loading...</h2>}
         </div>
 
@@ -397,8 +405,6 @@ useEffect(() => {
             <Pie options={pieChartOptions} data={pieChartData}/>
           </div>
         </div>
-
-
       </div>
     </div>
   )
