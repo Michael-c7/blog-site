@@ -3,14 +3,16 @@ import GeneralHeading from '../components/GeneralHeading';
 import { socialMediaNumberFormatter } from '../utility/misc';
 import { getAllCategories, getAllCategoryBgColors } from '../utility/reusable';
 import { faker } from '@faker-js/faker';
+
 import {
   FaComment,
   FaHeart,
   FaEye,
   FaUserFriends,
 } from 'react-icons/fa';
+
 import {
-  Chart as ChartJS,
+  Chart,
   CategoryScale,
   LinearScale,
   BarElement,
@@ -19,11 +21,16 @@ import {
   Legend,
   ArcElement,
 } from 'chart.js';
+
 import { Bar, Pie } from 'react-chartjs-2';
 import * as ChartGeo from 'chartjs-chart-geo';
-import { Chart } from 'chart.js';
-import { ChoroplethController, GeoFeature, ColorScale, ProjectionScale } from 'chartjs-chart-geo';
-import zoomPlugin from 'chartjs-plugin-zoom';
+
+import { 
+  ChoroplethController,
+  GeoFeature,
+  ColorScale,
+  ProjectionScale,
+} from 'chartjs-chart-geo';
 
 Chart.register(
   CategoryScale,
@@ -37,7 +44,6 @@ Chart.register(
   GeoFeature,
   ColorScale,
   ProjectionScale,
-  zoomPlugin
 );
 
 // in pixels, 1rem = 16px
@@ -138,25 +144,39 @@ const Stats = () => {
   // views, likes, comments
   let [breakdownByCategoryType, setBreakdownByCategoryType] = useState("views")
 
+  // temp until you get real data
+  let tempData1 = Array.from({ length:25 }, () => faker.datatype.number({ min: 0, max: 30000 }))
+  let tempData2 = Array.from({ length: 15 }, () => faker.datatype.number({ min: 0, max: 30000 }))
+  let tempData3 = Array.from({ length: 5 }, () => faker.datatype.number({ min: 0, max: 30000 }))
+
+
   // data state
-  let [viewsByCountryData, setViewsByCountryData] = useState("")
-  let [viewsOverTimeData, setViewsOverTimeData] = useState("")
-  let [viewsByTimeZoneData, setViewsByTimeZoneData] = useState("")
-  let [breakdownByCategory, setBreakdownByCategory] = useState("")
+    // using temp data until we get real data
+  let [totalViews, setTotalViews] = useState(30000)
+  let [totalLikes, setTotalLikes] = useState(20000)
+  let [totalComments, setTotalComments] = useState(10000)
+  let [totalInteractions, setTotalInteractions] = useState(40000)
 
 
+  let [viewsByCountryData, setViewsByCountryData] = useState(null)
+  let [viewsOverTimeData, setViewsOverTimeData] = useState(tempData1)
+  let [viewsByTimeZoneData, setViewsByTimeZoneData] = useState(tempData2)
+  let [breakdownByCategory, setBreakdownByCategory] = useState(tempData3)
+
+  
 
   // setup data, by dataSelectTime change
   useEffect(() => {
-    setViewsOverTimeData(faker.datatype.number({ min: 0, max: 1000 }))
-    setViewsByTimeZoneData(faker.datatype.number({ min: 0, max: 1000 }))
-    setBreakdownByCategory(faker.datatype.number({ min: 0, max: 1000 }))
+    setViewsOverTimeData(tempData1)
+    setViewsByTimeZoneData(tempData2)
+    setBreakdownByCategory(tempData3)
   }, [dataSelectTime])
 
-  // setup data by
+  // setup data by breakdownByCategoryType
   useEffect(() => {
-    setBreakdownByCategory(faker.datatype.number({ min: 0, max: 1000 }))
+    setBreakdownByCategory(tempData3)
   }, [breakdownByCategoryType])
+
 
 
   // views bar graph
@@ -165,7 +185,7 @@ const Stats = () => {
   datasets: [
     {
       label: 'Views bar graph',
-      data: dataTimeLabels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+      data: viewsOverTimeData.map((el) => el),
       backgroundColor: 'rgba(32, 162, 235, 0.5)',
     },
   ],
@@ -179,7 +199,7 @@ const verticalBarGraphData = {
     {
       label: 'Dataset 1',
       
-      data: timeZoneArr.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+      data: viewsByTimeZoneData.map((el) => el),
       borderColor: 'rgb(53, 162, 235)',
       backgroundColor: 'rgba(53, 162, 235, 0.5)',
     },
@@ -192,7 +212,7 @@ const pieChartData = {
   datasets: [
     {
       label: '# of Votes',
-      data: categoryArr.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+      data: breakdownByCategory.map((el) => el),
       backgroundColor:[
         "rgb(32,191,107)",
         "rgb(235,59,90)",
@@ -215,6 +235,34 @@ const pieChartData = {
 
 
 
+
+
+const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+let [isWorldMapLegendToBig, setIsWorldMapLegendToBig] = useState(false)
+// get window width for position of the world map legend
+useEffect(() => {
+  function handleResize() {
+    setWindowWidth(window.innerWidth);
+  }
+
+  window.addEventListener('resize', handleResize);
+
+  // cleanup function
+  return () => {
+    window.removeEventListener('resize', handleResize);
+  };
+}, []);
+
+// determine and set isWorldMapLegendToBig
+useEffect(() => {
+  // breakpointNum is in pixels
+  let breakPointNum = 1000
+  if(windowWidth <= breakPointNum) {
+    setIsWorldMapLegendToBig(true)
+  } else {
+    setIsWorldMapLegendToBig(false)
+  }
+}, [windowWidth]);
 
 
 const [chartInstance, setChartInstance] = useState(null);
@@ -265,12 +313,24 @@ useEffect(() => {
             plugins: {
               legend: {
                 display: false,
+                labels: {
+                  display:false,
+                }
               },
             },
             scales: {
               projection: {
                 axis: 'x',
                 projection: 'equalEarth',
+              },
+              color: {
+                // when screen is small this legend cover parts of the map
+                display:isWorldMapLegendToBig ? false : true,
+                axis: 'x',
+                legend: {
+                  position: 'bottom-right',
+                  align: 'left',
+                },
               },
             },
           },
@@ -293,24 +353,17 @@ useEffect(() => {
   return () => {
     isCanceled = true;
   };
-}, [dataSelectTime]);
+}, [dataSelectTime, isWorldMapLegendToBig]);
 
 
 
 
 
-
-
-
-
-
-  // a temp var for the actual users name
-  let tempUsername = "username here"
 
   return (
-    <div className="bg-gray-200">
-      <GeneralHeading text={`${tempUsername ? tempUsername : "unknown"}'s Stats`}/>
-      <div className="outer-width mx-auto">
+    <div className="bg-slate-50 relative">
+      <GeneralHeading text={`Stats`}/>
+      <div className="outer-width mx-auto ">
         {/* select time */}
         <div className={`flex gap-8 relative pb-0 pt-12 px-2 min-[425px]:flex-row flex-col`}>
           <button className={`${dataSelectTime === "last-24-hours" ? "relative before:content-[''] before:absolute before:bg-blue-600 before:h-[3px] min-[425px]:before:left-[-0.5rem] before:left-[0rem] before:bottom-[-0.25rem] min-[425px]:before:w-[calc(100%_+_1rem)] before:w-full text-blue-600" : "text-gray-700"}`} onClick={() => {
@@ -340,7 +393,7 @@ useEffect(() => {
             </div>
             <div className="">
               <p className="text-gray-500 text-sm font-semibold">Total Views</p>
-              <h2 className="text-4xl font-bold">300k</h2>
+              <h2 className="text-4xl font-bold">{socialMediaNumberFormatter.format(totalViews)}</h2>
             </div>
           </li>
           <li className="bg-white flex gap-4 items-center p-4 flex-1">
@@ -349,7 +402,7 @@ useEffect(() => {
             </div>
             <div className="">
               <p className="text-gray-500 text-sm font-semibold">Total Likes</p>
-              <h2 className="text-4xl font-bold">200k</h2>
+              <h2 className="text-4xl font-bold">{socialMediaNumberFormatter.format(totalLikes)}</h2>
             </div>
           </li>
           <li className="bg-white flex gap-4 items-center p-4 flex-1">
@@ -358,7 +411,7 @@ useEffect(() => {
             </div>
             <div className="">
               <p className="text-gray-500 text-sm font-semibold">Total Comments</p>
-              <h2 className="text-4xl font-bold">100k</h2>
+              <h2 className="text-4xl font-bold">{socialMediaNumberFormatter.format(totalComments)}</h2>
             </div>
           </li>
           <li className="bg-white flex gap-4 items-center p-4 flex-1">
@@ -367,14 +420,14 @@ useEffect(() => {
             </div>
             <div className="">
               <p className="text-gray-500 text-sm font-semibold">Total Interactions</p>
-              <h2 className="text-4xl font-bold">400k</h2>
+              <h2 className="text-4xl font-bold">{socialMediaNumberFormatter.format(totalInteractions)}</h2>
             </div>
           </li>
         </ul>
         {/* world map / views by country */}
         <div className="bg-white p-4 relative">
-          <h2 className="md:text-2xl text-xl font-semibold  p-2">Views by Country</h2>
-          {isWorldMapLoaded ? <canvas id="canvas-world-map"></canvas> : <h2 className="text-center text-4xl">Loading...</h2>}
+          <h2 className="md:text-3xl text-xl font-semibold  px-2 pb-6 pt-2">Views by Country</h2>
+          {isWorldMapLoaded ? <canvas id="canvas-world-map"></canvas> : <p className="text-center text-4xl">Loading...</p>}
         </div>
 
         <div className="py-12 md:grid md:grid-cols-2 flex flex-col gap-8">
