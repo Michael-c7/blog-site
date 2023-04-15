@@ -18,6 +18,7 @@ const StandardContext = React.createContext()
 export const StandardProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
+
   const openSidebar = _ => {
     dispatch({type: SIDEBAR_OPEN})
   }
@@ -26,15 +27,13 @@ export const StandardProvider = ({ children }) => {
     dispatch({type: SIDEBAR_CLOSE})
   }
 
-
+  
   const openSearchOverlay = _ => {
     dispatch({type: SEARCH_OVERLAY_OPEN})
-
   }
 
   const closeSearchOverlay = _ => {
     dispatch({type: SEARCH_OVERLAY_CLOSE})
-    
   }
 
 
