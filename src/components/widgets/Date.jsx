@@ -8,7 +8,7 @@ const Date = (props) => {
   return (
     <span className="flex flex-row items-center text-gray-500 text-sm" style={{color:textColor}}>
         <ImClock className="mr-1 text-xs"/>
-        <p>Dec 24, 2016</p>
+        <p>{date ? date : "date unknown"}</p>
     </span>
   )
 }
