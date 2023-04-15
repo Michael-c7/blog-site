@@ -27,21 +27,22 @@ import { BiTrash } from "react-icons/bi"
 import testImg from "../assets/images/testImg1.jpg"
 import testImg2 from "../assets/images/testImg2.jpg"
 import testAuthorImg from "../assets/images/testAuthorImg1.jpg"
+import defaultUserImg from "../assets/images/defaultUser.png"
 
 // profanity filter
 import swearjar from "swearjar-extended2"
 import AreYouSureModal from "../components/AreYouSureModal"
 
 
-const Post = () => {
-  /*
-  a temp variable to show the dots w/ dropdown
-  to edit / delete a comment if
-  the logged in user made the comment
-  */
-  let isUserComment = true
+import { useBlogContext } from "../contexts/blog_context"
+import { useAuthContext } from "../Auth/AuthContext"
 
-  let testAuthorDesc = "this is a test author description. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Id in ab, temporibus et praesentium reiciendis accusantium voluptate assumenda suscipit incidunt possimus ipsum facere. Vitae harum?"
+
+const Post = () => {
+  const { getPost, currentPost, } = useBlogContext()
+  const { isLoggedIn } = useAuthContext()
+
+  let authorDesc = "My goal is to create content that provides value to my readers in an engaging and informative way. Whether I have a specific area of expertise or cover a range of topics, I strive to write high-quality content that resonates with my audience and builds a community around my blog."
 
   let [wordLimitAmount, setWordLimitAmount] = useState(1000)
   let [currentUserCommentText, setCurrentUserCommentText] = useState("")
@@ -68,7 +69,7 @@ const Post = () => {
       id:generateUniqueId(),
       name:"john smith",
       dateCreated:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-      profileImg:testAuthorImg,
+      profileImg:defaultUserImg,
       hasBeenEdited:false,
     },
     {
@@ -76,7 +77,7 @@ const Post = () => {
       id:generateUniqueId(),
       name:"john smith 2",
       dateCreated:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-      profileImg:testImg2,
+      profileImg:defaultUserImg,
       hasBeenEdited:false,
     },
     {
@@ -84,7 +85,7 @@ const Post = () => {
       id:generateUniqueId(),
       name:"john smith 3",
       dateCreated:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-      profileImg:testImg2,
+      profileImg:defaultUserImg,
       hasBeenEdited:false,
     },
     {
@@ -92,10 +93,24 @@ const Post = () => {
       id:generateUniqueId(),
       name:"john smith 4",
       dateCreated:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-      profileImg:testImg2,
+      profileImg:defaultUserImg,
       hasBeenEdited:false,
     },
   ])
+
+
+  // get post data
+  useEffect(() => {
+    // gets the current url
+    const currentUrl = window.location.href;
+    {/* the URL is first parsed using the URL constructor
+    to create a URL object. The pathname property
+    of the URL object is then accessed,
+    which returns the path component of the URL */}
+    const url = new URL(currentUrl);
+    const postId = url.pathname.split('/').pop(); 
+    getPost(postId)
+  }, [])
 
 
 
@@ -149,7 +164,7 @@ const Post = () => {
       name:generateRandomName(),
       dateCreated:Date(),
       // get the profileImg from the current logged in user, for test use fake profileImg
-      profileImg:testAuthorImg,
+      // profileImg:defaultUserImg,
       hasBeenEdited:false,
     }
 
@@ -272,8 +287,14 @@ const Post = () => {
   useClickOff(postDropdownMenuRef, postDropdownDotsRef, setIsPostDropdownOpen)
 
 
+  // useEffect(() => {
+  //   // https://ip-api.com/docs/api:json
+  //   // up to 45 HTTP requests per minute from an ip address
+  //   fetch("http://ip-api.com/json")
+  //   .then((res) => res.json())
+  //   .then(data => console.log(data))
 
-
+  // })
 
   return (
     <>
@@ -288,11 +309,11 @@ const Post = () => {
         <div className="col-span-2">
           {/* main post content section */}
           <header className="mb-4">
-            <Tag {...{bgColor:"#ccc", link:"/test", text:"tag text"}}/>
+            <Tag {...{bgColor:"--category--science", link:`/category/${currentPost.tag}`, text:currentPost.tag}}/>
             <div className="relative">
               <div className="flex items-center">
-                <h2 className="font-bold text-4xl my-4">this is the test post title</h2>
-                {isUserComment ? (
+                <h2 className="font-bold text-4xl my-4">{currentPost.title}</h2>
+                {isLoggedIn ? (
                   <button className="dots-btn ml-auto" ref={postDropdownDotsRef} onClick={() => setIsPostDropdownOpen(!isPostDropdownOpen)}>
                     <RxDotsVertical/>
                   </button>
@@ -320,14 +341,14 @@ const Post = () => {
                 </div>
             </div>
             <div className="flex flex-col gap-1 min-[375px]:flex-row min-[375px]:gap-0 items-center">
-              <Author {...{textColor:"#000"}}/>
-              <DateWidget {...{textColor:"#000"}}/>
+              <Author {...{textColor:"#000", authorLink:`/author/${currentPost.username}`, authorName:currentPost.displayName}}/>
+              <DateWidget {...{textColor:"#000", date:currentPost.createdAt}}/>
               <div className="flex items-center text-sm mx-3">
                 <FaComment className="text-xs mr-1"/>
                 {/* this is a temp test number */}
                 <p>{socialMediaNumberFormatter.format(25000)} comments</p>
               </div>
-              <div className="flex items-center text-sm ">
+              <div className="flex items-center text-sm">
                 <FaRegHeart className="text-xs mr-1"/>
                 {/* this is a temp test number */}
                 <p>{socialMediaNumberFormatter.format(30000)}</p>
@@ -342,16 +363,16 @@ const Post = () => {
           {/* post section */}
           <section>
             {/* the actual post */}
-            <img src={testImg} alt="alt text for main img" className="w-full rounded-xl my-6"/>
-            <TestText amount={10}/>
+            <img src={currentPost.image} alt="alt text for main img" className="w-full rounded-xl my-6"/>
+            <p className="leading-relaxed">{currentPost.text}</p>
             {/* author details section */}
             <div className="flex flex-col md:flex-row md:text-left text-center gap-4 my-12">
-              <Link to="/author link here" className="w-28 h-28 rounded-full flex-shrink-0 mx-auto">
-                <img src={testAuthorImg} className="w-28 h-28 rounded-full object-cover"/>
+              <Link to={`/author/${currentPost.username}`} className="w-28 h-28 rounded-full flex-shrink-0 mx-auto">
+                <img src={defaultUserImg} className="w-28 h-28 rounded-full object-cover"/>
               </Link>
               <div className="flex-auto">
-                <h3 className="text-xl font-bold mb-1 capitalize"><Link to="/author link here">john johnson</Link></h3>
-                <p>{testAuthorDesc}</p>
+                <h3 className="text-xl font-bold mb-1 capitalize"><Link to={`/author/${currentPost.username}`}>{currentPost.displayName}</Link></h3>
+                <p>{authorDesc}</p>
               </div>
             </div>
           </section>
@@ -362,7 +383,7 @@ const Post = () => {
             <div className={`${testCommentData.length < 1 ? "mb-0" : "mb-12"}`}>
               <div className="flex flex-row gap-4">
                 <Link to="/author link here" className="rounded-full w-14 h-12 ">
-                  <img src={testImg} alt="alt text" className="rounded-full w-full h-full"/>
+                  <img src={defaultUserImg} alt="alt text" className="rounded-full w-full h-full"/>
                 </Link>
                 <textarea id="post-a-comment-input" onChange={() => setCurrentUserCommentText(postACommentText.current.value)} ref={postACommentText} value={currentUserCommentText} maxLength={wordLimitAmount} placeholder="Join the discussion and leave a comment!" className=" resize-y w-full h-24 border border-gray-300 rounded-sm p-2"></textarea>
               </div>
@@ -400,7 +421,7 @@ const Post = () => {
                       </Link>
                       <p className="text-slate-500 text-sm">{getTimeDifference(el.dateCreated, Date())}</p>
                       {el.hasBeenEdited ? <span className="text-slate-500 text-sm ml-1">(edited)</span> : ""}
-                      {isUserComment ? (
+                      {isLoggedIn ? (
                         <button className="dots-btn ml-auto">
                           <RxDotsVertical/>
                         </button>
