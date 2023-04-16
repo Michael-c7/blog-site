@@ -77,7 +77,7 @@ export const AuthContextProvider = ({children}) => {
       const usernameDoc =  doc(db, "usernames", username)
 
       // commit both docs together as a batch write
-      batch.set(userDoc, { username })
+      batch.set(userDoc, { username, displayName })
       batch.set(usernameDoc, { uid:userUid, displayName })
 
       // Commit the batch
