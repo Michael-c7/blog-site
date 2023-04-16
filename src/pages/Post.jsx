@@ -311,10 +311,10 @@ const Post = () => {
           <header className="mb-4">
             <Tag {...{bgColor:"--category--science", link:`/category/${currentPost.tag}`, text:currentPost.tag}}/>
             <div className="relative">
-              <div className="flex items-center">
+              <div className="flex items-center ">
                 <h2 className="font-bold text-4xl my-4">{currentPost.title}</h2>
                 {isLoggedIn ? (
-                  <button className="dots-btn ml-auto" ref={postDropdownDotsRef} onClick={() => setIsPostDropdownOpen(!isPostDropdownOpen)}>
+                  <button className="dots-btn ml-auto relative top-1" ref={postDropdownDotsRef} onClick={() => setIsPostDropdownOpen(!isPostDropdownOpen)}>
                     <RxDotsVertical/>
                   </button>
                 ) : ""}
