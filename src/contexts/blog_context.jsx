@@ -76,6 +76,8 @@ export const BlogProvider = ({ children }) => {
         // for authorUid use function to get the display name and username
         username:docSnap1.data().username,
         displayName:docSnap2.data().displayName,
+        authorUid:docSnap.data().postId,
+        altText:docSnap.data().altText,
         
       }
       
