@@ -13,9 +13,15 @@ import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 import { BiSearch, BiTrash } from "react-icons/bi";
 import { RiCloseLine } from "react-icons/ri";
 
+import { useBlogContext } from "../contexts/blog_context"
+import { useAuthContext } from "../Auth/AuthContext"
+import { serverTimestamp } from "@firebase/firestore";
+
 
 
 const CreateAPost = () => {
+  const { testFunc3, createPost } = useBlogContext()
+  const { user } = useAuthContext()
   // State variables for post information and character limits
   const [postTitleMaxChar, setPostTitleMaxChar] = useState(100);
   const [postTextMaxChar, setPostTextMaxChar] = useState(5000);
@@ -28,6 +34,8 @@ const CreateAPost = () => {
   const [searchImageText, setSearchImageText] = useState("");
   const [imageSourceSelect, setImageSourceSelect] = useState("default");
   const [unsplashedRequestData, setUnsplashedRequestData] = useState({ remaining: 50, limit: 50 });
+
+  const [currentAltText, setCurrentAltText] = useState("")
 
   // State variables for image dropdown content and pagination
   const [dropdownImages, setDropdownImages] = useState(defaultImgData);
@@ -62,7 +70,9 @@ const CreateAPost = () => {
 
   const chooseImage = (data) => {
     let targetImg = data.src
+    let targetAltText = data.alt
     setCurrentImage(targetImg)
+    setCurrentAltText(targetAltText)
     setIsImagePreviewShown(true)
     setIsImageDropdownOpen(false)
   }
@@ -115,34 +125,28 @@ const CreateAPost = () => {
 
 
 
-  const createPost = () => {
+  const getPostData = () => {
     let data = {
-      id:generateUniqueId(),
-      dateCreated:new Date(),
-      // author:"get current logged in user for author",
+      text:postInfo.postText,
+      title:postInfo.postTitle,
+      tag:postInfo.postTag,
+      postId:generateUniqueId(),  
+      createdAt:serverTimestamp(),
+      authorUid:user.uid,
+      image:currentImageCompressed,
+      altText:currentAltText,
     }
 
-    // get post image
-    if(isImagePreviewShown && currentImage && currentImageCompressed) {
-      data = {...data, image:currentImageCompressed}
+    if(
+      isImagePreviewShown 
+      && currentImage
+      && currentImageCompressed 
+      && postInfo.postTitle
+      && postInfo.postTag
+      && postInfo.postText
+      ) {
+        return data
     }
-
-    // get post title
-    if(postInfo.title) {
-      data = {...data, title:postInfo.title}
-    }
-    
-    // get post tag
-    if(postInfo.postTag) {
-      data = {...data, tag:postInfo.postTag}
-    }
-
-    // get post text
-    if(postInfo.postText) {
-      data = {...data, text:postInfo.postText}
-    }
-    console.log(data)
-    // create / send the post to the database [NEED TO ADD]
   }
 
 
@@ -302,7 +306,7 @@ useEffect(() => {
                     <BiTrash/>
                   </button>
                 </div>
-                <img src={currentImage} alt={currentImage} className="object-cover w-full h-full rounded-sm"/>
+                <img src={currentImage} alt={currentAltText} className="object-cover w-full h-full rounded-sm"/>
               </div>
             ) : (
               <div className="bg-gray-100 p-4 flex rounded-sm w-full border-2 border-dashed border-blue-500" >
@@ -418,7 +422,7 @@ useEffect(() => {
           <div className="mb-6 flex justify-between w-full">
             {/* <button className="bg-white text-black border-2 border-black rounded-sm py-2 px-3">Cancel</button> */}
             <p>{postInfo.postText.length} / {postTextMaxChar}</p>
-            <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" type="button" disabled={isImagePreviewShown && currentImage && postInfo.postText && postInfo.postTag && postInfo.postText ? false : true} onClick={() => createPost()}>Create Post</button>
+            <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" type="button" disabled={isImagePreviewShown && currentImage && postInfo.postText && postInfo.postTag && postInfo.postText ? false : true} onClick={() => createPost(getPostData())}>Create Post</button>
           </div>
         </div>
       </div>
