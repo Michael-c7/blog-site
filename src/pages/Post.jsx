@@ -40,7 +40,7 @@ import { useAuthContext } from "../Auth/AuthContext"
 
 const Post = () => {
   const { getPost, currentPost, } = useBlogContext()
-  const { isLoggedIn } = useAuthContext()
+  const { isLoggedIn, user } = useAuthContext()
 
   let authorDesc = "My goal is to create content that provides value to my readers in an engaging and informative way. Whether I have a specific area of expertise or cover a range of topics, I strive to write high-quality content that resonates with my audience and builds a community around my blog."
 
@@ -313,6 +313,7 @@ const Post = () => {
             <div className="relative">
               <div className="flex items-center ">
                 <h2 className="font-bold text-4xl my-4">{currentPost.title}</h2>
+                {/* this is be checking if current user uid is same as user uid of the author of the post not if user is logged in not not */}
                 {isLoggedIn ? (
                   <button className="dots-btn ml-auto relative top-1" ref={postDropdownDotsRef} onClick={() => setIsPostDropdownOpen(!isPostDropdownOpen)}>
                     <RxDotsVertical/>
@@ -363,7 +364,7 @@ const Post = () => {
           {/* post section */}
           <section>
             {/* the actual post */}
-            <img src={currentPost.image} alt="alt text for main img" className="w-full rounded-xl my-6"/>
+            <img src={currentPost.image} alt={currentPost.altText} className="w-full rounded-xl my-6"/>
             <p className="leading-relaxed">{currentPost.text}</p>
             {/* author details section */}
             <div className="flex flex-col md:flex-row md:text-left text-center gap-4 my-12">
