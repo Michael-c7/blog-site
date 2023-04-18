@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import Tag from "../components/widgets/Tag"
-import TestText from "../components/TestText"
+
 import { 
   generateUniqueId,
   getTimeDifference,
-  generateRandomName,
   socialMediaNumberFormatter,
 } from "../utility/misc"
 import InfoSidebar from "../components/InfoSidebar"
@@ -16,7 +15,7 @@ import DateWidget from "../components/widgets/Date"
 import useClickOff from "../hooks/useClickOff"
 
 import useGetScrollY from "../hooks/useGetScrollY"
-
+import AreYouSureModal from "../components/AreYouSureModal"
 
 // icons
 import { FaComment, FaRegHeart, FaEye } from "react-icons/fa"
@@ -24,14 +23,11 @@ import { RxDotsVertical } from "react-icons/rx"
 import { AiOutlineEdit } from "react-icons/ai"
 import { BiTrash } from "react-icons/bi"
 // test / placeholder images
-import testImg from "../assets/images/testImg1.jpg"
-import testImg2 from "../assets/images/testImg2.jpg"
-import testAuthorImg from "../assets/images/testAuthorImg1.jpg"
 import defaultUserImg from "../assets/images/defaultUser.png"
 
 // profanity filter
 import swearjar from "swearjar-extended2"
-import AreYouSureModal from "../components/AreYouSureModal"
+
 
 
 import { useBlogContext } from "../contexts/blog_context"
@@ -39,8 +35,20 @@ import { useAuthContext } from "../Auth/AuthContext"
 
 
 const Post = () => {
-  const { getPost, currentPost, } = useBlogContext()
-  const { isLoggedIn, user } = useAuthContext()
+  const { 
+    getPost,
+    currentPost,
+    currentUserName,
+    currentDisplayName,
+    createPostComment,
+    getPostComments,
+    currentPostComments,
+  } = useBlogContext()
+
+  const { 
+    isLoggedIn,
+    user,
+  } = useAuthContext()
 
   let authorDesc = "My goal is to create content that provides value to my readers in an engaging and informative way. Whether I have a specific area of expertise or cover a range of topics, I strive to write high-quality content that resonates with my audience and builds a community around my blog."
 
@@ -63,43 +71,64 @@ const Post = () => {
   
   let postACommentText = useRef(null)
 
-  let [testCommentData, setTestCommentData] = useState([
-    {
-      text:"this is a test comment 1. Lorem, ipsum dolor sit amet consectetur?",
-      id:generateUniqueId(),
-      name:"john smith",
-      dateCreated:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-      profileImg:defaultUserImg,
-      hasBeenEdited:false,
-    },
-    {
-      text:"this is a test comment 2. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Id in ab, temporibus et praesentium reiciendis accusantium voluptate assumenda suscipit incidunt possimus ipsum facere. Vitae harum tempore doloremque saepe nam repudiandae?",
-      id:generateUniqueId(),
-      name:"john smith 2",
-      dateCreated:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-      profileImg:defaultUserImg,
-      hasBeenEdited:false,
-    },
-    {
-      text:"this is a test comment 3!!!",
-      id:generateUniqueId(),
-      name:"john smith 3",
-      dateCreated:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-      profileImg:defaultUserImg,
-      hasBeenEdited:false,
-    },
-    {
-      text:"this is a test comment 4. Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
-      id:generateUniqueId(),
-      name:"john smith 4",
-      dateCreated:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-      profileImg:defaultUserImg,
-      hasBeenEdited:false,
-    },
-  ])
+  // let [localCommentData, setLocalCommentData] = useState([
+  //   {
+  //     text:"this is a test comment 1. Lorem, ipsum dolor sit amet consectetur?",
+  //     id:generateUniqueId(),
+  //     authorDisplayName:"john smith",
+  //     createdAt:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
+  //     isEdited:false,
+  //   },
+  //   {
+  //     text:"this is a test comment 2. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Id in ab, temporibus et praesentium reiciendis accusantium voluptate assumenda suscipit incidunt possimus ipsum facere. Vitae harum tempore doloremque saepe nam repudiandae?",
+  //     id:generateUniqueId(),
+  //     authorDisplayName:"john smith 2",
+  //     createdAt:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
+  //     isEdited:false,
+  //   },
+  //   {
+  //     text:"this is a test comment 3!!!",
+  //     id:generateUniqueId(),
+  //     authorDisplayName:"john smith 3",
+  //     createdAt:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
+  //     isEdited:false,
+  //   },
+  //   {
+  //     text:"this is a test comment 4. Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
+  //     id:generateUniqueId(),
+  //     authorDisplayName:"john smith 4",
+  //     createdAt:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
+  //     isEdited:false,
+  //   },
+  // ])
+
+  
+  
+  let [localCommentData, setLocalCommentData] = useState([])
 
 
-  // get post data
+  let [currentPostId, setCurrentPostId] = useState("")
+
+
+
+  const getCommentData = () => {
+    // currentPostId
+    let data = {
+      id:generateUniqueId(),
+      authorUid:user.uid,
+      authorUsername:currentUserName,
+      authorDisplayName:currentDisplayName,
+      createdAt:new Date(),
+      text:currentUserCommentText,
+      isEdited:false,
+    }
+    return data
+    // console.log(data, currentPostId)
+  }
+
+
+
+// get current postID
   useEffect(() => {
     // gets the current url
     const currentUrl = window.location.href;
@@ -108,17 +137,31 @@ const Post = () => {
     of the URL object is then accessed,
     which returns the path component of the URL */}
     const url = new URL(currentUrl);
-    const postId = url.pathname.split('/').pop(); 
-    getPost(postId)
+    const postId = url.pathname.split('/').pop();
+    setCurrentPostId(postId)
   }, [])
 
+
+// get post data
+  useEffect(() => {
+    getPost(currentPostId)
+
+    getPostComments(currentPostId)
+  }, [currentPostId])
+
+  // set local commentData w/ the actual commentData
+  useEffect(() => {
+    // setLocalCommentData()
+    setLocalCommentData(currentPostComments)
+
+  },[currentPostComments])
 
 
 
 
   useEffect(() => {
     // getting and setting the dropdown items data
-    let items = testCommentData.map((el, index) => {
+    let items = localCommentData.map((el, index) => {
       return {
         id:el.id,
         isOpen:false,
@@ -126,14 +169,14 @@ const Post = () => {
     })
 
     setIsDropdownOpen(items)
-  },[testCommentData])
+  },[localCommentData])
 
 
 
 
 
   const closeAllDropdown = () => {
-    let newItems = testCommentData.map((el, index) => {
+    let newItems = localCommentData.map((el, index) => {
       return {
         id:el.id,
         isOpen:false,
@@ -160,22 +203,21 @@ const Post = () => {
     let newItem = {
       text:swearjar.censor(currentUserCommentText),
       id:generateUniqueId(),
-      // get the name from the current logged in user, for test use fake name
-      name:generateRandomName(),
-      dateCreated:Date(),
-      // get the profileImg from the current logged in user, for test use fake profileImg
-      // profileImg:defaultUserImg,
-      hasBeenEdited:false,
+      // get the authorDisplayName from the current logged in user, for test use fake authorDisplayName
+      authorDisplayName:currentDisplayName,
+      createdAt:Date(),
+      isEdited:false,
     }
 
-    const oldItems = testCommentData
+    const oldItems = localCommentData
 
     const allItem = [newItem, ...oldItems]
-    setTestCommentData(allItem)
+    setLocalCommentData(allItem)
 
     // removes the text form the input & sets isEditingEnabled to false
     cancelBtn()
-    // post the comment in the database [NEED TO ADD]
+    // post the comment in the database
+    createPostComment(currentPostId, getCommentData())
   }
 
 
@@ -185,30 +227,30 @@ const Post = () => {
   /* this function edits the comment */
   const editComment = (arr) => {
     // edit the comment locally in the dom
-    // get index of current comment in testCommentData
-    const currentIndex = testCommentData.findIndex(el => el.id === currentCommentId)
+    // get index of current comment in localCommentData
+    const currentIndex = localCommentData.findIndex(el => el.id === currentCommentId)
 
     // get current item and update it w/ the text form textarea
-    let oldCurrentItem = testCommentData.filter((el) => el.id === currentCommentId)[0]
+    let oldCurrentItem = localCommentData.filter((el) => el.id === currentCommentId)[0]
 
     let newCurrentItem = {
       text:swearjar.censor(currentUserCommentText),
       id:oldCurrentItem.id,
-      name:oldCurrentItem.name,
-      dateCreated:oldCurrentItem.dateCreated,
-      profileImg:oldCurrentItem.profileImg,
-      hasBeenEdited:true,
+      authorDisplayName:oldCurrentItem.authorDisplayName,
+      createdAt:oldCurrentItem.createdAt,
+      isEdited:true,
     }
     
     // get all old item minus current item
-    let allOldItemsMinusCurrent = testCommentData.filter((el) => el.id !== currentCommentId)
+    let allOldItemsMinusCurrent = localCommentData.filter((el) => el.id !== currentCommentId)
     allOldItemsMinusCurrent.splice(currentIndex,0,newCurrentItem)
-    setTestCommentData(allOldItemsMinusCurrent)
+    setLocalCommentData(allOldItemsMinusCurrent)
 
     setCurrentUserCommentText("")
     setIsEditingEnabled(false)
 
     // edit the comment in the database [NEED TO ADD]
+    
   }
 
 
@@ -217,8 +259,8 @@ const Post = () => {
 
   const deleteComment = (id) => {
     // deletes the comment locally in the dom
-    let filteredComments = testCommentData.filter((el) => el.id !== id)
-    setTestCommentData(filteredComments)
+    let filteredComments = localCommentData.filter((el) => el.id !== id)
+    setLocalCommentData(filteredComments)
     // delete the comment in the database [NEED TO ADD]
   }
 
@@ -248,7 +290,7 @@ const Post = () => {
     let currentDots = event.target.closest(".dots-btn")
     let currentMenu = document.querySelector(".dropdown-menu-container--open")
 
-    let newItems = testCommentData.map((el) => {
+    let newItems = localCommentData.map((el) => {
       if(el.id === currentId) {
         let currentIsOpen = isDropdownOpen.filter((el) => el.id === currentId)[0]?.isOpen
         return {
@@ -384,7 +426,7 @@ const Post = () => {
           {/* comments section */}
           <section className="p-6 bg-slate-100 rounded">
             {/* post a comment */}
-            <div className={`${testCommentData.length < 1 ? "mb-0" : "mb-12"}`}>
+            <div className={`${localCommentData.length < 1 ? "mb-0" : "mb-12"}`}>
               <div className="flex flex-row gap-4">
                 <Link to="/author link here" className="rounded-full w-14 h-12 ">
                   <img src={defaultUserImg} alt="alt text" className="rounded-full w-full h-full"/>
@@ -404,27 +446,27 @@ const Post = () => {
                 </div>
               </div>
             </div>
-            {testCommentData.length <= 0 && <h2 className="mt-12 text-center text-lg">Leave a comment and start the discussion!</h2>}
+            {localCommentData.length <= 0 && <h2 className="mt-12 text-center text-lg">Leave a comment and start the discussion!</h2>}
             
             {/* comments */}
             <ul className="w-full my-6">
               {/* comment */}
-              {testCommentData.map((el, index) => {
+              {localCommentData.map((el, index) => {
                 const { id } = el
                 let isOpen = isDropdownOpen.filter((el) => el.id === id)[0]?.isOpen
              
                 return (
                   <li id="post-comment" data-uniqueid={el.id} className="flex flex-row gap-4 w-full my-8 relative" key={index}>
                   <Link to="/author link goes here" className="rounded-full w-14 h-12 ">
-                    <img src={el.profileImg} alt="alt text" className="rounded-full w-12 h-12 object-cover"/>
+                    <img src={defaultUserImg} alt="alt text" className="rounded-full w-12 h-12 object-cover"/>
                   </Link>
                   <div id="container-test" className="w-full">
                     <header className="flex flex-row items-center w-full ">
                       <Link to="/link to author here">
-                        <h2 className="font-medium mr-2">{el.name}</h2>
+                        <h2 className="font-medium mr-2">{el.authorDisplayName}</h2>
                       </Link>
-                      <p className="text-slate-500 text-sm">{getTimeDifference(el.dateCreated, Date())}</p>
-                      {el.hasBeenEdited ? <span className="text-slate-500 text-sm ml-1">(edited)</span> : ""}
+                      <p className="text-slate-500 text-sm">{getTimeDifference(el.createdAt, Date())}</p>
+                      {el.isEdited ? <span className="text-slate-500 text-sm ml-1">(edited)</span> : ""}
                       {/* this should be user?.uid === commentUser?.uid or something like that */}
                       {isLoggedIn ? (
                         <button className="dots-btn ml-auto">

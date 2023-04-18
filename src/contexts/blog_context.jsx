@@ -9,7 +9,7 @@ const initialState = {
 
 import { AppAuth, db } from "../Auth/firebase"
 
-import { doc, setDoc, getDoc } from "firebase/firestore"; 
+import { doc, setDoc, getDoc, deleteDoc } from "firebase/firestore"; 
 import { useNavigate } from "react-router-dom";
 
 import { getDateFromTime } from "../utility/misc"
@@ -28,7 +28,9 @@ export const BlogProvider = ({ children }) => {
   const [isError, setIsError] = useState(false)
   const [ErrorMsg, setRErrorMsg] = useState("")
   const [currentPost, setCurrentPost] = useState({})
-
+  const [currentUserName, setCurrentUsername] = useState("")
+  const [currentDisplayName, setCurrentDisplayName] = useState("")
+  const [currentPostComments, setCurrentPostComments] = useState([])
 
   const testFunc3 = _ => {
     console.log('test func from blog context')
@@ -37,6 +39,7 @@ export const BlogProvider = ({ children }) => {
 
   const createPost = async (postData) => {
     // Add a new document in collection "posts"
+
     await setDoc(doc(db, "posts", postData.postId), postData);
     console.log("create post form blog context")
     console.log(postData)
@@ -44,6 +47,19 @@ export const BlogProvider = ({ children }) => {
     // to go the post i just made
     // navigate(`/post/${postId}`);
   }
+
+  const getUserInfoFromUid = async (userUid) => {
+      // get username and display name
+      const docRef1 = doc(db, "users", userUid);
+      const docSnap1 = await getDoc(docRef1);
+      
+      setCurrentUsername(docSnap1.data().username)
+      setCurrentDisplayName(docSnap1.data().displayName)
+  }
+
+  useEffect(() => {
+    getUserInfoFromUid(user?.uid)
+  },[user])
 
 
 
@@ -92,18 +108,30 @@ export const BlogProvider = ({ children }) => {
 
 
 
-
-  const deletePost = (postId) => {
-
+  const createPostComment = async (postId, commentData) => {
+    const docRef = doc(db, "postComments", postId);
+    const docSnap = await getDoc(docRef);
+      
+    if(docSnap.exists()) {
+      /*get all old post de stringify
+      combine w/ current / new post re-stringify and send to the place
+      in an array of objects*/
+      let oldData = JSON.parse(docSnap.data().comments)
+      let newData = JSON.stringify([...oldData, commentData])
+      await setDoc(doc(db, "postComments", postId), {comments:newData});
+    } else {
+      // new one here, so just create new doc of an array w/ the object data and post it
+      console.log("No such document!");
+      let comments = JSON.stringify([commentData])
+      await setDoc(doc(db, "postComments", postId), {comments});
+    }
   }
 
-  const likePost = (postId, userUid) => {
-
-  }
-
-
-  const createPostComment = (commentInfo) => {
-
+  const getPostComments = async (postId) => {
+    const docRef = doc(db, "postComments", postId);
+    const docSnap = await getDoc(docRef);
+    // console.log(JSON.parse(docSnap.data().comments))
+    setCurrentPostComments(JSON.parse(docSnap.data().comments))
   }
 
   const EditPostComment = (postCommentId, updatedInfo) => {
@@ -113,6 +141,27 @@ export const BlogProvider = ({ children }) => {
   const DeletePostComment = (postCommentId) => {
 
   }
+
+
+
+  const deletePost = (postId) => {
+
+  }
+
+  const likePost = (postId, userUid) => {
+
+  }
+
+  const unlikePost = (postId, userUid) => {
+
+  }
+
+
+
+
+
+
+
 
 
 
@@ -140,6 +189,9 @@ export const BlogProvider = ({ children }) => {
   }
 
 
+  // after everything else is done do stuff for /stats here
+
+
   /*also have function for collection of data eg: function to get all
   liked posts(for liked posts page), author posts,ect...
   */
@@ -154,6 +206,12 @@ export const BlogProvider = ({ children }) => {
         createPost,
         getPost,
         currentPost,
+        getUserInfoFromUid,
+        currentUserName,
+        currentDisplayName,
+        createPostComment,
+        getPostComments,
+        currentPostComments,
       }}
     >
       {children}
