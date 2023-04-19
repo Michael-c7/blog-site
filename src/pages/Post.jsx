@@ -44,6 +44,7 @@ const Post = () => {
     getPostComments,
     currentPostComments,
     editPostComment,
+    deletePostComment,
   } = useBlogContext()
 
   const { 
@@ -152,7 +153,6 @@ const Post = () => {
 
   // set local commentData w/ the actual commentData
   useEffect(() => {
-    // setLocalCommentData()
     setLocalCommentData(currentPostComments)
 
   },[currentPostComments])
@@ -263,6 +263,7 @@ const Post = () => {
     let filteredComments = localCommentData.filter((el) => el.id !== id)
     setLocalCommentData(filteredComments)
     // delete the comment in the database [NEED TO ADD]
+    deletePostComment(currentPostId, currentCommentId)
   }
 
 
@@ -393,7 +394,7 @@ const Post = () => {
               <div className="flex items-center text-sm mx-3">
                 <FaComment className="text-xs mr-1"/>
                 {/* this is a temp test number */}
-                <p>{socialMediaNumberFormatter.format(25000)} comments</p>
+                <p>{socialMediaNumberFormatter.format(localCommentData.length)} comments</p>
               </div>
               <div className="flex items-center text-sm">
                 <FaRegHeart className="text-xs mr-1"/>
