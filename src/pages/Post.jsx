@@ -43,6 +43,7 @@ const Post = () => {
     createPostComment,
     getPostComments,
     currentPostComments,
+    editPostComment,
   } = useBlogContext()
 
   const { 
@@ -249,8 +250,8 @@ const Post = () => {
     setCurrentUserCommentText("")
     setIsEditingEnabled(false)
 
-    // edit the comment in the database [NEED TO ADD]
-    
+    // edit the comment in the database 
+    editPostComment(currentPostId, currentCommentId, currentUserCommentText)
   }
 
 
