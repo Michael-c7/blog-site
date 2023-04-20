@@ -134,33 +134,15 @@ export const BlogProvider = ({ children }) => {
     setCurrentPostComments(JSON.parse(docSnap.data().comments))
   }
 
-  const editPostComment = async (postId, postCommentId, updatedText) => {
-    const docRef = doc(db, "postComments", postId);
-    const docSnap = await getDoc(docRef);
 
-    let oldData = JSON.parse(docSnap.data().comments)
-    let postToEdit = oldData.filter((el) => el.id === postCommentId)[0]
-    let postToEditOriginalIndex = oldData.findIndex((el) => el.id === postCommentId)
-    let editedPost = {
-      authorDisplayName:postToEdit.authorDisplayName,
-      authorUid:postToEdit.authorUid,
-      authorUsername:postToEdit.authorUsername,
-      createdAt:postToEdit.createdAt,
-      id:postToEdit.id,
-      isEdited:true,
-      text:updatedText,
-    }
 
-    let newData = oldData.filter((el) => el.id !== postCommentId)
-    // add the editPost to the rest of the old data in the correctly positioned index
-    newData.splice(postToEditOriginalIndex, 0, editedPost)
-    // add to the database / overwrite old data that was there
-    await setDoc(doc(db, "postComments", postId), {comments:JSON.stringify(newData)});
+  const editPostComment = async (postId, editedData) => {
+    await setDoc(doc(db, "postComments", postId), {comments:JSON.stringify(editedData)});
   }
 
-  const DeletePostComment = (postId, postCommentId) => {
-   
 
+  const deletePostComment = async (postId, updatedData) => {
+    await setDoc(doc(db, "postComments", postId), {comments:JSON.stringify(updatedData)});
   }
 
 
@@ -169,7 +151,13 @@ export const BlogProvider = ({ children }) => {
 
   }
 
+
+
   const likePost = (postId, userUid) => {
+
+  }
+
+  const isPostLikedByUser = (userUid) => {
 
   }
 
@@ -234,6 +222,7 @@ export const BlogProvider = ({ children }) => {
         getPostComments,
         currentPostComments,
         editPostComment,
+        deletePostComment,
       }}
     >
       {children}

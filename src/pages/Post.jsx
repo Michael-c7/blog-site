@@ -226,7 +226,7 @@ const Post = () => {
 
 
   /* this function edits the comment */
-  const editComment = (arr) => {
+  const editComment = () => {
     // edit the comment locally in the dom
     // get index of current comment in localCommentData
     const currentIndex = localCommentData.findIndex(el => el.id === currentCommentId)
@@ -244,6 +244,7 @@ const Post = () => {
     
     // get all old item minus current item
     let allOldItemsMinusCurrent = localCommentData.filter((el) => el.id !== currentCommentId)
+    // adds the current item w/ the into the position it used to have
     allOldItemsMinusCurrent.splice(currentIndex,0,newCurrentItem)
     setLocalCommentData(allOldItemsMinusCurrent)
 
@@ -251,7 +252,7 @@ const Post = () => {
     setIsEditingEnabled(false)
 
     // edit the comment in the database 
-    editPostComment(currentPostId, currentCommentId, currentUserCommentText)
+    editPostComment(currentPostId, allOldItemsMinusCurrent)
   }
 
 
@@ -262,8 +263,8 @@ const Post = () => {
     // deletes the comment locally in the dom
     let filteredComments = localCommentData.filter((el) => el.id !== id)
     setLocalCommentData(filteredComments)
-    // delete the comment in the database [NEED TO ADD]
-    deletePostComment(currentPostId, currentCommentId)
+    // delete the comment in the database
+    deletePostComment(currentPostId, filteredComments)
   }
 
 
