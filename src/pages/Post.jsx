@@ -17,6 +17,8 @@ import useClickOff from "../hooks/useClickOff"
 import useGetScrollY from "../hooks/useGetScrollY"
 import AreYouSureModal from "../components/AreYouSureModal"
 
+import Error from "../pages/Error"
+
 // icons
 import { FaComment, FaRegHeart, FaEye } from "react-icons/fa"
 import { RxDotsVertical } from "react-icons/rx"
@@ -45,6 +47,8 @@ const Post = () => {
     currentPostComments,
     editPostComment,
     deletePostComment,
+    deletePost,
+    isCurrentPostLoading,
   } = useBlogContext()
 
   const { 
@@ -114,7 +118,6 @@ const Post = () => {
 
 
   const getCommentData = () => {
-    // currentPostId
     let data = {
       id:generateUniqueId(),
       authorUid:user.uid,
@@ -125,7 +128,6 @@ const Post = () => {
       isEdited:false,
     }
     return data
-    // console.log(data, currentPostId)
   }
 
 
@@ -328,7 +330,7 @@ const Post = () => {
     };
   })
 
-  // for the post dots / menu
+  // for the post dots / dropdown menu
   useClickOff(postDropdownMenuRef, postDropdownDotsRef, setIsPostDropdownOpen)
 
 
@@ -341,13 +343,19 @@ const Post = () => {
 
   // })
 
-
+  let hasDataInCurrentPost = Object.getOwnPropertyNames(currentPost).length !== 0
+  /* checking if the currentPost is loaded and if currentPost has data*/
+  if(!isCurrentPostLoading && !hasDataInCurrentPost) {
+    return (
+      <Error text={`Page /${currentPostId} not found`}/>
+    )
+  }
 
 
   return (
     <>
     {/* for the post dropdown menu */}
-    <AreYouSureModal {...{isOpen:isDeletePostModalOpen, setIsOpen:setIsDeletePostModalOpen, confirmFunction:"", headingText:"Are you sure you want to delete this post?", }}/>
+    <AreYouSureModal {...{isOpen:isDeletePostModalOpen, setIsOpen:setIsDeletePostModalOpen, confirmFunction:deletePost,confirmFunctionArgs:currentPostId, headingText:"Are you sure you want to delete this post?", hasNavigate:true, navigateLocation:"/", }}/>
 
     {/* for the comment dropdown menu */}
     <AreYouSureModal {...{isOpen:isDeleteCommentModalOpen, setIsOpen:setIsDeleteCommentModalOpen, confirmFunction:deleteComment,confirmFunctionArgs:currentCommentId, headingText:"Are you sure you want to delete this comment?", }}/>
@@ -357,7 +365,7 @@ const Post = () => {
         <div className="col-span-2">
           {/* main post content section */}
           <header className="mb-4">
-            <Tag {...{bgColor:"--category--science", link:`/category/${currentPost.tag}`, text:currentPost.tag}}/>
+            <Tag {...{bgColor:`--category--${currentPost.tag}`, link:`/category/${currentPost.tag}`, text:currentPost.tag}}/>
             <div className="relative">
               <div className="flex items-center ">
                 <h2 className="font-bold text-4xl my-4">{currentPost.title}</h2>
