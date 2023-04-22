@@ -10,7 +10,7 @@ const initialState = {
 import { AppAuth, db } from "../Auth/firebase"
 
 import { doc, setDoc, getDoc, deleteDoc } from "firebase/firestore"; 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, redirect, Navigate, } from "react-router-dom";
 
 import { getDateFromTime } from "../utility/misc"
 
@@ -19,7 +19,7 @@ const BlogContext = React.createContext()
 
 export const BlogProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-
+  
 
   const { user } = useAuthContext()
   // const navigate = useNavigate();
@@ -31,6 +31,10 @@ export const BlogProvider = ({ children }) => {
   const [currentUserName, setCurrentUsername] = useState("")
   const [currentDisplayName, setCurrentDisplayName] = useState("")
   const [currentPostComments, setCurrentPostComments] = useState([])
+
+  const [isCurrentPostLoading, setIsCurrentPostLoading] = useState(true)
+
+
 
   const testFunc3 = _ => {
     console.log('test func from blog context')
@@ -70,16 +74,12 @@ export const BlogProvider = ({ children }) => {
     const docRef = doc(db, "posts", postId);
     const docSnap = await getDoc(docRef);
 
-
+    setIsCurrentPostLoading(true)
 
     if (docSnap.exists()) {
       // get username
       const docRef1 = doc(db, "users", docSnap.data().authorUid);
       const docSnap1 = await getDoc(docRef1);
-
-      // get display name
-      const docRef2 = doc(db, "usernames", docSnap1.data().username);
-      const docSnap2 = await getDoc(docRef2);
 
       completeData = {
         postId:docSnap.data().postId,
@@ -91,19 +91,20 @@ export const BlogProvider = ({ children }) => {
         createdAt:getDateFromTime(docSnap.data().createdAt.nanoseconds, docSnap.data().createdAt.seconds),
         // for authorUid use function to get the display name and username
         username:docSnap1.data().username,
-        displayName:docSnap2.data().displayName,
+        displayName:docSnap1.data().displayName,
         authorUid:docSnap.data().authorUid,
         altText:docSnap.data().altText,
-        
       }
       
     } else {
       // docSnap.data() will be undefined in this case
       console.log("No such document!");
+      setIsCurrentPostLoading(false)
     }
 
     // console.log(completeData)
     setCurrentPost(completeData)
+    setIsCurrentPostLoading(false)
   }
 
 
@@ -131,7 +132,9 @@ export const BlogProvider = ({ children }) => {
     const docRef = doc(db, "postComments", postId);
     const docSnap = await getDoc(docRef);
     // console.log(JSON.parse(docSnap.data().comments))
-    setCurrentPostComments(JSON.parse(docSnap.data().comments))
+    if(docSnap.exists()) {
+      setCurrentPostComments(JSON.parse(docSnap.data().comments))
+    }
   }
 
 
@@ -147,8 +150,8 @@ export const BlogProvider = ({ children }) => {
 
 
 
-  const deletePost = (postId) => {
-
+  const deletePost = async (postId) => {
+    await deleteDoc(doc(db, "posts", postId));
   }
 
 
@@ -223,6 +226,8 @@ export const BlogProvider = ({ children }) => {
         currentPostComments,
         editPostComment,
         deletePostComment,
+        deletePost,
+        isCurrentPostLoading,
       }}
     >
       {children}
