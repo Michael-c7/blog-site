@@ -17,6 +17,8 @@ import { serverTimestamp } from "@firebase/firestore";
 
 import { useNavigate } from "react-router-dom";
 
+import useGetScrollY from "../hooks/useGetScrollY";
+
 const CreateAPost = () => {
   const { testFunc3, createPost } = useBlogContext()
   const { user } = useAuthContext()
@@ -53,6 +55,9 @@ const CreateAPost = () => {
 
   const [createdPostId, setCreatedPostId] = useState(generateUniqueId())
 
+  const [isPublishPostDropdownShown, setIsPublishPostDropdownShown] = useState(false)
+
+
 
   // for image select dropdown menu
   // useClickOff(imageDropdownMenuRef,openImageDropdownRef, setIsImageDropdownOpen)
@@ -74,9 +79,6 @@ const CreateAPost = () => {
     setIsImagePreviewShown(true)
     setIsImageDropdownOpen(false)
   }
-
-
-
 
 
   const closeDropdown = () => {
@@ -145,9 +147,7 @@ const CreateAPost = () => {
       ) {
         return data
     }
-  }
-
-  
+  } 
 
 
 
@@ -205,54 +205,44 @@ const CreateAPost = () => {
 
 
 
-  
+
+  // image search functionality
+  useEffect(() => {
+    // If the selected image source is Unsplash and there is search text, fetch images from the Unsplash API
+    if (imageSourceSelect === "unsplashed" && searchImageText) {
+      fetchImagesUnsplashed();
+    }
+
+    // If the selected image source is the default image source and there is search text
+    if (imageSourceSelect === "default" && searchImageText) {
+      // Filter the defaultImgData to find images that match the search text
+      let filteredDefaultImgData = defaultImgData.filter((el) => {
+        if (el.description.toLowerCase().indexOf(searchImageText.toLowerCase()) !== -1) {
+          return el;
+        }
+      });
+      // Update the dropdownImages state with the filtered results
+      setDropdownImages(filteredDefaultImgData);
+    } else if (imageSourceSelect === "default" && !searchImageText) {
+      // If there is no search text, set the dropdownImages state back to the defaultImgData
+      setDropdownImages(defaultImgData);
+    }
+  }, [imageSourceSelect, searchImageText]);
 
 
 
 
-
-
-
-
-
-
-// image search functionality
-useEffect(() => {
-  // If the selected image source is Unsplash and there is search text, fetch images from the Unsplash API
-  if (imageSourceSelect === "unsplashed" && searchImageText) {
-    fetchImagesUnsplashed();
-  }
-
-  // If the selected image source is the default image source and there is search text
-  if (imageSourceSelect === "default" && searchImageText) {
-    // Filter the defaultImgData to find images that match the search text
-    let filteredDefaultImgData = defaultImgData.filter((el) => {
-      if (el.description.toLowerCase().indexOf(searchImageText.toLowerCase()) !== -1) {
-        return el;
-      }
-    });
-    // Update the dropdownImages state with the filtered results
-    setDropdownImages(filteredDefaultImgData);
-  } else if (imageSourceSelect === "default" && !searchImageText) {
-    // If there is no search text, set the dropdownImages state back to the defaultImgData
-    setDropdownImages(defaultImgData);
-  }
-}, [imageSourceSelect, searchImageText]);
-
-
-
-
-// kick user to default images if the amount of api tokens is used up
-useEffect(() => {
-  // If there are no remaining tokens, switch back to the default image source and show an error message
-  if (unsplashedRequestData.remaining <= 0) {
-    setImageSourceSelect("default");
-    setErrorInfo({
-      isError: true,
-      errorMessage: "Ran out of request tokens for the Unsplash API. Tokens will refresh in approximately 1 hour."
-    });
-  }
-}, [unsplashedRequestData.remaining]);
+  // kick user to default images if the amount of api tokens is used up
+  useEffect(() => {
+    // If there are no remaining tokens, switch back to the default image source and show an error message
+    if (unsplashedRequestData.remaining <= 0) {
+      setImageSourceSelect("default");
+      setErrorInfo({
+        isError: true,
+        errorMessage: "Ran out of request tokens for the Unsplash API. Tokens will refresh in approximately 1 hour."
+      });
+    }
+  }, [unsplashedRequestData.remaining]);
 
 
 
@@ -284,10 +274,9 @@ useEffect(() => {
 
 
 
-
-
   return (
     <>
+      <div className={`fixed bg-white drop-shadow rounded p-4 mt-2 duration-300 -translate-x-1/2 left-1/2  transition-transform  ${isPublishPostDropdownShown ? "translate-y-0 z-40" : "-translate-y-16 -z-40" }`}>Publishing post...</div>
       <GeneralPageHeading text={"create a post"}/>
 
       <div className="outer-width mx-auto my-4 relative flex flex-col justify-center items-center">
@@ -423,12 +412,14 @@ useEffect(() => {
             <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" type="button" disabled={isImagePreviewShown && currentImage && postInfo.postText && postInfo.postTag && postInfo.postText ? false : true} onClick={() => {
               // add the post to the database
               createPost(getPostData())
+              // show the user that the post is being published
+              setIsPublishPostDropdownShown(true)
               /* go to post the user just made,
               but wait 500 milliseconds because if you go
               right away the page wont load with the post data */
               setTimeout(() => {
                 navigate(`/post/${createdPostId}`)
-              }, 500)
+              }, 600)
             }}>Create Post</button>
           </div>
         </div>
