@@ -1,16 +1,20 @@
 import React from 'react'
 import useGetScrollY from "../hooks/useGetScrollY"
+import { useNavigate } from "react-router-dom";
 
 /**
  * 
- * @param {*} isOpen the state value
+ * @param {boolean} isOpen the state value
  * @param {*} setIsOpen the set state value
  * @param {*} confirmFunction the function that gets executed when you click the ok button
  * @param {*} confirmFunctionArgs argument(s) for the confirmFunction
- * @param {*} headText the main message / heading text. default is "Are you sure?" 
+ * @param {string} headText the main message / heading text. default is "Are you sure?" 
+ * @param {boolean} hasNavigate should you go somewhere after the confirm function is triggered
+ * @param {string} navigateLocation location / route to navigate to after confirm function triggered, default is homepage eg: "/"
  * @returns 
  */
-const AreYouSureModal = ({ isOpen, setIsOpen, confirmFunction, confirmFunctionArgs, headingText = "Are you Sure?" }) => {
+const AreYouSureModal = ({ isOpen, setIsOpen, confirmFunction, confirmFunctionArgs, headingText = "Are you Sure?", hasNavigate, navigateLocation = "/" }) => {
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         if(isOpen) {
@@ -32,6 +36,8 @@ const AreYouSureModal = ({ isOpen, setIsOpen, confirmFunction, confirmFunctionAr
                     <button className="form-primary-btn text-base max-[420px]:w-full min-[420px]:ml-2 ml-0" onClick={() => {
                         confirmFunction(confirmFunctionArgs ? confirmFunctionArgs : "")
                         setIsOpen(false)
+                        {hasNavigate ? navigate(`${navigateLocation}`) : ""}
+                       
                     }}>Ok</button>
                 </div>
             </div>
