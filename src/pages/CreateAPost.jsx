@@ -2,10 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import GeneralPageHeading from "../components/GeneralHeading";
 import ErrorComponent from "../components/Error";
 import useClickOff from "../hooks/useClickOff";
-import { debounce, convertImageToBlob, compressImage } from "../utility/misc";
+import { debounce, convertImageToBlob, compressImage, generateUniqueId } from "../utility/misc";
 import { defaultImgData } from "../utility/reusable";
-import testImg1 from "../assets/images/testImg1.jpg";
-import { generateUniqueId } from "../utility/misc";
 import Loading from "../components/Loading"
 
 // Importing icons
@@ -17,7 +15,7 @@ import { useBlogContext } from "../contexts/blog_context"
 import { useAuthContext } from "../Auth/AuthContext"
 import { serverTimestamp } from "@firebase/firestore";
 
-
+import { useNavigate } from "react-router-dom";
 
 const CreateAPost = () => {
   const { testFunc3, createPost } = useBlogContext()
@@ -50,15 +48,15 @@ const CreateAPost = () => {
   const imageDropdownMenuRef = useRef(null);
   const searchInputRef = useRef(null);
 
-
-  //
   const [currentImageBlob, setCurrentImageBlob] = useState("")
   const [currentImageCompressed, setCurrentImageCompressed] = useState("")
+
+  const [createdPostId, setCreatedPostId] = useState(generateUniqueId())
 
 
   // for image select dropdown menu
   // useClickOff(imageDropdownMenuRef,openImageDropdownRef, setIsImageDropdownOpen)
-
+  const navigate = useNavigate();
 
   const clearSearchInput = _ => {
     // clear input
@@ -130,7 +128,7 @@ const CreateAPost = () => {
       text:postInfo.postText,
       title:postInfo.postTitle,
       tag:postInfo.postTag,
-      postId:generateUniqueId(),  
+      postId:createdPostId,  
       createdAt:serverTimestamp(),
       authorUid:user.uid,
       image:currentImageCompressed,
@@ -149,7 +147,7 @@ const CreateAPost = () => {
     }
   }
 
-
+  
 
 
 
@@ -330,7 +328,7 @@ useEffect(() => {
                   </div>
                   <input className="bg-slate-100 w-full focus:outline-none focus:border-transparent" ref={searchInputRef} placeholder="search for an image"  onChange={(e) => {
                     /*
-                    in milliseconds,
+                    debounceTime in milliseconds,
                     750 is what felt responsive
                     but also slow enough not to use up
                     to many api tickets
@@ -422,7 +420,16 @@ useEffect(() => {
           <div className="mb-6 flex justify-between w-full">
             {/* <button className="bg-white text-black border-2 border-black rounded-sm py-2 px-3">Cancel</button> */}
             <p>{postInfo.postText.length} / {postTextMaxChar}</p>
-            <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" type="button" disabled={isImagePreviewShown && currentImage && postInfo.postText && postInfo.postTag && postInfo.postText ? false : true} onClick={() => createPost(getPostData())}>Create Post</button>
+            <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" type="button" disabled={isImagePreviewShown && currentImage && postInfo.postText && postInfo.postTag && postInfo.postText ? false : true} onClick={() => {
+              // add the post to the database
+              createPost(getPostData())
+              /* go to post the user just made,
+              but wait 500 milliseconds because if you go
+              right away the page wont load with the post data */
+              setTimeout(() => {
+                navigate(`/post/${createdPostId}`)
+              }, 500)
+            }}>Create Post</button>
           </div>
         </div>
       </div>
