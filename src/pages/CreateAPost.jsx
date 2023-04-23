@@ -24,7 +24,7 @@ const CreateAPost = () => {
   const { user } = useAuthContext()
   // State variables for post information and character limits
   const [postTitleMaxChar, setPostTitleMaxChar] = useState(100);
-  const [postTextMaxChar, setPostTextMaxChar] = useState(5000);
+  const [postTextMaxChar, setPostTextMaxChar] = useState(10000);
   const [postInfo, setPostInfo] = useState({ postTitle: "", postTag: "", postText: "" });
 
   // State variables for image dropdown and preview
@@ -135,6 +135,7 @@ const CreateAPost = () => {
       authorUid:user.uid,
       image:currentImageCompressed,
       altText:currentAltText,
+      likes:[],
     }
 
     if(
@@ -408,7 +409,8 @@ const CreateAPost = () => {
           {/* publish / create the post */}
           <div className="mb-6 flex justify-between w-full">
             {/* <button className="bg-white text-black border-2 border-black rounded-sm py-2 px-3">Cancel</button> */}
-            <p>{postInfo.postText.length} / {postTextMaxChar}</p>
+            {/* using  toLocaleString() on postTextMaxChar to format it as 10,000 instead of it being 10000 */}
+            <p>{postInfo.postText.length} / {postTextMaxChar.toLocaleString()}</p>
             <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" type="button" disabled={isImagePreviewShown && currentImage && postInfo.postText && postInfo.postTag && postInfo.postText ? false : true} onClick={() => {
               // add the post to the database
               createPost(getPostData())
