@@ -35,7 +35,6 @@ export const BlogProvider = ({ children }) => {
   const [isCurrentPostLoading, setIsCurrentPostLoading] = useState(true)
 
 
-
   const testFunc3 = _ => {
     console.log('test func from blog context')
   }
@@ -94,6 +93,7 @@ export const BlogProvider = ({ children }) => {
         displayName:docSnap1.data().displayName,
         authorUid:docSnap.data().authorUid,
         altText:docSnap.data().altText,
+        likes:docSnap.data().likes,
       }
       
     } else {
@@ -156,20 +156,16 @@ export const BlogProvider = ({ children }) => {
 
 
 
-  const likePost = (postId, userUid) => {
 
+  const togglePostLike = async (postId, likeData) => {  
+    /* in the posts collection, all the user who've liked this post */
+    const docRef = doc(db, "posts", postId);
+    setDoc(docRef, { likes: likeData }, { merge: true });
+    /* in the likedPosts collection --> authorUid --> array of 
+    all the posts they've liked */
+    const docRef1 = doc(db, "likedPosts", user.uid);
+    setDoc(docRef1, { likes: likeData });
   }
-
-  const isPostLikedByUser = (userUid) => {
-
-  }
-
-  const unlikePost = (postId, userUid) => {
-
-  }
-
-
-
 
 
 
@@ -228,6 +224,7 @@ export const BlogProvider = ({ children }) => {
         deletePostComment,
         deletePost,
         isCurrentPostLoading,
+        togglePostLike,
       }}
     >
       {children}

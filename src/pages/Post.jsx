@@ -20,7 +20,7 @@ import AreYouSureModal from "../components/AreYouSureModal"
 import Error from "../pages/Error"
 
 // icons
-import { FaComment, FaRegHeart, FaEye } from "react-icons/fa"
+import { FaComment, FaRegHeart, FaHeart, FaEye } from "react-icons/fa"
 import { RxDotsVertical } from "react-icons/rx"
 import { AiOutlineEdit } from "react-icons/ai"
 import { BiTrash } from "react-icons/bi"
@@ -49,6 +49,7 @@ const Post = () => {
     deletePostComment,
     deletePost,
     isCurrentPostLoading,
+    togglePostLike,
   } = useBlogContext()
 
   const { 
@@ -75,47 +76,16 @@ const Post = () => {
   let postDropdownMenuRef = React.useRef(null)
 
   
-  let postACommentText = useRef(null)
-
-  // let [localCommentData, setLocalCommentData] = useState([
-  //   {
-  //     text:"this is a test comment 1. Lorem, ipsum dolor sit amet consectetur?",
-  //     id:generateUniqueId(),
-  //     authorDisplayName:"john smith",
-  //     createdAt:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-  //     isEdited:false,
-  //   },
-  //   {
-  //     text:"this is a test comment 2. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Id in ab, temporibus et praesentium reiciendis accusantium voluptate assumenda suscipit incidunt possimus ipsum facere. Vitae harum tempore doloremque saepe nam repudiandae?",
-  //     id:generateUniqueId(),
-  //     authorDisplayName:"john smith 2",
-  //     createdAt:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-  //     isEdited:false,
-  //   },
-  //   {
-  //     text:"this is a test comment 3!!!",
-  //     id:generateUniqueId(),
-  //     authorDisplayName:"john smith 3",
-  //     createdAt:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-  //     isEdited:false,
-  //   },
-  //   {
-  //     text:"this is a test comment 4. Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
-  //     id:generateUniqueId(),
-  //     authorDisplayName:"john smith 4",
-  //     createdAt:"Fri Mar 03 2023 10:40:45 GMT-0600 (Central Standard Time)",
-  //     isEdited:false,
-  //   },
-  // ])
-
-  
+  let postACommentText = useRef(null) 
   
   let [localCommentData, setLocalCommentData] = useState([])
 
-
   let [currentPostId, setCurrentPostId] = useState("")
 
-
+  let [isPostLikedByCurrentUser, setIsPostLikedByCurrentUser] = useState(false)
+  // the user uids of all the users, the length will be the like amount
+  let [localLikeUids, setLocalLikeUids] = useState([])
+  let [likeAmount, setLikeAmount] = useState(0)
 
   const getCommentData = () => {
     let data = {
@@ -161,7 +131,6 @@ const Post = () => {
 
 
 
-
   useEffect(() => {
     // getting and setting the dropdown items data
     let items = localCommentData.map((el, index) => {
@@ -175,6 +144,13 @@ const Post = () => {
   },[localCommentData])
 
 
+  // gets initial state for amount of likes and if current user likes the current post
+  useEffect(() => {
+    // gets initial state of if current post liked by current user
+    setIsPostLikedByCurrentUser(currentPost?.likes?.includes(user?.uid))
+    // the initial like amount from the database
+    setLocalLikeUids(currentPost?.likes)
+  }, [currentPost])
 
 
 
@@ -190,14 +166,10 @@ const Post = () => {
 
 
 
-
-
   const cancelBtn = _ => {
     setCurrentUserCommentText("")
     setIsEditingEnabled(false)
   }
-
-
 
 
 
@@ -222,8 +194,6 @@ const Post = () => {
     // post the comment in the database
     createPostComment(currentPostId, getCommentData())
   }
-
-
 
 
 
@@ -259,8 +229,6 @@ const Post = () => {
 
 
 
-
-
   const deleteComment = (id) => {
     // deletes the comment locally in the dom
     let filteredComments = localCommentData.filter((el) => el.id !== id)
@@ -268,8 +236,6 @@ const Post = () => {
     // delete the comment in the database
     deletePostComment(currentPostId, filteredComments)
   }
-
-
 
 
 
@@ -283,6 +249,25 @@ const Post = () => {
     setCurrentCommentId(id)
     // text to update
     setCurrentUserCommentText(text)
+  }
+
+
+
+
+  const likePostLocal = (currentUserUid, currentPostId) => {    
+    setIsPostLikedByCurrentUser(true)
+    setLocalLikeUids([...localLikeUids, currentUserUid])
+    
+    // upload to database
+    togglePostLike(currentPostId, [...localLikeUids, currentUserUid])
+  }
+
+  const unlikePostLocal = (currentUserUid, currentPostId) => {
+    setIsPostLikedByCurrentUser(false)
+    setLocalLikeUids([...localLikeUids.filter(id => id !== currentUserUid)])
+    
+    // upload to database
+    togglePostLike(currentPostId, [...localLikeUids.filter(id => id !== currentUserUid)])
   }
 
 
@@ -343,6 +328,11 @@ const Post = () => {
 
   // })
 
+
+
+
+
+
   let hasDataInCurrentPost = Object.getOwnPropertyNames(currentPost).length !== 0
   /* checking if the currentPost is loaded and if currentPost has data*/
   if(!isCurrentPostLoading && !hasDataInCurrentPost) {
@@ -350,7 +340,6 @@ const Post = () => {
       <Error text={`Page /${currentPostId} not found`}/>
     )
   }
-
 
   return (
     <>
@@ -405,11 +394,15 @@ const Post = () => {
                 {/* this is a temp test number */}
                 <p>{socialMediaNumberFormatter.format(localCommentData.length)} comments</p>
               </div>
-              <div className="flex items-center text-sm">
-                <FaRegHeart className="text-xs mr-1"/>
+              <button className="flex items-center text-sm" type="button" onClick={() => isPostLikedByCurrentUser ? unlikePostLocal(user.uid, currentPostId) : likePostLocal(user.uid, currentPostId)}>
+                {isPostLikedByCurrentUser ? (
+                   <FaHeart className="text-xs mr-1"/>
+                ) : (
+                  <FaRegHeart className="text-xs mr-1"/>
+                )}
                 {/* this is a temp test number */}
-                <p>{socialMediaNumberFormatter.format(30000)}</p>
-              </div>
+                <p>{socialMediaNumberFormatter.format(localLikeUids?.length)}</p>
+              </button>
               <div className="flex items-center text-sm mx-3">
                 <FaEye className="mr-1"/>
                 {/* this is a temp test number */}
