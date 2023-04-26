@@ -170,6 +170,23 @@ export const BlogProvider = ({ children }) => {
 
 
 
+  const getViewSheetData = (postId, postAuthorUserUid) => {
+
+  }
+
+  const CreateViewSheetData = (postId, postAuthorUserUid, viewCount, viewData) => {
+    // check if the data already exist w/ the postId
+    // if it exists, then modify this data and send it back
+    // else create new data
+  }
+
+  const deleteDataFromViewSheet = (postId) => {
+    /* this is just for when you delete a post,
+    you should also delete the view sheet data associated w/ the post
+    this is something that still needs to be added */
+  }
+
+
 
 
 
