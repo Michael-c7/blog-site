@@ -24,7 +24,7 @@ export const BlogProvider = ({ children }) => {
 
   // error handling
   const [isError, setIsError] = useState(false)
-  const [ErrorMsg, setRErrorMsg] = useState("")
+  const [ErrorMsg, setErrorMsg] = useState("")
 
   // current post data
   const [currentPost, setCurrentPost] = useState({})
@@ -167,6 +167,7 @@ export const BlogProvider = ({ children }) => {
 
       setPostIdExistsInViewsDatabase(true)
     } else {
+      setCurrentPostViews(0)
       setPostIdExistsInViewsDatabase(false)
       // data doesn't exists
     }
