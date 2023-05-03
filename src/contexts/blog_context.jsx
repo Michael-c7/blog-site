@@ -19,38 +19,29 @@ const BlogContext = React.createContext()
 
 export const BlogProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-  
 
   const { user } = useAuthContext()
-  // const navigate = useNavigate();
 
+  // error handling
   const [isError, setIsError] = useState(false)
   const [ErrorMsg, setRErrorMsg] = useState("")
+
+  // current post data
   const [currentPost, setCurrentPost] = useState({})
   const [currentUserName, setCurrentUsername] = useState("")
   const [currentDisplayName, setCurrentDisplayName] = useState("")
   const [currentPostComments, setCurrentPostComments] = useState([])
-
   const [isCurrentPostLoading, setIsCurrentPostLoading] = useState(true)
 
+  // post view data
   const [currentPostViews, setCurrentPostViews] = useState(0)
-  const [postIdExistsInViewsDatabase,  setPostIdExistsInViewsDatabase] = useState(true)
+  const [postIdExistsInViewsDatabase, setPostIdExistsInViewsDatabase] = useState(true)
   const [oldPostMetaData, setOldPostMeteData] = useState([])
-
-  const testFunc3 = _ => {
-    console.log('test func from blog context')
-  }
 
 
   const createPost = async (postData) => {
     // Add a new document in collection "posts"
-
     await setDoc(doc(db, "posts", postData.postId), postData);
-    console.log("create post form blog context")
-    console.log(postData)
-
-    // to go the post i just made
-    // navigate(`/post/${postId}`);
   }
 
   const getUserInfoFromUid = async (userUid) => {
@@ -65,8 +56,6 @@ export const BlogProvider = ({ children }) => {
   useEffect(() => {
     getUserInfoFromUid(user?.uid)
   },[user])
-
-
 
   const getPost = async (postId) => {
     // complete data is all the data need for the post
@@ -100,11 +89,8 @@ export const BlogProvider = ({ children }) => {
       
     } else {
       // docSnap.data() will be undefined in this case
-      console.log("No such document!");
       setIsCurrentPostLoading(false)
     }
-
-    // console.log(completeData)
     setCurrentPost(completeData)
     setIsCurrentPostLoading(false)
   }
@@ -115,6 +101,8 @@ export const BlogProvider = ({ children }) => {
     // delete the views and view metadata associated w/ the post
     deletePostViewData(postId)
   }
+
+
 
 
 
@@ -130,8 +118,7 @@ export const BlogProvider = ({ children }) => {
       let newData = JSON.stringify([...oldData, commentData])
       await setDoc(doc(db, "postComments", postId), {comments:newData});
     } else {
-      // new one here, so just create new doc of an array w/ the object data and post it
-      console.log("No such document!");
+      // no previous data to add to, so just create new doc of an array w/ the object data and post it
       let comments = JSON.stringify([commentData])
       await setDoc(doc(db, "postComments", postId), {comments});
     }
@@ -140,12 +127,10 @@ export const BlogProvider = ({ children }) => {
   const getPostComments = async (postId) => {
     const docRef = doc(db, "postComments", postId);
     const docSnap = await getDoc(docRef);
-    // console.log(JSON.parse(docSnap.data().comments))
     if(docSnap.exists()) {
       setCurrentPostComments(JSON.parse(docSnap.data().comments))
     }
   }
-
 
 
   const editPostComment = async (postId, editedData) => {
@@ -159,17 +144,11 @@ export const BlogProvider = ({ children }) => {
 
 
 
-
-
-
-
-
   const togglePostLike = async (postId, likeData) => {  
     /* in the posts collection, all the user who've liked this post */
     const docRef = doc(db, "posts", postId);
     setDoc(docRef, { likes: likeData }, { merge: true });
-    /* in the likedPosts collection --> authorUid --> array of 
-    all the posts they've liked */
+    /*array of all the posts they've liked */
     const docRef1 = doc(db, "likedPosts", user.uid);
     setDoc(docRef1, { likes: likeData });
   }
@@ -178,28 +157,23 @@ export const BlogProvider = ({ children }) => {
 
 
 
-
   const getPostViewData = async (postId) => {
     const docRef = doc(db, "postViewData", postId);
     const docSnap = await getDoc(docRef);
-    // console.log(JSON.parse(docSnap.data().comments))
     if(docSnap.exists()) {
-      // console.log(docSnap.data())
       setCurrentPostViews(docSnap.data().viewCount)
       // set the old meta data, so i can merge it w/ the new meta data later
       setOldPostMeteData(docSnap.data().viewMetaData)
 
-      // 
       setPostIdExistsInViewsDatabase(true)
     } else {
       setPostIdExistsInViewsDatabase(false)
-      console.log("data doesn't exists")
+      // data doesn't exists
     }
   }
 
 
   const addPostViewData = async (postId, postAuthorUserUid, viewCount, viewMetaData) => {
-    // console.log(postId, postAuthorUserUid, viewCount, viewMetaData)
       setPostIdExistsInViewsDatabase(true)
 
       await setDoc(doc(db, "postViewData", postId), {
@@ -260,7 +234,6 @@ export const BlogProvider = ({ children }) => {
     <BlogContext.Provider
       value={{
         ...state,
-        testFunc3,
         createPost,
         getPost,
         currentPost,

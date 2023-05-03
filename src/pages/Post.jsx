@@ -1,60 +1,64 @@
+// react and third-party libraries
 import React, { useState, useEffect, useRef } from "react"
-import { Link } from "react-router-dom"
-import Tag from "../components/widgets/Tag"
+import { Link } from "react-router-dom";
 
+// components and pages
+import Tag from "../components/widgets/Tag";
+import InfoSidebar from "../components/InfoSidebar";
+import Author from "../components/widgets/Author";
+import DateWidget from "../components/widgets/Date";
+import AreYouSureModal from "../components/AreYouSureModal";
+import Error from "../pages/Error";
+
+// assets and external libraries
+import defaultUserImg from "../assets/images/defaultUser.png";
+import swearjar from "swearjar-extended2";
+
+// utility functions and hooks
 import { 
   generateUniqueId,
   getTimeDifference,
   socialMediaNumberFormatter,
-} from "../utility/misc"
-import InfoSidebar from "../components/InfoSidebar"
-import Author from "../components/widgets/Author"
-// import this as DateWidget so it doesn't conflict w/ the Date object
-import DateWidget from "../components/widgets/Date"
-// using for just the post click off, not comments click off
-import useClickOff from "../hooks/useClickOff"
+} from "../utility/misc";
+import useClickOff from "../hooks/useClickOff";
 
-import useGetScrollY from "../hooks/useGetScrollY"
-import AreYouSureModal from "../components/AreYouSureModal"
+// context providers
+import { useBlogContext } from "../contexts/blog_context";
+import { useAuthContext } from "../Auth/AuthContext";
 
-import Error from "../pages/Error"
-
-// icons
-import { FaComment, FaRegHeart, FaHeart, FaEye } from "react-icons/fa"
-import { RxDotsVertical } from "react-icons/rx"
-import { AiOutlineEdit } from "react-icons/ai"
-import { BiTrash } from "react-icons/bi"
-// test / placeholder images
-import defaultUserImg from "../assets/images/defaultUser.png"
-
-// profanity filter
-import swearjar from "swearjar-extended2"
+// icon imports
+import { FaComment, FaRegHeart, FaHeart, FaEye } from "react-icons/fa";
+import { RxDotsVertical } from "react-icons/rx";
+import { AiOutlineEdit } from "react-icons/ai";
+import { BiTrash } from "react-icons/bi";
 
 
 
-import { useBlogContext } from "../contexts/blog_context"
-import { useAuthContext } from "../Auth/AuthContext"
-import { serverTimestamp } from "firebase/firestore"
 
 
 const Post = () => {
   const { 
-    getPost,
-    currentPost,
-    currentUserName,
-    currentDisplayName,
-    createPostComment,
-    getPostComments,
-    currentPostComments,
-    editPostComment,
-    deletePostComment,
-    deletePost,
-    isCurrentPostLoading,
-    togglePostLike,
-    currentPostViews,
-    getPostViewData,
-    addPostViewData,
-    postIdExistsInViewsDatabase,
+    // post
+      getPost,
+      currentPost,
+      deletePost,
+      isCurrentPostLoading,
+    // post comments
+      createPostComment,
+      getPostComments,
+      currentPostComments,
+      editPostComment,
+      deletePostComment,
+    // post likes
+      togglePostLike,
+    // post views
+      currentPostViews,
+      getPostViewData,
+      addPostViewData,
+      postIdExistsInViewsDatabase,
+    // state
+      currentUserName,
+      currentDisplayName,
   } = useBlogContext()
 
   const { 
@@ -62,55 +66,57 @@ const Post = () => {
     user,
   } = useAuthContext()
 
-  let authorDesc = "My goal is to create content that provides value to my readers in an engaging and informative way. Whether I have a specific area of expertise or cover a range of topics, I strive to write high-quality content that resonates with my audience and builds a community around my blog."
+// Author description for the blog
+let authorDesc = "My goal is to create content that provides value to my readers in an engaging and informative way. Whether I have a specific area of expertise or cover a range of topics, I strive to write high-quality content that resonates with my audience and builds a community around my blog."
 
-  let [wordLimitAmount, setWordLimitAmount] = useState(1000)
-  let [currentUserCommentText, setCurrentUserCommentText] = useState("")
-  let [isEditingEnabled, setIsEditingEnabled] = useState(false)
-  let [currentCommentId, setCurrentCommentId] = useState(null)  
-  // an array of object eg: [{ id:1234, isOpen:false }, { id:678, isOpen:true }]
-  let [isDropdownOpen, setIsDropdownOpen] = useState([])
-  // for the post dropdown, a boolean
-  let [isPostDropdownOpen, setIsPostDropdownOpen] = useState(false)
-  // for the post itself
-  let [isDeletePostModalOpen, setIsDeletePostModalOpen] = useState(false)
-  // for the post comments
-  let [isDeleteCommentModalOpen, setIsDeleteCommentModalOpen] = useState(false)
+// State variables with their initial values using useState hook
+let [wordLimitAmount, setWordLimitAmount] = useState(1000)
+let [currentUserCommentText, setCurrentUserCommentText] = useState("")
+let [isEditingEnabled, setIsEditingEnabled] = useState(false)
+let [currentCommentId, setCurrentCommentId] = useState(null)  
 
-  let postDropdownDotsRef = React.useRef(null)
-  let postDropdownMenuRef = React.useRef(null)
+// An array of object eg: [{ id:1234, isOpen:false }, { id:678, isOpen:true }]
+let [isDropdownOpen, setIsDropdownOpen] = useState([])
 
-  
-  let postACommentText = useRef(null) 
-  
-  let [localCommentData, setLocalCommentData] = useState([])
+// State variables for modals
+let [isPostDropdownOpen, setIsPostDropdownOpen] = useState(false) // for the post dropdown
+let [isDeletePostModalOpen, setIsDeletePostModalOpen] = useState(false) // for the post itself
+let [isDeleteCommentModalOpen, setIsDeleteCommentModalOpen] = useState(false) // for the post comments
 
-  let [currentPostId, setCurrentPostId] = useState("")
+// Refs
+let postDropdownDotsRef = React.useRef(null) // Ref for post dropdown dots
+let postDropdownMenuRef = React.useRef(null) // Ref for post dropdown menu
+let postACommentText = useRef(null) // Ref for posting a comment
 
-  let [isPostLikedByCurrentUser, setIsPostLikedByCurrentUser] = useState(false)
-  // the user uids of all the users, the length will be the like amount
-  let [localLikeUids, setLocalLikeUids] = useState([])
+// State variable to store local comment data
+let [localCommentData, setLocalCommentData] = useState([])
 
-  //
-  const [localCurrentPageViews, setLocalCurrentPageViews] = useState(0)
-  const [currentUserMetaData, setCurrentUserMetaData] = useState([])
+let [currentPostId, setCurrentPostId] = useState("") // State variable for current post id
+
+let [isPostLikedByCurrentUser, setIsPostLikedByCurrentUser] = useState(false) // State variable to check if post is liked by current user
+
+// State variable to store user ids of users who have liked the post
+let [localLikeUids, setLocalLikeUids] = useState([])
+
+// State variables for page views
+const [localCurrentPageViews, setLocalCurrentPageViews] = useState(0)
+const [currentUserMetaData, setCurrentUserMetaData] = useState([])
 
 
 
 
-
-  const getCommentData = () => {
-    let data = {
-      id:generateUniqueId(),
-      authorUid:user.uid,
-      authorUsername:currentUserName,
-      authorDisplayName:currentDisplayName,
-      createdAt:new Date(),
-      text:currentUserCommentText,
-      isEdited:false,
-    }
-    return data
+const getCommentData = () => {
+  let data = {
+    id:generateUniqueId(),
+    authorUid:user.uid,
+    authorUsername:currentUserName,
+    authorDisplayName:currentDisplayName,
+    createdAt:new Date(),
+    text:currentUserCommentText,
+    isEdited:false,
   }
+  return data
+}
 
 
 
@@ -371,9 +377,6 @@ const Post = () => {
 
 
 
-
-
-
 // get the data of the views from the database
   useEffect(() => {
     getPostViewData(currentPostId)
@@ -382,29 +385,7 @@ const Post = () => {
 // update the views
   useEffect(() => {
     updateViewsLocal()
-    console.log("VIEW UPDATE")
   }, [currentPostViews, postIdExistsInViewsDatabase])
-
-
-
-
-
-
-
-  // useEffect(() => {
-  //   addPostViewData()
-  // }, [currentUserMetaData])
-
-  
-
-
-
-
-  
-
-
-
-
 
 
 
@@ -467,7 +448,6 @@ const Post = () => {
               <DateWidget {...{textColor:"#000", date:currentPost.createdAt}}/>
               <div className="flex items-center text-sm mx-3">
                 <FaComment className="text-xs mr-1"/>
-                {/* this is a temp test number */}
                 <p>{socialMediaNumberFormatter.format(localCommentData.length)} comments</p>
               </div>
               <button className="flex items-center text-sm" type="button" onClick={() => isPostLikedByCurrentUser ? unlikePostLocal(user.uid, currentPostId) : likePostLocal(user.uid, currentPostId)}>
@@ -476,12 +456,10 @@ const Post = () => {
                 ) : (
                   <FaRegHeart className="text-xs mr-1"/>
                 )}
-                {/* this is a temp test number */}
                 <p>{socialMediaNumberFormatter.format(localLikeUids?.length)}</p>
               </button>
               <div className="flex items-center text-sm mx-3">
                 <FaEye className="mr-1"/>
-                {/* this is a temp test number */}
                 <p>{socialMediaNumberFormatter.format(localCurrentPageViews)}</p>
               </div>
             </div>
