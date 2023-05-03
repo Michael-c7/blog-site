@@ -34,6 +34,7 @@ import swearjar from "swearjar-extended2"
 
 import { useBlogContext } from "../contexts/blog_context"
 import { useAuthContext } from "../Auth/AuthContext"
+import { serverTimestamp } from "firebase/firestore"
 
 
 const Post = () => {
@@ -50,6 +51,10 @@ const Post = () => {
     deletePost,
     isCurrentPostLoading,
     togglePostLike,
+    currentPostViews,
+    getPostViewData,
+    addPostViewData,
+    postIdExistsInViewsDatabase,
   } = useBlogContext()
 
   const { 
@@ -85,7 +90,14 @@ const Post = () => {
   let [isPostLikedByCurrentUser, setIsPostLikedByCurrentUser] = useState(false)
   // the user uids of all the users, the length will be the like amount
   let [localLikeUids, setLocalLikeUids] = useState([])
-  let [likeAmount, setLikeAmount] = useState(0)
+
+  //
+  const [localCurrentPageViews, setLocalCurrentPageViews] = useState(0)
+  const [currentUserMetaData, setCurrentUserMetaData] = useState([])
+
+
+
+
 
   const getCommentData = () => {
     let data = {
@@ -319,14 +331,78 @@ const Post = () => {
   useClickOff(postDropdownMenuRef, postDropdownDotsRef, setIsPostDropdownOpen)
 
 
-  // useEffect(() => {
-  //   // https://ip-api.com/docs/api:json
-  //   // up to 45 HTTP requests per minute from an ip address
-  //   fetch("http://ip-api.com/json")
-  //   .then((res) => res.json())
-  //   .then(data => console.log(data))
 
-  // })
+
+
+  const getLocationDataLocal = ()  => {
+    // get viewer data
+      // https://ip-api.com/docs/api:json
+      // up to 45 HTTP requests per minute from an ip address
+      fetch("http://ip-api.com/json?fields=status,message,country,timezone")
+      .then((res) => res.json())
+      .then(data => {
+        if(data.status === "success") {
+          setCurrentUserMetaData({
+            country:data.country,
+            timezone:data.timezone,
+            createdAt:new Date(),
+          })
+        } else {
+          console.error("Error fetching user location data")
+        }
+      })
+  }
+
+
+  const updateViewsLocal = () => {
+    // set local views
+    setLocalCurrentPageViews(currentPostViews + 1)
+
+    // send the views and view metadata to the database
+    //  currentPostId, user.uid, currentPostViews + 1, currentUserMetaData
+    addPostViewData(currentPostId, user?.uid, currentPostViews + 1, currentUserMetaData)
+  }
+
+
+// get the location meta data
+  useEffect(() => {
+    getLocationDataLocal()
+  }, [])
+
+
+
+
+
+
+// get the data of the views from the database
+  useEffect(() => {
+    getPostViewData(currentPostId)
+  }, [currentPostId])
+
+// update the views
+  useEffect(() => {
+    updateViewsLocal()
+    console.log("VIEW UPDATE")
+  }, [currentPostViews, postIdExistsInViewsDatabase])
+
+
+
+
+
+
+
+  // useEffect(() => {
+  //   addPostViewData()
+  // }, [currentUserMetaData])
+
+  
+
+
+
+
+  
+
+
 
 
 
@@ -406,7 +482,7 @@ const Post = () => {
               <div className="flex items-center text-sm mx-3">
                 <FaEye className="mr-1"/>
                 {/* this is a temp test number */}
-                <p>{socialMediaNumberFormatter.format(20000)}</p>
+                <p>{socialMediaNumberFormatter.format(localCurrentPageViews)}</p>
               </div>
             </div>
           </header>

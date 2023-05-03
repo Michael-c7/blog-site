@@ -24,7 +24,6 @@ export const BlogProvider = ({ children }) => {
   const { user } = useAuthContext()
   // const navigate = useNavigate();
 
-  // const [user, setUser] = useState(null)
   const [isError, setIsError] = useState(false)
   const [ErrorMsg, setRErrorMsg] = useState("")
   const [currentPost, setCurrentPost] = useState({})
@@ -34,6 +33,9 @@ export const BlogProvider = ({ children }) => {
 
   const [isCurrentPostLoading, setIsCurrentPostLoading] = useState(true)
 
+  const [currentPostViews, setCurrentPostViews] = useState(0)
+  const [postIdExistsInViewsDatabase,  setPostIdExistsInViewsDatabase] = useState(true)
+  const [oldPostMetaData, setOldPostMeteData] = useState([])
 
   const testFunc3 = _ => {
     console.log('test func from blog context')
@@ -108,6 +110,13 @@ export const BlogProvider = ({ children }) => {
   }
 
 
+  const deletePost = async (postId) => {
+    await deleteDoc(doc(db, "posts", postId));
+    // delete the views and view metadata associated w/ the post
+    deletePostViewData(postId)
+  }
+
+
 
   const createPostComment = async (postId, commentData) => {
     const docRef = doc(db, "postComments", postId);
@@ -150,9 +159,7 @@ export const BlogProvider = ({ children }) => {
 
 
 
-  const deletePost = async (postId) => {
-    await deleteDoc(doc(db, "posts", postId));
-  }
+
 
 
 
@@ -170,21 +177,47 @@ export const BlogProvider = ({ children }) => {
 
 
 
-  const getViewSheetData = (postId, postAuthorUserUid) => {
 
+
+  const getPostViewData = async (postId) => {
+    const docRef = doc(db, "postViewData", postId);
+    const docSnap = await getDoc(docRef);
+    // console.log(JSON.parse(docSnap.data().comments))
+    if(docSnap.exists()) {
+      // console.log(docSnap.data())
+      setCurrentPostViews(docSnap.data().viewCount)
+      // set the old meta data, so i can merge it w/ the new meta data later
+      setOldPostMeteData(docSnap.data().viewMetaData)
+
+      // 
+      setPostIdExistsInViewsDatabase(true)
+    } else {
+      setPostIdExistsInViewsDatabase(false)
+      console.log("data doesn't exists")
+    }
   }
 
-  const CreateViewSheetData = (postId, postAuthorUserUid, viewCount, viewData) => {
-    // check if the data already exist w/ the postId
-    // if it exists, then modify this data and send it back
-    // else create new data
+
+  const addPostViewData = async (postId, postAuthorUserUid, viewCount, viewMetaData) => {
+    // console.log(postId, postAuthorUserUid, viewCount, viewMetaData)
+      setPostIdExistsInViewsDatabase(true)
+
+      await setDoc(doc(db, "postViewData", postId), {
+        postAuthorUserUid,
+        viewCount,
+        viewMetaData:[...oldPostMetaData, JSON.stringify(viewMetaData)],
+      }, { merge: true });
+    
   }
 
-  const deleteDataFromViewSheet = (postId) => {
-    /* this is just for when you delete a post,
-    you should also delete the view sheet data associated w/ the post
-    this is something that still needs to be added */
+
+  // when you delete a post should delete the postViewData associated w/ it
+  const deletePostViewData = async (postId) => {
+    await deleteDoc(doc(db, "postViewData", postId));
   }
+
+
+
 
 
 
@@ -242,6 +275,11 @@ export const BlogProvider = ({ children }) => {
         deletePost,
         isCurrentPostLoading,
         togglePostLike,
+        currentPostViews,
+        postIdExistsInViewsDatabase,
+        getPostViewData,
+        addPostViewData,
+        deletePostViewData,
       }}
     >
       {children}
