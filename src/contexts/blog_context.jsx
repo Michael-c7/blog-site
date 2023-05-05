@@ -33,10 +33,18 @@ export const BlogProvider = ({ children }) => {
   const [currentPostComments, setCurrentPostComments] = useState([])
   const [isCurrentPostLoading, setIsCurrentPostLoading] = useState(true)
 
+  const [currentUsersLikedPosts, setCurrentUsersLikedPosts] = useState([])
+
+
   // post view data
   const [currentPostViews, setCurrentPostViews] = useState(0)
   const [postIdExistsInViewsDatabase, setPostIdExistsInViewsDatabase] = useState(true)
   const [oldPostMetaData, setOldPostMeteData] = useState([])
+
+
+  // for pagination
+  const PAGE_SIZE = 10; // Number of documents per page
+
 
 
   const createPost = async (postData) => {
@@ -144,13 +152,19 @@ export const BlogProvider = ({ children }) => {
 
 
 
-  const togglePostLike = async (postId, likeData) => {  
+  const togglePostLike = async (postId, likeData, userUid, likedPostsData) => {  
     /* in the posts collection, all the user who've liked this post */
     const docRef = doc(db, "posts", postId);
     setDoc(docRef, { likes: likeData }, { merge: true });
-    /*array of all the posts they've liked */
-    const docRef1 = doc(db, "likedPosts", user.uid);
-    setDoc(docRef1, { likes: likeData });
+    /*array of all the posts that liked */
+    // const docRef1 = doc(db, "likedPosts", user.uid);
+    // setDoc(docRef1, { likes: [...oldPostIdsArr, postId] });
+
+
+
+    // get all the old likedPosts for this user then do -->  [...oldPostIdsArr, postId]
+    const docRef1 = doc(db, "likedPosts", userUid);
+    setDoc(docRef1, { likes: likedPostsData }, { merge: true });
   }
 
 
@@ -199,8 +213,21 @@ export const BlogProvider = ({ children }) => {
 
 
 
-  const getLikedPosts = () => {
+  const getLikedPosts = async (userUid) => {
     // get all posts liked by the current user, for the /likedPosts page
+    const docRef = doc(db, "likedPosts", userUid);
+    const docSnap = await getDoc(docRef);
+    if(docSnap.exists()) {
+      // all the uids of the likedPosts
+      let likedPostsUids = docSnap.data().likes
+      // now get the posts
+      setCurrentUsersLikedPosts(likedPostsUids)
+
+      console.log(userUid)
+      // return likedPostsUids
+      // setCurrentPostViews(docSnap.data().viewCount)
+    }
+    // console.log(userUid)
   }
 
   const getAuthorsPosts = (userUid,username) => {
@@ -254,6 +281,9 @@ export const BlogProvider = ({ children }) => {
         getPostViewData,
         addPostViewData,
         deletePostViewData,
+
+        getLikedPosts,
+        currentUsersLikedPosts,
       }}
     >
       {children}

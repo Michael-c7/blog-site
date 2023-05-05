@@ -56,6 +56,8 @@ const Post = () => {
       getPostViewData,
       addPostViewData,
       postIdExistsInViewsDatabase,
+      getLikedPosts,
+      currentUsersLikedPosts,
     // state
       currentUserName,
       currentDisplayName,
@@ -97,6 +99,7 @@ let [isPostLikedByCurrentUser, setIsPostLikedByCurrentUser] = useState(false) //
 
 // State variable to store user ids of users who have liked the post
 let [localLikeUids, setLocalLikeUids] = useState([])
+let [localLikedPosts, setLocalLikedPosts] = useState([])
 
 // State variables for page views
 const [localCurrentPageViews, setLocalCurrentPageViews] = useState(0)
@@ -168,7 +171,20 @@ const getCommentData = () => {
     setIsPostLikedByCurrentUser(currentPost?.likes?.includes(user?.uid))
     // the initial like amount from the database
     setLocalLikeUids(currentPost?.likes)
+
+    
   }, [currentPost])
+
+
+  useEffect(() => {
+    getLikedPosts(user?.uid)
+  }, [user])
+
+  useEffect(() => {
+    // the initial amount of post the user has liked
+    setLocalLikedPosts(currentUsersLikedPosts) 
+    console.log(currentUsersLikedPosts)
+  }, [currentUsersLikedPosts])
 
 
 
@@ -277,7 +293,16 @@ const getCommentData = () => {
     setLocalLikeUids([...localLikeUids, currentUserUid])
     
     // upload to database
-    togglePostLike(currentPostId, [...localLikeUids, currentUserUid])
+    togglePostLike(
+      // postId
+      currentPostId,
+      // likeData
+      Array.from(new Set([...localLikeUids, currentUserUid])),
+      // userUid
+      currentUserUid,
+      // likedPostsData
+      Array.from(new Set([...localLikedPosts, currentPostId]))
+    )
   }
 
   const unlikePostLocal = (currentUserUid, currentPostId) => {
@@ -285,7 +310,16 @@ const getCommentData = () => {
     setLocalLikeUids([...localLikeUids.filter(id => id !== currentUserUid)])
     
     // upload to database
-    togglePostLike(currentPostId, [...localLikeUids.filter(id => id !== currentUserUid)])
+    togglePostLike(
+      // postId
+      currentPostId,
+      // likeData
+      [...localLikeUids.filter(id => id !== currentUserUid)],
+      // userUid
+      currentUserUid,
+      // likedPostsData
+      [...localLikedPosts.filter(id => id !== currentPostId)]
+    )
   }
 
 
