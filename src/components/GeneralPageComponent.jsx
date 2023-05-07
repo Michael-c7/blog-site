@@ -6,14 +6,12 @@ import PostPreviewCol from "./widgets/postPreview/PostPreviewCol"
 import GeneralPageCard from "./GeneralPageCard"
 
 
-const GeneralPageComponent = ({headingText, isGeneralHeadingShown = true}) => {
+const GeneralPageComponent = ({headingText, isGeneralHeadingShown = true, paginationDotAmount}) => {
     // have ten articles / PostPreviewCol per page
     let testArr = Array.from({ length:10 })
-    let testBtnAmt = Array.from({ length:8 })
+    let paginationBtnAmt = Array.from({ length:paginationDotAmount })
 
-    let [showPageButtons, setShowPageButtons] = React.useState(true)
     let [currentPageNumber, setCurrentPageNumber] = React.useState(0)
-    
 
     return (
         <div>
@@ -28,9 +26,9 @@ const GeneralPageComponent = ({headingText, isGeneralHeadingShown = true}) => {
                                 )
                             })}
                         </div>
-                        {showPageButtons ? (
+                        {paginationDotAmount > 1 ? (
                             <div className="flex flex-wrap mt-12">
-                                {testBtnAmt.map((el, index) => {
+                                {paginationBtnAmt.map((el, index) => {
                                     return (
                                         <button key={index} className={`text-white mx-1 first-of-type:ml-0 last-of-type:mr-0 py-2 px-4 rounded-full transition-colors hover:bg-orange-600 ${currentPageNumber === index ? "bg-orange-600" : "bg-black"}`}>{index + 1}</button>
                                     )
