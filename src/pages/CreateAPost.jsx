@@ -20,7 +20,11 @@ import { useNavigate } from "react-router-dom";
 import useGetScrollY from "../hooks/useGetScrollY";
 
 const CreateAPost = () => {
-  const { testFunc3, createPost } = useBlogContext()
+  const { 
+    createPost,
+    currentUserName,
+    currentDisplayName,
+   } = useBlogContext()
   const { user } = useAuthContext()
   // State variables for post information and character limits
   const [postTitleMaxChar, setPostTitleMaxChar] = useState(100);
@@ -89,8 +93,7 @@ const CreateAPost = () => {
   }
 
 
-
-
+  
   /*
   getting the currentImage ready to be
   compressed by converting the image
@@ -136,6 +139,8 @@ const CreateAPost = () => {
       image:currentImageCompressed,
       altText:currentAltText,
       likes:[],
+      displayName:currentDisplayName,
+      username:currentUserName,
     }
 
     if(
