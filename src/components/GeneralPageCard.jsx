@@ -4,7 +4,7 @@ import PostPreviewCol from "./widgets/postPreview/PostPreviewCol";
 
 
 
-const GeneralPageCard = () => {
+const GeneralPageCard = (props) => {
     const [isVisible, setIsVisible] = useState(false);
     const cardRef = useRef(null);
 
@@ -30,12 +30,14 @@ const GeneralPageCard = () => {
         };
       }, []);
 
-      
+
+
+     
       /* Creating a dynamic class name based on the isVisible state */
       /* Rendering the component with the PostPreviewCol component as a child */
       return (
         <div ref={cardRef} className={`general-card ${isVisible ? "general-card--visible" : ""}`}>
-            <PostPreviewCol hideDescription={true}/>
+            <PostPreviewCol hideDescription={true} {...{post:props}}/>
         </div>
     )
 }

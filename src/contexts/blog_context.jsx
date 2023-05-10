@@ -9,7 +9,7 @@ const initialState = {
 
 import { AppAuth, db } from "../Auth/firebase"
 
-import { doc, setDoc, getDoc, deleteDoc } from "firebase/firestore"; 
+import { doc, setDoc, getDoc, deleteDoc, collection, getDocs, query, where } from "firebase/firestore"; 
 import { useNavigate, redirect, Navigate, } from "react-router-dom";
 
 import { getDateFromTime } from "../utility/misc"
@@ -43,7 +43,10 @@ export const BlogProvider = ({ children }) => {
 
 
   // for pagination
-  const PAGE_SIZE = 10; // Number of documents per page
+  const POSTS_PER_PAGE = 10; // Number of documents / blog posts per page
+  let [currentGeneralPagePosts, setCurrentGeneralPagePosts] = useState([])
+
+  let [paginationDotsLoaded, setPaginationDotsLoaded] = useState(false)
 
 
 
@@ -205,27 +208,41 @@ export const BlogProvider = ({ children }) => {
     await deleteDoc(doc(db, "postViewData", postId));
   }
 
+/**
+ * 
+ * @param {Array} databasePath eg: ["posts"]
+ * @param {Array} dataToGet array of document id's to get
+ */
+  const getPaginatedDataFromDB = async (databasePath, dataToGet) => {
+    // let testPath = ["likedPosts", "Nfi7uDPukyQZdh6Bfqv8AGea44I3"]
+    let docRefs = dataToGet.map((postId) => {
+      return doc(db, ...databasePath, postId);
+    })
+
+    const docsSnapshot = await getDocs(query(collection(db, ...databasePath), where('__name__', 'in', dataToGet)));
+    const matchingDocs = docsSnapshot.docs;
+    
+    setCurrentGeneralPagePosts(matchingDocs.map((el) => el.data()))
+    // console.log(matchingDocs) // an array of DocumentSnapshot objects representing the requested documents
+  } 
 
 
 
 
-
-
-
-
-  const getLikedPosts = async (userUid) => {
+  const getLikedPostsIds = async (userUid) => {
     // get all posts liked by the current user, for the /likedPosts page
-    const docRef = doc(db, "likedPosts", userUid);
+    let pathTest = ["likedPosts", userUid]
+    // const docRef = doc(db, "likedPosts", userUid);
+    const docRef = doc(db, ...pathTest);
+
     const docSnap = await getDoc(docRef);
     if(docSnap.exists()) {
       // all the uids of the likedPosts
       let likedPostsUids = docSnap.data().likes
       // now get the posts
       setCurrentUsersLikedPosts(likedPostsUids)
-
-      console.log(userUid)
-      // return likedPostsUids
-      // setCurrentPostViews(docSnap.data().viewCount)
+      // this is here so i can load the first set of blog posts when the pagination dots are loaded
+      setPaginationDotsLoaded(true)
     }
     // console.log(userUid)
   }
@@ -282,8 +299,14 @@ export const BlogProvider = ({ children }) => {
         addPostViewData,
         deletePostViewData,
 
-        getLikedPosts,
+        getLikedPostsIds,
         currentUsersLikedPosts,
+        POSTS_PER_PAGE,
+        getPaginatedDataFromDB,
+        currentGeneralPagePosts,
+
+        paginationDotsLoaded,
+      setPaginationDotsLoaded,
       }}
     >
       {children}
