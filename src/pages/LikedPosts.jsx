@@ -7,8 +7,8 @@ import { useAuthContext } from "../Auth/AuthContext"
 
 const LikedPosts = () => {
   const { 
-    getLikedPostsIds,
-    currentUsersLikedPosts,
+    getPostsFromUids,
+    paginatedBlogPosts,
     POSTS_PER_PAGE,
     getPaginatedDataFromDB,
     currentGeneralPagePosts,
@@ -24,7 +24,7 @@ const LikedPosts = () => {
   let postAmtToGetEnd = POSTS_PER_PAGE * currentPageNumber
   let postAmtToGetStart = postAmtToGetEnd - POSTS_PER_PAGE
 
-  let paginationDotAmount = Math.ceil(currentUsersLikedPosts.length / POSTS_PER_PAGE)
+  let paginationDotAmount = Math.ceil(paginatedBlogPosts.length / POSTS_PER_PAGE)
   let [currentIdsToGet, setCurrentIdsToGet] = useState([])
 
   let [postsData, setPostsData] = useState([])
@@ -33,7 +33,7 @@ const LikedPosts = () => {
 
   useEffect(() => {
     try {
-      getLikedPostsIds(user?.uid)
+      getPostsFromUids(["likedPosts", user?.uid], ["likes"])
     } catch(error) {
       console.log(error)
     }
@@ -41,7 +41,7 @@ const LikedPosts = () => {
 
 
   useEffect(() => {
-    setCurrentIdsToGet(currentUsersLikedPosts.slice(postAmtToGetStart, postAmtToGetEnd))
+    setCurrentIdsToGet(paginatedBlogPosts.slice(postAmtToGetStart, postAmtToGetEnd))
   }, [paginationDotsLoaded, currentPageNumber])
 
 

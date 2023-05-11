@@ -9,7 +9,7 @@ const initialState = {
 
 import { AppAuth, db } from "../Auth/firebase"
 
-import { doc, setDoc, getDoc, deleteDoc, collection, getDocs, query, where } from "firebase/firestore"; 
+import { doc, setDoc, getDoc, deleteDoc, collection, getDocs, query, where,orderBy, startAt, endAt, limit } from "firebase/firestore"; 
 import { useNavigate, redirect, Navigate, } from "react-router-dom";
 
 import { getDateFromTime } from "../utility/misc"
@@ -33,7 +33,7 @@ export const BlogProvider = ({ children }) => {
   const [currentPostComments, setCurrentPostComments] = useState([])
   const [isCurrentPostLoading, setIsCurrentPostLoading] = useState(true)
 
-  const [currentUsersLikedPosts, setCurrentUsersLikedPosts] = useState([])
+  const [paginatedBlogPosts, setPaginatedBlogPosts] = useState([])
 
 
   // post view data
@@ -210,15 +210,10 @@ export const BlogProvider = ({ children }) => {
 
 /**
  * 
- * @param {Array} databasePath eg: ["posts"]
+ * @param {Array} databasePath eg: ["posts"] or ["likedPosts", user.uid]
  * @param {Array} dataToGet array of document id's to get
  */
   const getPaginatedDataFromDB = async (databasePath, dataToGet) => {
-    // let testPath = ["likedPosts", "Nfi7uDPukyQZdh6Bfqv8AGea44I3"]
-    let docRefs = dataToGet.map((postId) => {
-      return doc(db, ...databasePath, postId);
-    })
-
     const docsSnapshot = await getDocs(query(collection(db, ...databasePath), where('__name__', 'in', dataToGet)));
     const matchingDocs = docsSnapshot.docs;
     
@@ -227,31 +222,56 @@ export const BlogProvider = ({ children }) => {
   } 
 
 
-
-
-  const getLikedPostsIds = async (userUid) => {
-    // get all posts liked by the current user, for the /likedPosts page
-    let pathTest = ["likedPosts", userUid]
-    // const docRef = doc(db, "likedPosts", userUid);
-    const docRef = doc(db, ...pathTest);
-
+  /**
+   * 
+   * @param {Array} databasePath eg: ["posts"] or ["likedPosts", user.uid]
+   * @param {Array} UidPropertyPath thh Property path for the array of uids to get eg: in this the propertyPath would just the "likes" --> docSnap.data().likes for the argument should be like eg: [john, userData, likes]
+   */
+  const getPostsFromUids = async (databasePath, UidsPropertyPath) => {
+    const docRef = doc(db, ...databasePath);
     const docSnap = await getDoc(docRef);
     if(docSnap.exists()) {
-      // all the uids of the likedPosts
-      let likedPostsUids = docSnap.data().likes
-      // now get the posts
-      setCurrentUsersLikedPosts(likedPostsUids)
-      // this is here so i can load the first set of blog posts when the pagination dots are loaded
+      let uidsForPosts = UidsPropertyPath.reduce((acc, curr) => acc[curr], docSnap.data());
+      setPaginatedBlogPosts(uidsForPosts)
+      /* This is here so i can load the first set
+      of blog posts when the pagination dots are loaded */
       setPaginationDotsLoaded(true)
     }
-    // console.log(userUid)
   }
 
-  const getAuthorsPosts = (userUid,username) => {
-    /*get all the posts by the user 
-    (for when you click on a user profile),
-    for /author page */
+
+
+
+  const getPostsByProperty = async () => {
+    //
+    const postsRef = collection(db, 'posts');
+
+    // get the posts
+    // const queryRef = query(postsRef, where('username', '==', 'scifacts'), orderBy('username'), startAt(0), endAt(30), limit(10));
+    const queryRef = query(
+      postsRef,
+      where('username', '==', 'scifacts'),
+      orderBy('title'),
+      startAt(0),
+      // endAt(30),
+      limit(5)
+    );
+    
+    const querySnapshot = await getDocs(queryRef);
+  
+    // const posts = querySnapshot.docs.map((doc) => doc.data());
+    const posts = querySnapshot.docs.map((doc) => doc.data());
+    console.log(posts);
+    
+    // get the amount of posts for the pagination posts
+    const totalQueryRef = query(postsRef, where('username', '==', 'scifacts'));
+    const totalPosts = (await getDocs(totalQueryRef)).size;
+    // set the total posts f
+    // setCurrentGeneralPagePosts(totalPosts)
+// setPaginationDotsLoaded
   }
+
+
 
   const getCategoryPosts = (category) => {
     /*get all posts that belong to a certain category, eg: science,food,ect...
@@ -299,14 +319,16 @@ export const BlogProvider = ({ children }) => {
         addPostViewData,
         deletePostViewData,
 
-        getLikedPostsIds,
-        currentUsersLikedPosts,
+        getPostsFromUids,
+        paginatedBlogPosts,
         POSTS_PER_PAGE,
         getPaginatedDataFromDB,
         currentGeneralPagePosts,
 
         paginationDotsLoaded,
-      setPaginationDotsLoaded,
+        setPaginationDotsLoaded,
+
+        getPostsByProperty,
       }}
     >
       {children}
