@@ -9,7 +9,7 @@ const initialState = {
 
 import { AppAuth, db } from "../Auth/firebase"
 
-import { doc, setDoc, getDoc, deleteDoc, collection, getDocs, query, where,orderBy, startAt, endAt, limit } from "firebase/firestore"; 
+import { doc, setDoc, getDoc, deleteDoc, collection, getDocs, query, where,orderBy,startAfter, startAt, endAt, limit } from "firebase/firestore"; 
 import { useNavigate, redirect, Navigate, } from "react-router-dom";
 
 import { getDateFromTime } from "../utility/misc"
@@ -47,6 +47,8 @@ export const BlogProvider = ({ children }) => {
   let [currentGeneralPagePosts, setCurrentGeneralPagePosts] = useState([])
 
   let [paginationDotsLoaded, setPaginationDotsLoaded] = useState(false)
+
+  let [currentSearchTerm, setCurrentSearchTerm] = useState("")
 
 
 
@@ -242,48 +244,100 @@ export const BlogProvider = ({ children }) => {
 
 
 
-  const getPostsByProperty = async () => {
-    //
-    const postsRef = collection(db, 'posts');
+  const getPostsByProperty = async (propertyName, propertyValue, pageNumber) => {
+    const postsRef = collection(db, "posts");
 
     // get the posts
-    // const queryRef = query(postsRef, where('username', '==', 'scifacts'), orderBy('username'), startAt(0), endAt(30), limit(10));
     const queryRef = query(
       postsRef,
-      where('username', '==', 'scifacts'),
-      orderBy('title'),
-      startAt(0),
-      // endAt(30),
-      limit(5)
+      where(propertyName, "==", propertyValue),
+      orderBy("createdAt"),
+      limit(POSTS_PER_PAGE * pageNumber)
     );
     
     const querySnapshot = await getDocs(queryRef);
-  
-    // const posts = querySnapshot.docs.map((doc) => doc.data());
-    const posts = querySnapshot.docs.map((doc) => doc.data());
-    console.log(posts);
+    /*The querySnapshot is all the previous and current data
+      then the slice removes the previous data so we're left w/ the current data.
+      This will not scale well however cant find a better solution native to firebase*/
+    const posts = querySnapshot.docs.map((doc) => doc.data()).slice(pageNumber <= 1 ? 0 : (POSTS_PER_PAGE * pageNumber) - POSTS_PER_PAGE, POSTS_PER_PAGE * pageNumber);
+    setCurrentGeneralPagePosts(posts);
+    console.log(posts)
     
     // get the amount of posts for the pagination posts
-    const totalQueryRef = query(postsRef, where('username', '==', 'scifacts'));
+    const totalQueryRef = query(postsRef, where(propertyName, "==", propertyValue));
     const totalPosts = (await getDocs(totalQueryRef)).size;
-    // set the total posts f
-    // setCurrentGeneralPagePosts(totalPosts)
-// setPaginationDotsLoaded
+    // set the total posts
+    setPaginatedBlogPosts(Array.from({length: totalPosts}))
+    setPaginationDotsLoaded(true)
   }
 
-
-
-  const getCategoryPosts = (category) => {
-    /*get all posts that belong to a certain category, eg: science,food,ect...
-    for the /category page
+  const getSearchPosts = async (searchTerm = "the history and evolution of Biryani", currentPageNumber = 2) => {
+    /* can't find good in-the box solution for this w/ firebase for i think i will...
+        1. get all post title and put them in an array,
+        2. split all the posts titles and split them into words eg: searchTerm.split(" "
+        3. return in limits of 10 posts, very similar to how i did /likePosts 
     */
-  }
+    // get all title in from my posts
+    const postsRef = collection(db, 'posts');
+    const querySnapshot = await getDocs(postsRef);
+    const titles = [];
+  
+    // get the all the titles and postId's
+    querySnapshot.forEach((doc) => {
+      const title = doc.data().title;
+      const postId = doc.data().postId;
+      titles.push({title, postId});
+    });
 
-  const getSearchPosts = (searchTerm) => {
-    /*returns all the posts that that have the search term eg: sonic, n64,ect..
-    for the /search page
+
+    const result = [];
+    for (let i = 0; i < titles.length; i++) {
+      const titleWords = titles[i].title.toLowerCase().split(" ");
+      for (let j = 0; j < searchTerm.length; j++) {
+        if (titleWords.includes(searchTerm[j].toLowerCase())) {
+          result.push(titles[i]);
+          break;
+        }
+      }
+    }
+
+
+    // now set the pagination ect...
+    let postAmtToGetEnd = POSTS_PER_PAGE * currentPageNumber
+    let postAmtToGetStart = postAmtToGetEnd - POSTS_PER_PAGE
+    let resultsPaginated = result.slice(postAmtToGetStart, postAmtToGetEnd)
+    // not 100% sure on these
+    // setPaginatedBlogPosts(result.slice(postAmtToGetStart, postAmtToGetEnd))
+    // setPaginationDotsLoaded(true)
+    console.log(result)
+    // then get the data
+    
+    /*
+      1. now from the result resultsPaginated get the actual posts
+      2. set the the actual post data to setCurrentGeneralPagePosts(postsHere);
     */
-  }
+
+      // const docsSnapshot = await getDocs(query(collection(db, postsRef), where(propertyName, "==", propertyValue)));
+      // querySnapshot.forEach((doc) => {
+      //   // const title = doc.data().title;
+      //   console.log(doc.data())
+      //   // const postId = doc.data().postId;
+      //   // titles.push({title, postId});
+      // });
+
+
+
+    // const postObjects = [];
+    // for (const post of posts) {
+    //   if (post.postId) {
+    //     const postRef = doc(db, 'posts', post.postId);
+    //     const postDoc = await getDoc(postRef);
+    //     const postObject = postDoc.data();
+    //     postObjects.push(postObject);
+    //   }
+    // }
+    // console.log(postObjects);
+  } 
 
 
   // after everything else is done do stuff for /stats here
@@ -329,6 +383,10 @@ export const BlogProvider = ({ children }) => {
         setPaginationDotsLoaded,
 
         getPostsByProperty,
+
+        currentSearchTerm,
+        setCurrentSearchTerm,
+        getSearchPosts,
       }}
     >
       {children}
