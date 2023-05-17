@@ -90,7 +90,7 @@ const Navbar = () => {
             ) : ""}
 
             {isLoggedIn ? (
-              <Link className="flex flex-row self-center mr-3 max-[530px]:hidden" to="/createAPost">
+              <Link className="flex flex-row self-center mr-0 max-[530px]:hidden" to="/createAPost">
                 <div className="flex flex-row self-center mr-1">
                   <AiOutlineForm/>
                 </div>
@@ -98,9 +98,9 @@ const Navbar = () => {
               </Link>
             ) : ""}
 
-            <button className="bg-gray-200 p-2 rounded-full flex-center text-[18px] relative" onClick={() => openSearchOverlay()}>
+            {/* <button className="bg-gray-200 p-2 rounded-full flex-center text-[18px] relative" onClick={() => openSearchOverlay()}>
               <BiSearch/>
-            </button>
+            </button> */}
 
             <button className="hidden max-[530px]:block bg-gray-200 p-2 rounded-full flex-center text-[16px] relative ml-2"  onClick={() => openSidebar()}>
               <AiOutlineMenu/>
