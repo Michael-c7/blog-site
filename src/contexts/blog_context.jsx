@@ -9,7 +9,7 @@ const initialState = {
 
 import { AppAuth, db } from "../Auth/firebase"
 
-import { doc, setDoc, getDoc, deleteDoc, collection, getDocs, query, where,orderBy,startAfter, startAt, endAt, limit } from "firebase/firestore"; 
+import { doc, setDoc, getDoc, deleteDoc, collection, getDocs, query, where,orderBy, limit, } from "firebase/firestore"; 
 import { useNavigate, redirect, Navigate, } from "react-router-dom";
 
 import { getDateFromTime } from "../utility/misc"
@@ -271,18 +271,26 @@ export const BlogProvider = ({ children }) => {
     setPaginationDotsLoaded(true)
   }
 
-  const getSearchPosts = async (searchTerm = "the history and evolution of Biryani", currentPageNumber = 2) => {
+
+
+
+
+  const getSearchPosts = async (searchTerm, currentPageNumber) => {
     /* can't find good in-the box solution for this w/ firebase for i think i will...
         1. get all post title and put them in an array,
-        2. split all the posts titles and split them into words eg: searchTerm.split(" "
+        2. split all the posts titles and split them into words eg: searchTerm.split(" ")
         3. return in limits of 10 posts, very similar to how i did /likePosts 
     */
-    // get all title in from my posts
+   
+  
+    // get all posts, (Yikes)
     const postsRef = collection(db, 'posts');
     const querySnapshot = await getDocs(postsRef);
+
+
     const titles = [];
   
-    // get the all the titles and postId's
+    // get the all the titles and postId's from the posts
     querySnapshot.forEach((doc) => {
       const title = doc.data().title;
       const postId = doc.data().postId;
@@ -290,6 +298,10 @@ export const BlogProvider = ({ children }) => {
     });
 
 
+
+// BUG IS HERE I THINK
+    /* Compare the words in the titles array
+    and the words in the searchTerm */
     const result = [];
     for (let i = 0; i < titles.length; i++) {
       const titleWords = titles[i].title.toLowerCase().split(" ");
@@ -301,34 +313,21 @@ export const BlogProvider = ({ children }) => {
       }
     }
 
+    console.log(titles)
+
 
     // now set the pagination ect...
-    let postAmtToGetEnd = POSTS_PER_PAGE * currentPageNumber
-    let postAmtToGetStart = postAmtToGetEnd - POSTS_PER_PAGE
-    let resultsPaginated = result.slice(postAmtToGetStart, postAmtToGetEnd)
-    // not 100% sure on these
-    // setPaginatedBlogPosts(result.slice(postAmtToGetStart, postAmtToGetEnd))
+    // let postAmtToGetEnd = POSTS_PER_PAGE * currentPageNumber
+    // let postAmtToGetStart = postAmtToGetEnd - POSTS_PER_PAGE
+    // let resultsPaginated = result.slice(postAmtToGetStart, postAmtToGetEnd)
+    // setPaginatedBlogPosts(result)
     // setPaginationDotsLoaded(true)
-    console.log(result)
-    // then get the data
     
-    /*
-      1. now from the result resultsPaginated get the actual posts
-      2. set the the actual post data to setCurrentGeneralPagePosts(postsHere);
-    */
 
-      // const docsSnapshot = await getDocs(query(collection(db, postsRef), where(propertyName, "==", propertyValue)));
-      // querySnapshot.forEach((doc) => {
-      //   // const title = doc.data().title;
-      //   console.log(doc.data())
-      //   // const postId = doc.data().postId;
-      //   // titles.push({title, postId});
-      // });
+    // get post data from the postIds in the current page
+    // let postObjects  = []
 
-
-
-    // const postObjects = [];
-    // for (const post of posts) {
+    // for (const post of resultsPaginated) {
     //   if (post.postId) {
     //     const postRef = doc(db, 'posts', post.postId);
     //     const postDoc = await getDoc(postRef);
@@ -336,11 +335,9 @@ export const BlogProvider = ({ children }) => {
     //     postObjects.push(postObject);
     //   }
     // }
-    // console.log(postObjects);
-  } 
 
-
-  // after everything else is done do stuff for /stats here
+    // setCurrentGeneralPagePosts(postObjects)
+  }
 
 
   /*also have function for collection of data eg: function to get all
