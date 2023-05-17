@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 
 import PrivateRoutes from "./utility/PrivateRoutes"
@@ -32,7 +32,10 @@ import { useAuthContext } from "./Auth/AuthContext"
 function App() {
   const { isAuthError, AuthErrorMsg } = useAuthContext()
 
-
+  // to prevent the bug where the vertical scroll bar is hidden on page load
+  useEffect(() => {
+    document.body.style.overflowY = "initial";
+  }, [])
 
   return (
     <>
