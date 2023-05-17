@@ -15,22 +15,25 @@ import { MdLogout } from "react-icons/md"
 
 import { navItems } from "../utility/reusable"
 
-import { useStandardContext } from "../contexts/standard_context";
-
 import useClickOff from "../hooks/useClickOff";
 
+import { useStandardContext } from "../contexts/standard_context";
+
 import { useAuthContext } from "../Auth/AuthContext"
+
+import { useBlogContext } from "../contexts/blog_context";
 
 
 const Navbar = () => {
   const { isLoggedIn, logoutUser } = useAuthContext()
-
   const { openSidebar, openSearchOverlay } = useStandardContext()
+  const { currentUserName } = useBlogContext()
 
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = React.useState(false)
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = React.useState(false)
 
-
+  
+// refs
   const profileMenuRef = useRef(null)
   const profileRef = useRef(null)
   const categoriesMenuRef = useRef(null)
@@ -116,7 +119,7 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <ul className="dropdown-menu text-zinc-500">
                   <li className="my-4 hover:text-zinc-900">
-                      <Link to="/profile" className="flex flex-row items-center">
+                      <Link to={`/author/${currentUserName}`} className="flex flex-row items-center">
                         <BiUser className="mr-3 text-xl"/>
                         <span>Profile</span>
                       </Link>
