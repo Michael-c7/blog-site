@@ -165,14 +165,27 @@
 
 /* styles for the scrollbar */
 ::-webkit-scrollbar {
-  width: 12px;
-  background-color: #F2F2F2;
+  width:20px;
+  background-color:#f1f1f1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #aaa;
+  background:#c0c0c0;
+  /* the border and background-clip create the appearance of padding */
+  border:4px solid rgba(0, 0, 0, 0);
+  background-clip:padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background:#a5a5a5;
+  /* the border and background-clip create the appearance of padding */
+  border:4px solid rgba(0, 0, 0, 0);
+  background-clip:padding-box;
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: #7c7c7c;
+  background:#7c7c7c;
+  /* the border and background-clip create the appearance of padding */
+  border:4px solid rgba(0, 0, 0, 0);
+  background-clip:padding-box;
 }
