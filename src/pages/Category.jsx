@@ -3,7 +3,7 @@ import GeneralPageComponent from '../components/GeneralPageComponent'
 
 import { useBlogContext } from '../contexts/blog_context'
 
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 
 const Category = () => {
@@ -17,6 +17,8 @@ const Category = () => {
   } = useBlogContext()
 
   const { categoryName } = useParams();
+  const location = useLocation();
+  const currentUrl = location.pathname;
 
   let [currentPageNumber, setCurrentPageNumber] = React.useState(1)
   let paginationDotAmount = Math.ceil(paginatedBlogPosts.length / POSTS_PER_PAGE)
@@ -25,12 +27,14 @@ const Category = () => {
 
   useEffect(() => {
     setCurrentCategory(categoryName)
-  }, [])
+    // when category changes reset the current page to 1
+    setCurrentPageNumber(1)
+  }, [currentUrl])
 
 
   useEffect(() => {
     getPostsByProperty("tag", currentCategory, currentPageNumber)
-  }, [currentCategory, currentPageNumber])
+  }, [currentUrl, currentCategory, currentPageNumber])
 
   useEffect(() => {
     // reset so if we go to another will still work
