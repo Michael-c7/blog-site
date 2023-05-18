@@ -10,7 +10,7 @@ import { getDateFromTime } from "../utility/misc"
 const HeroSlider = () => {
     const { getPostsByIds } = useBlogContext()
 
-    let [currentSlideId, setCurrentSlideId] = useState(0)
+    let [currentSlideIndex, setCurrentSlideIndex] = useState(0)
 
     let [titleCharacterLimit, setTitleCharacterLimit] = useState(60)
     let [titleBtnCharacterLimit, setTitleBtnCharacterLimit] = useState(20)
@@ -29,12 +29,12 @@ const HeroSlider = () => {
     useEffect(() => {
         let slideTimeChangeInMilliseconds = 5000
         let timeout = setTimeout(() => {
-            if(currentSlideId === slideData.length - 1) {
-                setCurrentSlideId((currentState) => {
+            if(currentSlideIndex === slideData.length - 1) {
+                setCurrentSlideIndex((currentState) => {
                     return currentState = 0
                 })
             } else {
-                setCurrentSlideId((currentState) => {
+                setCurrentSlideIndex((currentState) => {
                     return currentState + 1
                 })
             }
@@ -43,7 +43,7 @@ const HeroSlider = () => {
         return (() => {
             clearTimeout(timeout)
         })
-    }, [currentSlideId])
+    }, [currentSlideIndex])
 
 
     // get the post data for the slides
@@ -59,7 +59,7 @@ const HeroSlider = () => {
             <ul>
                 {slideData.map((el, index) => {
                     return (
-                        <li key={el?.postId} className={`${currentSlideId === index ? "hero-slider-transition--current" : ""}  hero-slider-transition--start absolute rounded-lg w-full h-full text-white`}>
+                        <li key={el?.postId} className={`${currentSlideIndex === index ? "hero-slider-transition--current" : ""}  hero-slider-transition--start absolute rounded-lg w-full h-full text-white`}>
                             <Link to={`/post/${el?.postId}`} className="top-0 absolute w-full h-full rounded-xl">
                                 <img src={el?.image} alt={el?.altText} className="top-0 left-0 absolute w-full h-full rounded-xl object-cover" />
                              </Link>
@@ -82,10 +82,10 @@ const HeroSlider = () => {
             <ul className="absolute bottom-0 px-8 mb-8 w-full justify-between md:grid grid-rows-1 hidden z-10 grid-cols-4 gap-4">
                 {slideData.map((el, index) => {
                     return (
-                        <li key={el.postId} onClick={() => setCurrentSlideId(index)} className="text-white flex items-center">
+                        <li key={el.postId} onClick={() => setCurrentSlideIndex(index)} className="text-white flex items-center">
                             <button className="flex items-center">
                                 <img src={el.image} alt={el.title} className="w-14 h-14 rounded-full mr-2 object-cover"/>
-                                <h2 className={` ${currentSlideId === index ? "text-white" : "text-neutral-300"} font-semibold uppercase text-sm text-left`}>{el.title.length <= titleBtnCharacterLimit ? `${el.title}` : `${el.title.slice(0,titleBtnCharacterLimit)}...`}</h2>
+                                <h2 className={` ${currentSlideIndex === index ? "text-white" : "text-neutral-300"} font-semibold uppercase text-sm text-left`}>{el.title.length <= titleBtnCharacterLimit ? `${el.title}` : `${el.title.slice(0,titleBtnCharacterLimit)}...`}</h2>
                             </button>
                         </li>
                     )
