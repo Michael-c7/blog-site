@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom";
 import { socialMediaNumberFormatter } from "../utility/misc";
 // icons 
@@ -23,13 +23,21 @@ import foodBgImage from "../assets/images/categories/food.jpg"
 import gamingBgImage from "../assets/images/categories/gaming.jpg"
 import moviesBgImage from "../assets/images/categories/movies.jpg"
 import scienceBgImage from "../assets/images/categories/science.jpg"
+import { useBlogContext } from "../contexts/blog_context";
+
+
 
 
 const InfoSidebar = (props) => {
+    const { getPostsByIds } = useBlogContext()
+
     let testRecentArr = Array.from({ length:3 })
     let sliderSlidesArr = Array.from({ length:4 })
 
     let [sliderCurrentIndex, setSliderCurrentIndex] = React.useState(0)
+
+
+    let [sliderPostData, setSliderPostData] = useState([])
 
     const categoriesList = [
         {
@@ -115,6 +123,17 @@ const InfoSidebar = (props) => {
         },
     ]
 
+
+    let infoSidebarSlider = [
+        "672115e6-6bab-489c-b141-bfeec7dd6d7d",
+        "9ca69349-a22e-41b3-aeb5-a2e44a94dbc6",
+        "8ce51437-96c0-49ad-9994-23da3505bd73",
+        "bdba4736-66db-4abc-b7e4-b4cf8c94a5e0",
+    ]
+
+    useEffect(() => {
+        getPostsByIds(infoSidebarSlider).then((data) => setSliderPostData(data))
+    }, [])
 
 
     const prevSlide = _ => {
@@ -206,7 +225,7 @@ const InfoSidebar = (props) => {
                 {/* slides */}
                 <div className="w-full h-full relative overflow-hidden rounded-xl">
                     {/* slide */}
-                    {sliderSlidesArr.map((el, index) => {
+                    {sliderPostData.map((data, index) => {
                         let slidePosition = "mini-slider--next"
 
                         if (sliderCurrentIndex === index) {
@@ -221,7 +240,7 @@ const InfoSidebar = (props) => {
 
                         return (
                             <div key={index} className={`${slidePosition} opacity-0 transition-all duration-700 absolute w-full h-full top-0`}>
-                                <PostPreviewTogether {...{position:"absolute", width:"w-full", height:"h-full"}} />
+                                <PostPreviewTogether {...{post:data ,position:"absolute", width:"w-full", height:"h-full"}} />
                             </div>
                         )
                     })}
