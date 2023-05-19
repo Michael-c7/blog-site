@@ -1,12 +1,11 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 import Tag from "../Tag"
 import AuthorAndDate from "../AuthorAndDate"
+import { getDateFromTime } from '../../../utility/misc'
 
 import testImg from "../../../assets/images/testImg1.jpg"
-
-
 /*
 Where the text is on to of the image,
 not for the hero slider on homepage
@@ -18,20 +17,27 @@ eg: in example Top of the week section
  * @returns 
  */
 const PostPreviewTogether = (props) => {
-  // className={`${props.position === "absolute" ? "absolute h-full w-full" : "relative"}`}
+
+  let [data, setData] = React.useState([])
+  let [articleTitleCutoff, setArticleTitleCutoff] = useState(35)
+
+  useEffect(() => {
+    setData(props.post)
+  },[props])
+  
   return (
     <section className={`${props.position ? props.position : "relative"} ${props?.width} ${props?.height}`}>
-      <Link to="/link to post" className='w-full h-full'>
-        <img src={testImg} alt="the alt text here" title="alt text here" className='w-full h-full rounded-xl object-cover'/>
+      <Link to={`/post/${data?.postId}`} className='w-full h-full'>
+        <img src={data?.image ? data?.image : testImg} alt={data?.altText} title={data?.title} className='w-full h-full rounded-xl object-cover'/>
       </Link>
       <div className="absolute top-0 m-6">
-        <Tag {...{bgColor:"#ccc", link:"/test", text:"tag text"}}/>
+        <Tag {...{bgColor:`--category--${data?.tag}`, link:`/category/${data?.tag}`, text:`${data?.tag}`}}/>
       </div>
       <div className='absolute bottom-0 m-6'>
-        <Link to="/link to post here">
-          <h2 className='text-white font-medium text-2xl mb-2'>the title goes here</h2>
+        <Link to={`/post/${data?.postId}`}>
+          <h2 className='text-white font-medium text-2xl mb-2'>{data?.title?.length >= articleTitleCutoff ? `${data?.title?.slice(0, articleTitleCutoff).trim()}...` : data?.title}</h2>
         </Link>
-        <AuthorAndDate {...{textColor:"#fff"}}/>
+        <AuthorAndDate {...{authorLink:`/author/${data?.username}`, authorName:data?.displayName, date:getDateFromTime(data?.createdAt?.nanoseconds, data?.createdAt?.seconds), textColor:"#fff"}}/>
       </div>
     </section>
   )
