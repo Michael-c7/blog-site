@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import GeneralPageComponent from '../components/GeneralPageComponent'
 
 import { useBlogContext } from '../contexts/blog_context'
+import { useParams } from 'react-router-dom'
 
 const Author = () => {
   const { 
@@ -11,28 +12,37 @@ const Author = () => {
     paginationDotsLoaded,
     setPaginationDotsLoaded,
     getPostsByProperty,
-    currentDisplayName,
   } = useBlogContext()
 
+  let { authorId } = useParams()
   
   let [currentPageNumber, setCurrentPageNumber] = React.useState(1)
   let paginationDotAmount = Math.ceil(paginatedBlogPosts.length / POSTS_PER_PAGE)
+  let [authorDisplayName, setAuthorDisplayName] = useState("")
 
 
-  useEffect(() => {
-    getPostsByProperty("username", "scifacts", currentPageNumber)
+  // get the posts
+  useEffect(() => {  
+    getPostsByProperty("username", authorId, currentPageNumber)
   }, [currentPageNumber])
 
+
+  // get the displayname
   useEffect(() => {
-    // reset so if we go to another will still work
+    setAuthorDisplayName(currentGeneralPagePosts[0]?.displayName)
+  }, [currentGeneralPagePosts])
+
+  // reset so if we go to another page will still work
+  useEffect(() => {
     if(paginationDotsLoaded) {
       setPaginationDotsLoaded(false)
     }
   }, [paginationDotsLoaded])
 
+
   return (
     <>
-      <GeneralPageComponent {...{headingText:currentDisplayName ? currentDisplayName : "name unknown", paginationDotAmount, currentPageNumber, setCurrentPageNumber, currentGeneralPagePosts }}/>
+      <GeneralPageComponent {...{headingText:authorDisplayName ? authorDisplayName : "name unknown", paginationDotAmount, currentPageNumber, setCurrentPageNumber, currentGeneralPagePosts }}/>
     </>
   )
 }
