@@ -61,7 +61,7 @@ export const BlogProvider = ({ children }) => {
       // get username and display name
       const docRef1 = doc(db, "users", userUid);
       const docSnap1 = await getDoc(docRef1);
-      
+      // console.log(docSnap1.data().username)
       setCurrentUsername(docSnap1.data().username)
       setCurrentDisplayName(docSnap1.data().displayName)
   }
@@ -339,12 +339,35 @@ export const BlogProvider = ({ children }) => {
     // setCurrentGeneralPagePosts(postObjects)
   }
 
+  
+  
+  /**
+   * 
+   * @param {Array} postIdsArr - an array of the post ids you to use to get the associated post data 
+   */
+  const getPostsByIds = async (postIdsArr)  => {
+    const postsData = []
 
-  /*also have function for collection of data eg: function to get all
-  liked posts(for liked posts page), author posts,ect...
-  */
+    for (const postId of postIdsArr) {
+      const postRef = doc(collection(db, 'posts'), postId);
+      const postSnapshot = await getDoc(postRef);
 
-  // put the backend stuff here, createapost,ect...
+      if(postSnapshot.exists()) {
+        const postData = postSnapshot.data();
+        postsData.push(postData);
+      }
+    }
+
+    return postsData
+  }
+
+
+  // recent posts, so get most recent posts
+    // this will be in footer & infosidebar
+
+  // top of the week, get most viewed posts by within a certain date,
+  // or could change it to be all time highest viewed post
+
 
   return (
     <BlogContext.Provider
@@ -384,6 +407,8 @@ export const BlogProvider = ({ children }) => {
         currentSearchTerm,
         setCurrentSearchTerm,
         getSearchPosts,
+
+        getPostsByIds,
       }}
     >
       {children}
