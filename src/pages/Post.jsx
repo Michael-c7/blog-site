@@ -56,7 +56,6 @@ const Post = () => {
       getPostViewData,
       addPostViewData,
       postIdExistsInViewsDatabase,
-      getLikedPosts,
       currentUsersLikedPosts,
     // state
       currentUserName,
@@ -175,10 +174,6 @@ const getCommentData = () => {
     
   }, [currentPost])
 
-
-  useEffect(() => {
-    getLikedPosts(user?.uid)
-  }, [user])
 
   useEffect(() => {
     // the initial amount of post the user has liked
