@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom";
 import { socialMediaNumberFormatter } from "../utility/misc";
+import { useBlogContext } from "../contexts/blog_context";
 // icons 
 import {
     FaFacebookF,
@@ -23,7 +24,7 @@ import foodBgImage from "../assets/images/categories/food.jpg"
 import gamingBgImage from "../assets/images/categories/gaming.jpg"
 import moviesBgImage from "../assets/images/categories/movies.jpg"
 import scienceBgImage from "../assets/images/categories/science.jpg"
-import { useBlogContext } from "../contexts/blog_context";
+
 
 
 
@@ -32,7 +33,6 @@ const InfoSidebar = (props) => {
     const { getPostsByIds } = useBlogContext()
 
     let testRecentArr = Array.from({ length:3 })
-    let sliderSlidesArr = Array.from({ length:4 })
 
     let [sliderCurrentIndex, setSliderCurrentIndex] = React.useState(0)
 
@@ -124,7 +124,7 @@ const InfoSidebar = (props) => {
     ]
 
 
-    let infoSidebarSlider = [
+    let infoSidebarSliderIds = [
         "672115e6-6bab-489c-b141-bfeec7dd6d7d",
         "9ca69349-a22e-41b3-aeb5-a2e44a94dbc6",
         "8ce51437-96c0-49ad-9994-23da3505bd73",
@@ -132,20 +132,20 @@ const InfoSidebar = (props) => {
     ]
 
     useEffect(() => {
-        getPostsByIds(infoSidebarSlider).then((data) => setSliderPostData(data))
+        getPostsByIds(infoSidebarSliderIds).then((data) => setSliderPostData(data))
     }, [])
 
 
     const prevSlide = _ => {
         if(sliderCurrentIndex === 0) {
-              setSliderCurrentIndex(sliderSlidesArr?.length - 1)
+              setSliderCurrentIndex(sliderPostData?.length - 1)
             } else {
               setSliderCurrentIndex(sliderCurrentIndex - 1)
             }
     }
 
     const nextSlide = _ => {
-      if(sliderCurrentIndex === sliderSlidesArr?.length - 1) {
+      if(sliderCurrentIndex === sliderPostData?.length - 1) {
         setSliderCurrentIndex(sliderCurrentIndex = sliderCurrentIndex - sliderCurrentIndex)
         } else {
           setSliderCurrentIndex(sliderCurrentIndex = sliderCurrentIndex + 1)
@@ -157,7 +157,7 @@ const InfoSidebar = (props) => {
     React.useEffect(() => {
         let slideTimeChangeInMilliseconds = 7000
         let timeout = setTimeout(() => {
-            if(sliderCurrentIndex === sliderSlidesArr.length - 1) {
+            if(sliderCurrentIndex === sliderPostData.length - 1) {
                 setSliderCurrentIndex((currentState) => {
                     return currentState = 0
                 })
@@ -205,7 +205,7 @@ const InfoSidebar = (props) => {
             <div>
                 <h2 className=" font-semibold text-3xl mb-2">Recent Posts</h2>
                 <div className="flex flex-col gap-6">
-                {testRecentArr.map((el, index) => {
+                {testRecentArr.map((data, index) => {
                     return (
                         <PostPreviewRow key={index} direction={"flex-row-reverse"}/>
                         )
@@ -213,7 +213,7 @@ const InfoSidebar = (props) => {
                 </div>
             </div>
             {/* mini slider  */}
-            <div className="relative my-8 h-[375px] ">
+            <div className="relative my-8 h-[375px]">
                 <div className="absolute z-30 mt-5 mr-4 right-0 text-white text-xl">
                     <button onClick={() => prevSlide()} className="bg-[rgba(10,10,10,0.30)] rounded-full p-2 mx-1">
                         <RiArrowLeftSLine/>
@@ -233,7 +233,7 @@ const InfoSidebar = (props) => {
                         }
                         if 
                         (sliderCurrentIndex === index - 1 || 
-                        (index === 0 && sliderCurrentIndex === sliderSlidesArr.length - 1)
+                        (index === 0 && sliderCurrentIndex === sliderPostData.length - 1)
                         ) {
                         slidePosition = "mini-slider--prev";
                         }
