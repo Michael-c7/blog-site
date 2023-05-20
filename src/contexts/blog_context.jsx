@@ -9,7 +9,7 @@ const initialState = {
 
 import { AppAuth, db } from "../Auth/firebase"
 
-import { doc, setDoc, getDoc, deleteDoc, collection, getDocs, query, where,orderBy, limit, } from "firebase/firestore"; 
+import { doc, setDoc, getDoc, deleteDoc, collection, getDocs, query, where, orderBy, limit, } from "firebase/firestore"; 
 import { useNavigate, redirect, Navigate, } from "react-router-dom";
 
 import { getDateFromTime } from "../utility/misc"
@@ -61,7 +61,6 @@ export const BlogProvider = ({ children }) => {
       // get username and display name
       const docRef1 = doc(db, "users", userUid);
       const docSnap1 = await getDoc(docRef1);
-      // console.log(docSnap1.data().username)
       setCurrentUsername(docSnap1.data().username)
       setCurrentDisplayName(docSnap1.data().displayName)
   }
@@ -261,7 +260,6 @@ export const BlogProvider = ({ children }) => {
       This will not scale well however cant find a better solution native to firebase*/
     const posts = querySnapshot.docs.map((doc) => doc.data()).slice(pageNumber <= 1 ? 0 : (POSTS_PER_PAGE * pageNumber) - POSTS_PER_PAGE, POSTS_PER_PAGE * pageNumber);
     setCurrentGeneralPagePosts(posts);
-    console.log(posts)
     
     // get the amount of posts for the pagination posts
     const totalQueryRef = query(postsRef, where(propertyName, "==", propertyValue));
@@ -365,8 +363,44 @@ export const BlogProvider = ({ children }) => {
   // recent posts, so get most recent posts
     // this will be in footer & infosidebar
 
-  // top of the week, get most viewed posts by within a certain date,
-  // or could change it to be all time highest viewed post
+
+
+
+  const getMostViewedPosts = async _ => {
+    // get the ids for the most viewed posts
+    const postsRef = collection(db, "postViewData");
+
+    const queryRef = query(
+      postsRef,
+      orderBy('viewCount', 'desc'),
+      limit(8),
+    );
+    
+    const querySnapshot = await getDocs(queryRef);
+
+    let postIdsAndViewsData = []
+
+    querySnapshot.forEach((doc) => {
+      const postId = doc.id;
+      const viewCount = doc.data().viewCount 
+    
+      postIdsAndViewsData.push({postId, viewCount})
+    })
+
+    // get the actual post data
+    let posts = []
+    const postsCollectionRef = collection(db, "posts");
+ 
+    for (const item of postIdsAndViewsData) {
+      const { postId, viewCount } = item;
+      const postDoc = await getDoc(doc(postsCollectionRef, postId));
+      const postData = postDoc.data();
+      posts.push(postData)
+    }
+
+    return posts
+  }
+  
 
 
   return (
@@ -409,6 +443,7 @@ export const BlogProvider = ({ children }) => {
         getSearchPosts,
 
         getPostsByIds,
+        getMostViewedPosts,
       }}
     >
       {children}
