@@ -35,7 +35,7 @@ const PostPreviewTogether = (props) => {
       </div>
       <div className='absolute bottom-0 m-6'>
         <Link to={`/post/${data?.postId}`}>
-          <h2 className='text-white font-medium text-2xl mb-2'>{data?.title?.length >= articleTitleCutoff ? `${data?.title?.slice(0, articleTitleCutoff).trim()}...` : data?.title}</h2>
+          <h2 className='text-white font-medium text-2xl mb-2'>{data?.title ? (data.title.length > articleTitleCutoff ? `${data.title.slice(0, articleTitleCutoff).trim()}...` : data?.title) : "title unknown"}</h2>
         </Link>
         <AuthorAndDate {...{authorLink:`/author/${data?.username}`, authorName:data?.displayName, date:getDateFromTime(data?.createdAt?.nanoseconds, data?.createdAt?.seconds), textColor:"#fff"}}/>
       </div>
