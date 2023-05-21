@@ -400,6 +400,28 @@ export const BlogProvider = ({ children }) => {
 
     return posts
   }
+
+
+  const getMostRecentPosts = async (postAmountToGet = 10) => {
+    const postsRef = collection(db, "posts");
+
+    const queryRef = query(
+      postsRef,
+      orderBy('createdAt', 'desc'),
+      limit(postAmountToGet),
+    );
+    
+    const querySnapshot = await getDocs(queryRef);
+
+    let posts = []
+
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      posts.push(doc.data())
+    });
+
+    return posts
+  }
   
 
 
@@ -444,6 +466,7 @@ export const BlogProvider = ({ children }) => {
 
         getPostsByIds,
         getMostViewedPosts,
+        getMostRecentPosts,
       }}
     >
       {children}
