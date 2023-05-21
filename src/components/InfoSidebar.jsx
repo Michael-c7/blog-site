@@ -30,14 +30,10 @@ import scienceBgImage from "../assets/images/categories/science.jpg"
 
 
 const InfoSidebar = (props) => {
-    const { getPostsByIds } = useBlogContext()
-
-    let testRecentArr = Array.from({ length:3 })
-
-    let [sliderCurrentIndex, setSliderCurrentIndex] = React.useState(0)
-
-
+    const { getPostsByIds, getMostRecentPosts } = useBlogContext()
+    let [sliderCurrentIndex, setSliderCurrentIndex] = useState(0)
     let [sliderPostData, setSliderPostData] = useState([])
+    let [recentPostsData, setRecentPostsData] = useState([])
 
     const categoriesList = [
         {
@@ -154,7 +150,7 @@ const InfoSidebar = (props) => {
 
 
     // auto slider
-    React.useEffect(() => {
+    useEffect(() => {
         let slideTimeChangeInMilliseconds = 7000
         let timeout = setTimeout(() => {
             if(sliderCurrentIndex === sliderPostData.length - 1) {
@@ -173,6 +169,12 @@ const InfoSidebar = (props) => {
         })
     },[sliderCurrentIndex])
     
+
+    
+    // get most recent posts
+    useEffect(() => {
+        getMostRecentPosts(3).then((data) => setRecentPostsData(data))
+    },[])
 
 
   return (
@@ -205,9 +207,9 @@ const InfoSidebar = (props) => {
             <div>
                 <h2 className=" font-semibold text-3xl mb-2">Recent Posts</h2>
                 <div className="flex flex-col gap-6">
-                {testRecentArr.map((data, index) => {
+                {recentPostsData.map((data, index) => {
                     return (
-                        <PostPreviewRow key={index} direction={"flex-row-reverse"}/>
+                        <PostPreviewRow key={index} {...{post:data, direction:"flex-row-reverse"}}/>
                         )
                     })}
                 </div>

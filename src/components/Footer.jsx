@@ -7,10 +7,19 @@ import {
 } from "../utility/reusable"
 
 import PostPreviewRow from "../components/widgets/postPreview/PostPreviewRow"
+import { useBlogContext } from "../contexts/blog_context"
+
+
+
 
 const Footer = () => {
-  let recentPostsArr = Array.from({ length:2 })
+  const { getMostRecentPosts } = useBlogContext()
+  let [recentPostsData, setRecentPostsData] = React.useState([])
 
+
+  React.useEffect(() => {
+      getMostRecentPosts(2).then((data) => setRecentPostsData(data))
+  },[])
 
   return (
     <footer className="bg-black text-white relative">
@@ -39,9 +48,9 @@ const Footer = () => {
               <div>
                 <h2 className="font-bold mb-4 text-lg">Recent Posts</h2>
                 <div className="flex flex-col gap-6">
-                  {recentPostsArr.map((el, index) => {
+                  {recentPostsData.map((data, index) => {
                     return (
-                      <PostPreviewRow key={index} {...{textColor:"#fff", direction:"flex-row-reverse"}} />
+                      <PostPreviewRow key={index} {...{post:data, textColor:"#fff", direction:"flex-row-reverse"}} />
                     )
                   })}
                 </div>
