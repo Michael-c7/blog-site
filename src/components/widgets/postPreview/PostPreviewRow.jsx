@@ -34,7 +34,7 @@ const PostPreviewRow = (props) => {
 
   return (
     <div className={`flex items-center  ${props.direction ? props.direction : "flex-row"} ${props.direction === "flex-row-reverse" ? "justify-between" : ""}`}>
-        <Link className="w-24 h-24 flex-shrink-0" to="/link to post">
+        <Link className="w-24 h-24 flex-shrink-0" to={`/post/${data?.postId}`}>
           <img src={data?.image ? data?.image : testImg} alt={data?.title} title={data?.title} className="w-full h-full rounded-xl object-cover  "/>
         </Link>
 
