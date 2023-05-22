@@ -1,8 +1,8 @@
-import React from "react"
+import React, { useState } from "react"
 import { Link } from "react-router-dom"
 
 import {
-  navItems,
+  getAllCategories,
   socialMediaItems,
 } from "../utility/reusable"
 
@@ -10,16 +10,20 @@ import PostPreviewRow from "../components/widgets/postPreview/PostPreviewRow"
 import { useBlogContext } from "../contexts/blog_context"
 
 
-
-
 const Footer = () => {
-  const { getMostRecentPosts } = useBlogContext()
+  const { getMostRecentPosts, getAllCategoriesAndCategoryAmount } = useBlogContext()
   let [recentPostsData, setRecentPostsData] = React.useState([])
+  let [categories, setCategories] = useState([])
+
+  React.useEffect(() => {
+    let amountOfPostsToGet = 2
+    getMostRecentPosts(amountOfPostsToGet).then((data) => setRecentPostsData(data))
+  },[])
 
 
   React.useEffect(() => {
-      getMostRecentPosts(2).then((data) => setRecentPostsData(data))
-  },[])
+    getAllCategoriesAndCategoryAmount(getAllCategories()).then((data) => setCategories(data))
+}, [getAllCategories])
 
   return (
     <footer className="bg-black text-white relative">
@@ -61,13 +65,13 @@ const Footer = () => {
                 <h2 className="font-bold mb-4 text-lg">Categories</h2>
                 <ul>
                   {/* Slice removes the first item which is home */}
-                  {navItems.slice(1,navItems.length).map((el) => {
+                  {categories.map((el, index) => {
                     return (
-                      <li key={el.id} className="relative py-3 flex flex-row justify-between after:content-[''] after:absolute after:bg-zinc-800 after:w-full after:left-0 after:h-px after:bottom-0">
-                        <Link to={`${el.link}`}>{el.text}</Link>
+                      <li key={el.category} className="relative py-3 flex flex-row justify-between after:content-[''] after:absolute after:bg-zinc-800 after:w-full after:left-0 after:h-px after:bottom-0">
+                        <Link to={`/category/${el.category}`}>{el.category}</Link>
                         <div className="rounded-full p-1 flex justify-center items-center text-center text-xs min-w-[1.5rem] min-h-[1.5rem]" 
-                          style={{backgroundColor:`var(${el.bgColor})`}}
-                        >13</div>
+                          style={{backgroundColor:`var(--category--${el.category.toLowerCase()})`}}
+                        >{el.amount}</div>
                       </li>
                     )
                   })}
