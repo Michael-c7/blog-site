@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom";
 import { socialMediaNumberFormatter } from "../utility/misc";
 import { useBlogContext } from "../contexts/blog_context";
+import { getAllCategories } from "../utility/reusable";
 // icons 
 import {
     FaFacebookF,
@@ -27,38 +28,21 @@ import scienceBgImage from "../assets/images/categories/science.jpg"
 
 
 
-
-
 const InfoSidebar = (props) => {
-    const { getPostsByIds, getMostRecentPosts } = useBlogContext()
+    const { getPostsByIds, getMostRecentPosts, getAllCategoriesAndCategoryAmount } = useBlogContext()
     let [sliderCurrentIndex, setSliderCurrentIndex] = useState(0)
     let [sliderPostData, setSliderPostData] = useState([])
     let [recentPostsData, setRecentPostsData] = useState([])
+    let [categories, setCategories] = useState([])
+    let [categoriesList, setCategoryList] = useState([])
 
-    const categoriesList = [
-        {
-            name:"food",
-            amount:12,
-            bgImg:foodBgImage,
-            link:"/category/food"
-        },
-        {
-            name:"gaming",
-            amount:8,
-            bgImg:gamingBgImage,
-            link:"/category/gaming"
-        },        {
-            name:"Movies",
-            amount:4,
-            bgImg:moviesBgImage,
-            link:"/category/movies"
-        },        {
-            name:"science",
-            amount:7,
-            bgImg:scienceBgImage,
-            link:"/category/science"
-        },
-    ]
+    const categoriesImageMap = {
+        movies: moviesBgImage,
+        science: scienceBgImage,
+        food:foodBgImage,
+        gaming:gamingBgImage,
+    }
+
 
     const socialMediaGroupList = [
         {
@@ -173,8 +157,22 @@ const InfoSidebar = (props) => {
     
     // get most recent posts
     useEffect(() => {
-        getMostRecentPosts(3).then((data) => setRecentPostsData(data))
+        let amountOfPostsToGet = 3
+        getMostRecentPosts(amountOfPostsToGet).then((data) => setRecentPostsData(data))
     },[])
+
+    // get all categories and the amount of posts their are for the categories
+    useEffect(() => {
+        getAllCategoriesAndCategoryAmount(getAllCategories()).then((data) => setCategories(data))
+    }, [])
+
+
+    useEffect(() => {
+        let categoriesToGet = ["food", "gaming", "movies", "science"]
+        const filteredData = categories.filter(item => categoriesToGet.includes(item.category.toLowerCase()));
+        
+        setCategoryList(filteredData)
+    }, [categories])
 
 
   return (
@@ -196,8 +194,8 @@ const InfoSidebar = (props) => {
             <section className="flex flex-col gap-3 my-10">
                 {categoriesList.map((el, index) => {
                     return (
-                        <Link to={`${el.link}`} key={index} className="bg-slate-500 p-4 rounded-xl flex justify-between bg-no-repeat bg-center bg-cover" style={{backgroundImage:`url(${el.bgImg})`, boxShadow:"inset 0px 0px 75px 17px rgba(0,0,0,0.75)"}}>
-                            <span className="text-white capitalize">{el.name}</span>
+                        <Link to={`${el.link}`} key={index} className="bg-slate-500 p-4 rounded-xl flex justify-between bg-no-repeat bg-center bg-cover" style={{backgroundImage:`url(${categoriesImageMap[el?.category.toLowerCase()]})`, boxShadow:"inset 0px 0px 75px 17px rgba(0,0,0,0.75)"}}>
+                            <span className="text-white capitalize">{el.category}</span>
                             <span className="bg-white p-1 rounded-full w-8 flex justify-center items-center">{el.amount}</span>
                         </Link>
                     )
@@ -242,7 +240,7 @@ const InfoSidebar = (props) => {
 
                         return (
                             <div key={index} className={`${slidePosition} opacity-0 transition-all duration-700 absolute w-full h-full top-0`}>
-                                <PostPreviewTogether {...{post:data ,position:"absolute", width:"w-full", height:"h-full"}} />
+                                <PostPreviewTogether {...{post:data, position:"absolute", width:"w-full", height:"h-full"}} />
                             </div>
                         )
                     })}
