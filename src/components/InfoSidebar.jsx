@@ -176,13 +176,13 @@ const InfoSidebar = (props) => {
 
 
   return (
-    <div className="mb-0 relative ">
+    <div className="mb-0 relative">
         <div className="sticky top-0">
             {/* social media group */}
             <div className="grid grid-cols-4 grid-rows-2 gap-1">
                 {socialMediaGroupList.map((el, index) => {
                     return (
-                        <Link to={el.link} key={index} className=" bg-slate-50 p-3 flex text-center flex-col justify-center center">
+                        <Link to={el.link} key={index} className="bg-slate-50 p-3 flex text-center flex-col justify-center center">
                             <el.icon className="self-center text-xl" style={{color:el.iconColor}}/>
                             <div className="text-sm font-bold mt-1">{socialMediaNumberFormatter.format(el.followers)}</div>
                             <p className="text-xs">{el.followerText}</p>
@@ -194,7 +194,7 @@ const InfoSidebar = (props) => {
             <section className="flex flex-col gap-3 my-10">
                 {categoriesList.map((el, index) => {
                     return (
-                        <Link to={`${el.link}`} key={index} className="bg-slate-500 p-4 rounded-xl flex justify-between bg-no-repeat bg-center bg-cover" style={{backgroundImage:`url(${categoriesImageMap[el?.category.toLowerCase()]})`, boxShadow:"inset 0px 0px 75px 17px rgba(0,0,0,0.75)"}}>
+                        <Link to={`/category/${el.category}`} key={index} className="bg-slate-500 p-4 rounded-xl flex justify-between bg-no-repeat bg-center bg-cover" style={{backgroundImage:`url(${categoriesImageMap[el?.category.toLowerCase()]})`, boxShadow:"inset 0px 0px 75px 17px rgba(0,0,0,0.75)"}}>
                             <span className="text-white capitalize">{el.category}</span>
                             <span className="bg-white p-1 rounded-full w-8 flex justify-center items-center">{el.amount}</span>
                         </Link>
@@ -203,7 +203,7 @@ const InfoSidebar = (props) => {
             </section>
             {/* recent posts */}
             <div>
-                <h2 className=" font-semibold text-3xl mb-2">Recent Posts</h2>
+                <h2 className="font-semibold text-3xl mb-2">Recent Posts</h2>
                 <div className="flex flex-col gap-6">
                 {recentPostsData.map((data, index) => {
                     return (
