@@ -51,13 +51,15 @@ const Post = () => {
       deletePostComment,
     // post likes
       togglePostLike,
+      getLikedPosts,
+      currentUsersLikedPosts,
+      paginatedBlogPosts,
     // post views
       currentPostViews,
       getPostViewData,
       addPostViewData,
       postIdExistsInViewsDatabase,
-      currentUsersLikedPosts,
-    // state
+    // username & displayName
       currentUserName,
       currentDisplayName,
   } = useBlogContext()
@@ -98,7 +100,6 @@ let [isPostLikedByCurrentUser, setIsPostLikedByCurrentUser] = useState(false) //
 
 // State variable to store user ids of users who have liked the post
 let [localLikeUids, setLocalLikeUids] = useState([])
-let [localLikedPosts, setLocalLikedPosts] = useState([])
 
 // State variables for page views
 const [localCurrentPageViews, setLocalCurrentPageViews] = useState(0)
@@ -146,7 +147,6 @@ const getCommentData = () => {
   // set local commentData w/ the actual commentData
   useEffect(() => {
     setLocalCommentData(currentPostComments)
-
   },[currentPostComments])
 
 
@@ -170,16 +170,7 @@ const getCommentData = () => {
     setIsPostLikedByCurrentUser(currentPost?.likes?.includes(user?.uid))
     // the initial like amount from the database
     setLocalLikeUids(currentPost?.likes)
-
-    
   }, [currentPost])
-
-
-  useEffect(() => {
-    // the initial amount of post the user has liked
-    setLocalLikedPosts(currentUsersLikedPosts) 
-    console.log(currentUsersLikedPosts)
-  }, [currentUsersLikedPosts])
 
 
 
@@ -286,7 +277,7 @@ const getCommentData = () => {
   const likePostLocal = (currentUserUid, currentPostId) => {    
     setIsPostLikedByCurrentUser(true)
     setLocalLikeUids([...localLikeUids, currentUserUid])
-    
+
     // upload to database
     togglePostLike(
       // postId
@@ -295,8 +286,8 @@ const getCommentData = () => {
       Array.from(new Set([...localLikeUids, currentUserUid])),
       // userUid
       currentUserUid,
-      // likedPostsData
-      Array.from(new Set([...localLikedPosts, currentPostId]))
+      // likeOrUnlike
+      "like",
     )
   }
 
@@ -312,8 +303,8 @@ const getCommentData = () => {
       [...localLikeUids.filter(id => id !== currentUserUid)],
       // userUid
       currentUserUid,
-      // likedPostsData
-      [...localLikedPosts.filter(id => id !== currentPostId)]
+      // likeOrUnlike
+      "unlike",
     )
   }
 

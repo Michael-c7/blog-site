@@ -9,7 +9,12 @@ const initialState = {
 
 import { AppAuth, db } from "../Auth/firebase"
 
-import { doc, setDoc, getDoc, deleteDoc, collection, getDocs, query, where, orderBy, limit, } from "firebase/firestore"; 
+import { 
+  doc, setDoc, getDoc,updateDoc,
+  deleteDoc,
+  collection, getDocs, query, where, orderBy, limit,
+  arrayUnion, arrayRemove,
+} from "firebase/firestore"; 
 import { useNavigate, redirect, Navigate, } from "react-router-dom";
 
 import { getDateFromTime } from "../utility/misc"
@@ -45,9 +50,9 @@ export const BlogProvider = ({ children }) => {
   // for pagination
   const POSTS_PER_PAGE = 10; // Number of documents / blog posts per page
   let [currentGeneralPagePosts, setCurrentGeneralPagePosts] = useState([])
-
   let [paginationDotsLoaded, setPaginationDotsLoaded] = useState(false)
 
+  // other
   let [currentSearchTerm, setCurrentSearchTerm] = useState("")
 
 
@@ -117,7 +122,7 @@ export const BlogProvider = ({ children }) => {
 
 
 
-
+// post comments
   const createPostComment = async (postId, commentData) => {
     const docRef = doc(db, "postComments", postId);
     const docSnap = await getDoc(docRef);
@@ -156,25 +161,41 @@ export const BlogProvider = ({ children }) => {
 
 
 
-  const togglePostLike = async (postId, likeData, userUid, likedPostsData) => {  
+
+  /**
+   * 
+   * @param {string} postId - the id of the post eg: "d33d7967-efac-4b49-b49f-16e018645acc"
+   * @param {Array} likeData - an array of user id's who've like the post
+   * @param {string} userUid - id of the current logged in user
+   * @param {String} likeOrUnlike - if function is for liking the post put "like" if for un-liking the post put "unlike"
+   */
+  const togglePostLike = async (postId, likeData, userUid, likeOrUnlike) => {  
     /* in the posts collection, all the user who've liked this post */
     const docRef = doc(db, "posts", postId);
     setDoc(docRef, { likes: likeData }, { merge: true });
-    /*array of all the posts that liked */
-    // const docRef1 = doc(db, "likedPosts", user.uid);
-    // setDoc(docRef1, { likes: [...oldPostIdsArr, postId] });
 
-
-
-    // get all the old likedPosts for this user then do -->  [...oldPostIdsArr, postId]
+    // in the likedPosts collection, all the posts the users liked
     const docRef1 = doc(db, "likedPosts", userUid);
-    setDoc(docRef1, { likes: likedPostsData }, { merge: true });
+
+
+    // add or remove an element to the array
+    if(likeOrUnlike === "like") {
+      updateDoc(docRef1, {
+        likes: arrayUnion(postId)
+      })
+    } else if(likeOrUnlike === "unlike") {
+      // arrayRemove
+      updateDoc(docRef1, {
+        likes: arrayRemove(postId)
+      })
+    }
+
   }
 
 
 
 
-
+// post view data
   const getPostViewData = async (postId) => {
     const docRef = doc(db, "postViewData", postId);
     const docSnap = await getDoc(docRef);
@@ -191,7 +212,6 @@ export const BlogProvider = ({ children }) => {
     }
   }
 
-
   const addPostViewData = async (postId, postAuthorUserUid, viewCount, viewMetaData) => {
       setPostIdExistsInViewsDatabase(true)
 
@@ -203,11 +223,13 @@ export const BlogProvider = ({ children }) => {
     
   }
 
-
   // when you delete a post should delete the postViewData associated w/ it
   const deletePostViewData = async (postId) => {
     await deleteDoc(doc(db, "postViewData", postId));
   }
+
+
+
 
 /**
  * 
@@ -360,11 +382,6 @@ export const BlogProvider = ({ children }) => {
   }
 
 
-  // recent posts, so get most recent posts
-    // this will be in footer & infosidebar
-
-
-
 
   const getMostViewedPosts = async _ => {
     // get the ids for the most viewed posts
@@ -422,6 +439,24 @@ export const BlogProvider = ({ children }) => {
 
     return posts
   }
+
+
+  /**
+   * 
+   * @param {Array} categories - an array of categories eg: ["Food", "Movies", "Science"]
+   */
+  const getAllCategoriesAndCategoryAmount = async (categories) => {
+    const postsRef = collection(db, "posts");
+    let result = []
+
+    for(let i = 0; i < categories.length; i++) {
+      const totalQueryRef = query(postsRef, where("tag", "==", categories[i].toLowerCase()));
+      const amount = (await getDocs(totalQueryRef)).size;
+      result.push({category:categories[i], amount})
+    }
+
+    return result
+  }
   
 
 
@@ -467,6 +502,7 @@ export const BlogProvider = ({ children }) => {
         getPostsByIds,
         getMostViewedPosts,
         getMostRecentPosts,
+        getAllCategoriesAndCategoryAmount,
       }}
     >
       {children}
