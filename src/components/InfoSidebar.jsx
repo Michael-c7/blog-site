@@ -194,7 +194,7 @@ const InfoSidebar = (props) => {
             <section className="flex flex-col gap-3 my-10">
                 {categoriesList.map((el, index) => {
                     return (
-                        <Link to={`/category/${el.category}`} key={index} className="bg-slate-500 p-4 rounded-xl flex justify-between bg-no-repeat bg-center bg-cover" style={{backgroundImage:`url(${categoriesImageMap[el?.category.toLowerCase()]})`, boxShadow:"inset 0px 0px 75px 17px rgba(0,0,0,0.75)"}}>
+                        <Link to={`/category/${el.category.toLowerCase()}`} key={index} className="bg-slate-500 p-4 rounded-xl flex justify-between bg-no-repeat bg-center bg-cover" style={{backgroundImage:`url(${categoriesImageMap[el?.category.toLowerCase()]})`, boxShadow:"inset 0px 0px 75px 17px rgba(0,0,0,0.75)"}}>
                             <span className="text-white capitalize">{el.category}</span>
                             <span className="bg-white p-1 rounded-full w-8 flex justify-center items-center">{el.amount}</span>
                         </Link>
