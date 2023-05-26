@@ -215,11 +215,13 @@ const getCommentData = () => {
     let oldCurrentItem = localCommentData.filter((el) => el.id === currentCommentId)[0]
 
     let newCurrentItem = {
-      text:currentUserCommentText,
-      id:oldCurrentItem.id,
       authorDisplayName:oldCurrentItem.authorDisplayName,
+      authorUid:oldCurrentItem.authorUid,
+      authorUsername:oldCurrentItem.authorUsername,
       createdAt:oldCurrentItem.createdAt,
+      id:oldCurrentItem.id,
       isEdited:true,
+      text:currentUserCommentText,
     }
     
     // get all old item minus current item
