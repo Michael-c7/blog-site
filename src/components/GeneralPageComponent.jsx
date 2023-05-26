@@ -6,7 +6,7 @@ import PostPreviewCol from "./widgets/postPreview/PostPreviewCol"
 import GeneralPageCard from "./GeneralPageCard"
 
 
-const GeneralPageComponent = ({headingText, isGeneralHeadingShown = true, paginationDotAmount, postsData, currentPageNumber, setCurrentPageNumber, currentGeneralPagePosts,}) => {
+const GeneralPageComponent = ({headingText, isGeneralHeadingShown = true, paginationDotAmount, currentPageNumber, setCurrentPageNumber, currentGeneralPagePosts,}) => {
     // have ten articles / PostPreviewCol per page
     let testArr = Array.from({ length:10 })
     let paginationBtnAmt = Array.from({ length:paginationDotAmount })
@@ -29,7 +29,13 @@ const GeneralPageComponent = ({headingText, isGeneralHeadingShown = true, pagina
                             <div className="flex flex-wrap mt-12">
                                 {paginationBtnAmt.map((_, index) => {
                                     return (
-                                        <button onClick={() => setCurrentPageNumber(index + 1)} key={index} className={`text-white mx-1 first-of-type:ml-0 last-of-type:mr-0 py-2 px-4 rounded-full transition-colors hover:bg-orange-600 ${currentPageNumber === index + 1 ? "bg-orange-600" : "bg-black"}`}>{index + 1}</button>
+                                        <button onClick={() => {
+                                            setCurrentPageNumber(index + 1)
+                                            window.scrollTo({
+                                                top: 0,
+                                                behavior: 'instant',
+                                              });
+                                        }} key={index} className={`text-white mx-1 first-of-type:ml-0 last-of-type:mr-0 py-2 px-4 rounded-full transition-colors hover:bg-orange-600 ${currentPageNumber === index + 1 ? "bg-orange-600" : "bg-black"}`}>{index + 1}</button>
                                     )
                                 })}
                             </div>

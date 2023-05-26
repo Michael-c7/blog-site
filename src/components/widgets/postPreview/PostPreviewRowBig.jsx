@@ -26,7 +26,7 @@ const PostPreviewRowBig = (props) => {
   return (
     <section className={`flex ${props?.direction ? props?.direction : "flex-row"} gap-6`}>
         <Link to={`/post/${data.postId}`} className="flex-1 min-h-60">
-            <img src={data?.image ? data?.image : testImg} alt={data?.altText} title={`${data?.title ? data?.title : "default image"}`} className="w-full rounded-lg h-60"/>
+            <img src={data?.image ? data?.image : testImg} alt={data?.altText} className="w-full rounded-lg h-60"/>
         </Link>
         <div className="flex-1">
             <header className="flex items-center">

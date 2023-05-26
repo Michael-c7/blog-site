@@ -76,7 +76,7 @@ const LikedPosts = () => {
 
   return (
     <>
-      <GeneralPageComponent {...{headingText:"Liked posts", paginationDotAmount, postsData, currentPageNumber, setCurrentPageNumber, currentGeneralPagePosts }}/>
+      <GeneralPageComponent {...{headingText:"Liked posts", paginationDotAmount, currentPageNumber, setCurrentPageNumber, currentGeneralPagePosts }}/>
     </>
   )
 }

@@ -121,6 +121,22 @@ export function getTimeDifference(date1, date2) {
 
 
 
+  /**
+   * 
+   * @param {number} nanoseconds eg:386000000
+   * @param {number} seconds  eg:1681566169
+   * @returns Outputs "month day, year" eg: April 23, 2023
+   */
+  export function getDateFromTime(nanoseconds, seconds) {
+    const milliseconds = (seconds * 1000) + Math.floor(nanoseconds / 1000000);
+    const date = new Date(milliseconds);
+  
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  }
+
+
+
 
 
   const firstNames = {

@@ -91,8 +91,8 @@ export const socialMediaItems = [
 ]
 
 
-
-
+export const getAllCategories = _ => navItems.map((item) => item.text).slice(1, navItems.length)
+export const getAllCategoryBgColors = _ => navItems.map((item) => `var(${item.bgColor})`).slice(1, navItems.length)
 
 // images
 
