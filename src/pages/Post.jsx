@@ -184,7 +184,7 @@ const getCommentData = () => {
   const postComment = () => {
     // post the comment locally in the dom
     let newItem = {
-      text:swearjar.censor(currentUserCommentText),
+      text:currentUserCommentText,
       id:generateUniqueId(),
       // get the authorDisplayName from the current logged in user, for test use fake authorDisplayName
       authorDisplayName:currentDisplayName,
@@ -215,7 +215,7 @@ const getCommentData = () => {
     let oldCurrentItem = localCommentData.filter((el) => el.id === currentCommentId)[0]
 
     let newCurrentItem = {
-      text:swearjar.censor(currentUserCommentText),
+      text:currentUserCommentText,
       id:oldCurrentItem.id,
       authorDisplayName:oldCurrentItem.authorDisplayName,
       createdAt:oldCurrentItem.createdAt,
