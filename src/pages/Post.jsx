@@ -13,6 +13,7 @@ import Error from "../pages/Error";
 // assets and external libraries
 import defaultUserImg from "../assets/images/defaultUser.png";
 
+
 // utility functions and hooks
 import { 
   generateUniqueId,
@@ -134,7 +135,7 @@ const getCommentData = () => {
   // set local commentData w/ the actual commentData
   useEffect(() => {
     setLocalCommentData(currentPostComments)
-  },[postId, currentPostComments])
+  }, [postId, currentPostComments])
 
 
 
@@ -423,7 +424,7 @@ const getCommentData = () => {
           <header className="mb-4">
             <Tag {...{bgColor:`--category--${currentPost.tag}`, link:`/category/${currentPost.tag}`, text:currentPost.tag}}/>
             <div className="relative">
-              <div className="flex items-center ">
+              <div className="flex items-center">
                 <h2 className="font-bold text-4xl my-4">{currentPost.title}</h2>
                 {/* this is be checking if current user uid is same as user uid of the author of the post not if user is logged in not not */}
                 {user?.uid === currentPost?.authorUid ? (
@@ -496,7 +497,8 @@ const getCommentData = () => {
             {/* post a comment */}
             <div className={`${localCommentData.length < 1 ? "mb-0" : "mb-12"}`}>
               <div className="flex flex-row gap-4">
-                <Link to="/author link here" className="rounded-full w-14 h-12 ">
+                {/* the current user */}
+                <Link to={`/author/${currentUserName}`} className="rounded-full w-14 h-12 ">
                   <img src={defaultUserImg} alt="alt text" className="rounded-full w-full h-full"/>
                 </Link>
                 <textarea id="post-a-comment-input" onChange={() => setCurrentUserCommentText(postACommentText.current.value)} ref={postACommentText} value={currentUserCommentText} maxLength={wordLimitAmount} placeholder="Join the discussion and leave a comment!" className=" resize-y w-full h-24 border border-gray-300 rounded-sm p-2"></textarea>
@@ -525,12 +527,12 @@ const getCommentData = () => {
 
                 return (
                   <li id="post-comment" data-uniqueid={el.id} className="flex flex-row gap-4 w-full my-8 relative" key={index}>
-                  <Link to="/author link goes here" className="rounded-full w-14 h-12">
+                  <Link to={`/author/${el.authorUsername}`} className="rounded-full w-14 h-12">
                     <img src={defaultUserImg} alt="alt text" className="rounded-full w-12 h-12 object-cover"/>
                   </Link>
                   <div id="container-test" className="w-full">
                     <header className="flex flex-row items-center w-full">
-                      <Link to="/link to author here">
+                      <Link to={`/author/${el.authorUsername}`}>
                         <h2 className="font-medium mr-2">{el.authorDisplayName}</h2>
                       </Link>
                       <p className="text-slate-500 text-sm">{getTimeDifference(el.createdAt, Date())}</p>
