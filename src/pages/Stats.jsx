@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import GeneralHeading from '../components/GeneralHeading';
 import { socialMediaNumberFormatter } from '../utility/misc';
-import { getAllCategories, getAllCategoryBgColors } from '../utility/reusable';
+// import { getAllCategories, getAllCategoryBgColors } from '../utility/reusable';
 import { faker } from '@faker-js/faker';
 
 import {
