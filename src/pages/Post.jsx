@@ -1,6 +1,6 @@
 // react and third-party libraries
 import React, { useState, useEffect, useRef } from "react"
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";;
 
 // components and pages
 import Tag from "../components/widgets/Tag";
@@ -33,10 +33,9 @@ import { AiOutlineEdit } from "react-icons/ai";
 import { BiTrash } from "react-icons/bi";
 
 
-
-
-
 const Post = () => {
+  const { postId } = useParams();
+
   const { 
     // post
       getPost,
@@ -51,9 +50,6 @@ const Post = () => {
       deletePostComment,
     // post likes
       togglePostLike,
-      getLikedPosts,
-      currentUsersLikedPosts,
-      paginatedBlogPosts,
     // post views
       currentPostViews,
       getPostViewData,
@@ -70,7 +66,7 @@ const Post = () => {
   } = useAuthContext()
 
 // Author description for the blog
-let authorDesc = "My goal is to create content that provides value to my readers in an engaging and informative way. Whether I have a specific area of expertise or cover a range of topics, I strive to write high-quality content that resonates with my audience and builds a community around my blog."
+let authorDesc = "We don't know a lot about them, but we're sure they're great. Their air of mystery only adds to the intrigue surrounding them. From what little information we have, they possess an undeniable charisma and captivating presence that draws people towards them."
 
 // State variables with their initial values using useState hook
 let [wordLimitAmount, setWordLimitAmount] = useState(1000)
@@ -125,29 +121,21 @@ const getCommentData = () => {
 
 // get current postID
   useEffect(() => {
-    // gets the current url
-    const currentUrl = window.location.href;
-    {/* the URL is first parsed using the URL constructor
-    to create a URL object. The pathname property
-    of the URL object is then accessed,
-    which returns the path component of the URL */}
-    const url = new URL(currentUrl);
-    const postId = url.pathname.split('/').pop();
     setCurrentPostId(postId)
   }, [])
 
 
 // get post data
   useEffect(() => {
-    getPost(currentPostId)
+    getPost(postId)
 
-    getPostComments(currentPostId)
-  }, [currentPostId])
+    getPostComments(postId)
+  }, [postId])
 
   // set local commentData w/ the actual commentData
   useEffect(() => {
     setLocalCommentData(currentPostComments)
-  },[currentPostComments])
+  },[postId, currentPostComments])
 
 
 
@@ -532,14 +520,15 @@ const getCommentData = () => {
               {localCommentData.map((el, index) => {
                 const { id } = el
                 let isOpen = isDropdownOpen.filter((el) => el.id === id)[0]?.isOpen
-             
+                console.log(el)
+
                 return (
                   <li id="post-comment" data-uniqueid={el.id} className="flex flex-row gap-4 w-full my-8 relative" key={index}>
-                  <Link to="/author link goes here" className="rounded-full w-14 h-12 ">
+                  <Link to="/author link goes here" className="rounded-full w-14 h-12">
                     <img src={defaultUserImg} alt="alt text" className="rounded-full w-12 h-12 object-cover"/>
                   </Link>
                   <div id="container-test" className="w-full">
-                    <header className="flex flex-row items-center w-full ">
+                    <header className="flex flex-row items-center w-full">
                       <Link to="/link to author here">
                         <h2 className="font-medium mr-2">{el.authorDisplayName}</h2>
                       </Link>
