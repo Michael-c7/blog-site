@@ -9,7 +9,8 @@ import { BiSearch, BiUser } from "react-icons/bi"
 import { 
   AiOutlineHeart,
   AiOutlineForm,
-  AiOutlineMenu
+  AiOutlineMenu,
+  AiOutlineBarChart,
 } from "react-icons/ai"
 import { MdLogout } from "react-icons/md"
 
@@ -108,10 +109,11 @@ const Navbar = () => {
             <button className="hidden max-[530px]:block bg-gray-200 p-2 rounded-full flex-center text-[16px] relative ml-2"  onClick={() => openSidebar()}>
               <AiOutlineMenu/>
             </button>
+            
 
             <button ref={profileRef} className="flex-center flex-row ml-3" onClick={() => setIsDropdownMenuOpen(!isDropdownMenuOpen)}>
                 <img src={user} className="mr-1 w-[32px]"/>
-                <IoIosArrowDown className="text-zinc-500" />
+                <IoIosArrowDown className="text-zinc-500"/>
             </button>
 
             <div ref={profileMenuRef} className={`dropdown-menu-container top-[55px] ${isDropdownMenuOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed"} `}>
@@ -125,17 +127,24 @@ const Navbar = () => {
                       </Link>
                   </li>
                   <li className="my-4 hover:text-zinc-900 min-[530px]:hidden">
-                      <Link to="/createAPost" className="flex flex-row items-center">
+                      <Link to="/createAPost" className="flex flex-row items-center" onClick={() =>  setIsDropdownMenuOpen(false)}>
                         <AiOutlineForm className="mr-3 text-xl"/>
                         <span>Write</span>
                       </Link>
                   </li>
                   <li className="my-4 hover:text-zinc-900">
-                    <Link to="/likedPosts" className="flex flex-row items-center">
+                    <Link to="/likedPosts" className="flex flex-row items-center" onClick={() =>  setIsDropdownMenuOpen(false)}>
                       <AiOutlineHeart className="mr-3 text-xl"/>
                       <span>Liked Posts</span>
                     </Link>
                   </li>
+                  <li className="my-4 hover:text-zinc-900">
+                    <Link to="/stats" className="flex flex-row items-center" onClick={() =>  setIsDropdownMenuOpen(false)}>
+                      <AiOutlineBarChart className="mr-3 text-xl"/>
+                      <span>Stats</span>
+                    </Link>
+                  </li>
+
                   <li className="my-4 hover:text-zinc-900">
                     <button className="flex flex-row items-center" onClick={() => {
                       logoutUser()
@@ -151,10 +160,10 @@ const Navbar = () => {
                 {!isLoggedIn ? (
                   <div className="text-center">
                     <h2 className="font-medium">Get started on BizTech</h2>
-                    <Link to="/login" className="flex flex-row justify-center items-center my-4 form-primary-btn text-sm mx-0">
+                    <Link to="/login" className="flex flex-row justify-center items-center my-4 form-primary-btn text-sm mx-0" onClick={() =>  setIsDropdownMenuOpen(false)}>
                     Login
                     </Link>
-                    <Link to="/signUp" className="flex flex-row justify-center items-center my-4 form-secondary-btn text-sm mx-0">
+                    <Link to="/signUp" className="flex flex-row justify-center items-center my-4 form-secondary-btn text-sm mx-0" onClick={() =>  setIsDropdownMenuOpen(false)}>
                     Sign Up
                     </Link>
                   </div>

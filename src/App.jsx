@@ -25,6 +25,7 @@ import Overlay from "./components/Overlay"
 // import SearchOverlay from "./components/SearchOverlay"
 import ScrollToTop from "./components/ScrollToTop"
 import LikedPosts from "./pages/LikedPosts";
+import Stats from "./pages/Stats";
 import ErrorComponent from "./components/Error";
 
 import { useAuthContext } from "./Auth/AuthContext"
@@ -56,6 +57,7 @@ function App() {
           {/* All private routes go in here */}
           <Route element={<PrivateRoutes/>}>
             <Route element={<CreateAPost/>} path="/createAPost"/>
+            <Route element={<Stats/>} path="/stats"/>
           </Route>
 
           <Route element={<Home/>} path="/"/>
@@ -67,6 +69,8 @@ function App() {
           <Route element={<Post/>} path="/post/:postId"/>
           {/* <Route element={<Search/>} path="/search"/> */}
           <Route element={<LikedPosts/>} path="/likedPosts"/>
+
+
 
           <Route element={<Error/>} path="*"/>
         </Routes>
