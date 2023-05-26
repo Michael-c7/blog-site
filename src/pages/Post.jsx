@@ -522,7 +522,6 @@ const getCommentData = () => {
               {localCommentData.map((el, index) => {
                 const { id } = el
                 let isOpen = isDropdownOpen.filter((el) => el.id === id)[0]?.isOpen
-                console.log(el)
 
                 return (
                   <li id="post-comment" data-uniqueid={el.id} className="flex flex-row gap-4 w-full my-8 relative" key={index}>
@@ -537,7 +536,7 @@ const getCommentData = () => {
                       <p className="text-slate-500 text-sm">{getTimeDifference(el.createdAt, Date())}</p>
                       {el.isEdited ? <span className="text-slate-500 text-sm ml-1">(edited)</span> : ""}
                       {/* this should be user?.uid === commentUser?.uid or something like that */}
-                      {isLoggedIn ? (
+                      {user?.uid === el.authorUid ? (
                         <button className="dots-btn ml-auto">
                           <RxDotsVertical/>
                         </button>
