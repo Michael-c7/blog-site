@@ -12,7 +12,6 @@ import Error from "../pages/Error";
 
 // assets and external libraries
 import defaultUserImg from "../assets/images/defaultUser.png";
-import swearjar from "swearjar-extended2";
 
 // utility functions and hooks
 import { 
@@ -417,6 +416,7 @@ const getCommentData = () => {
     <AreYouSureModal {...{isOpen:isDeleteCommentModalOpen, setIsOpen:setIsDeleteCommentModalOpen, confirmFunction:deleteComment,confirmFunctionArgs:currentCommentId, headingText:"Are you sure you want to delete this comment?", }}/>
 
     <article className="outer-width mx-auto">
+      {/* min-[995px]:grid min-[995px]:grid-cols-3 flex flex-col gap-28 mb-8 */}
       <div className="min-[990px]:grid min-[990px]:grid-cols-3 min-[990px]:my-12 my-6 gap-12 flex flex-col">
         <div className="col-span-2">
           {/* main post content section */}
@@ -535,7 +535,6 @@ const getCommentData = () => {
                       </Link>
                       <p className="text-slate-500 text-sm">{getTimeDifference(el.createdAt, Date())}</p>
                       {el.isEdited ? <span className="text-slate-500 text-sm ml-1">(edited)</span> : ""}
-                      {/* this should be user?.uid === commentUser?.uid or something like that */}
                       {user?.uid === el.authorUid ? (
                         <button className="dots-btn ml-auto">
                           <RxDotsVertical/>
