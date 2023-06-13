@@ -539,7 +539,7 @@ const getCommentData = () => {
                       </Link>
                       <p className="text-slate-500 text-sm">{getTimeDifference(el.createdAt, Date())}</p>
                       {el.isEdited ? <span className="text-slate-500 text-sm ml-1">(edited)</span> : ""}
-                      {user?.uid === el.authorUid ? (
+                      {isLoggedIn && user?.uid === el.authorUid ? (
                         <button className="dots-btn ml-auto">
                           <RxDotsVertical/>
                         </button>
