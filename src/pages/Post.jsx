@@ -495,27 +495,29 @@ const getCommentData = () => {
           {/* comments section */}
           <section className="p-6 bg-slate-100 rounded">
             {/* post a comment */}
-            <div className={`${localCommentData.length < 1 ? "mb-0" : "mb-12"}`}>
-              <div className="flex flex-row gap-4">
-                {/* the current user */}
-                <Link to={`/author/${currentUserName}`} className="rounded-full w-14 h-12 ">
-                  <img src={defaultUserImg} alt="alt text" className="rounded-full w-full h-full"/>
-                </Link>
-                <textarea id="post-a-comment-input" onChange={() => setCurrentUserCommentText(postACommentText.current.value)} ref={postACommentText} value={currentUserCommentText} maxLength={wordLimitAmount} placeholder="Join the discussion and leave a comment!" className=" resize-y w-full h-24 border border-gray-300 rounded-sm p-2"></textarea>
-              </div>
-              <div className="flex min-[425px]:flex-row flex-col min-[425px]:justify-between justify-center items-center mt-3  min-[425px]:ml-0  ml-16">
-                <p className="min-[425px]:ml-16 ml-0 min-[425px]:mb-0 mb-4">{currentUserCommentText.length} / {wordLimitAmount}</p>
-
-                <div className="flex min-[425px]:flex-row flex-col gap-4">
-                  {isEditingEnabled ? (
-                    <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" disabled={currentUserCommentText.length >= 1 ? false : true} type="button" onClick={() => editComment()}>Update Comment</button>
-                  ) : (
-                    <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" disabled={currentUserCommentText.length >= 1 ? false : true} type="button" onClick={() => postComment()}>Post comment</button>
-                  )}
-                  <button className="bg-white text-black border-2 border-black rounded-sm py-2 px-3" onClick={() => cancelBtn()}>Cancel</button>
+            {isLoggedIn ? (
+              <div className={`${localCommentData.length < 1 ? "mb-0" : "mb-12"}`}>
+                <div className="flex flex-row gap-4">
+                  {/* the current user */}
+                  <Link to={`/author/${currentUserName}`} className="rounded-full w-14 h-12 ">
+                    <img src={defaultUserImg} alt="alt text" className="rounded-full w-full h-full"/>
+                  </Link>
+                  <textarea id="post-a-comment-input" onChange={() => setCurrentUserCommentText(postACommentText.current.value)} ref={postACommentText} value={currentUserCommentText} maxLength={wordLimitAmount} placeholder="Join the discussion and leave a comment!" className=" resize-y w-full h-24 border border-gray-300 rounded-sm p-2"></textarea>
                 </div>
-              </div>
+                <div className="flex min-[425px]:flex-row flex-col min-[425px]:justify-between justify-center items-center mt-3  min-[425px]:ml-0  ml-16">
+                  <p className="min-[425px]:ml-16 ml-0 min-[425px]:mb-0 mb-4">{currentUserCommentText.length} / {wordLimitAmount}</p>
+                    
+                  <div className="flex min-[425px]:flex-row flex-col gap-4">
+                    {isEditingEnabled ? (
+                      <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" disabled={currentUserCommentText.length >= 1 ? false : true} type="button" onClick={() => editComment()}>Update Comment</button>
+                    ) : (
+                      <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" disabled={currentUserCommentText.length >= 1 ? false : true} type="button" onClick={() => postComment()}>Post comment</button>
+                    )}
+                    <button className="bg-white text-black border-2 border-black rounded-sm py-2 px-3" onClick={() => cancelBtn()}>Cancel</button>
+                  </div>
+                </div>
             </div>
+            ) : ( localCommentData.length < 1 ? "" : <h2 className="mb-12 ">Log in to post a comment and add to the discussions!</h2> )}
             {localCommentData.length <= 0 && <h2 className="mt-12 text-center text-lg">Leave a comment and start the discussion!</h2>}
             
             {/* comments */}
