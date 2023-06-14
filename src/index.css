@@ -17,6 +17,10 @@
   --vimeo--bg-color:#1AB7EA;
   --youtube--bg-color:#FE2905;
 
+
+  --skeleton-base-color:#ccc;
+  --skeleton-highlight-color:#a8a8a8;
+
   /* the width for the site container, on mobile */
   --smaller-main-width:calc(100% - 1rem);
 }
