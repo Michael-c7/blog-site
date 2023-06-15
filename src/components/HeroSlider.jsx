@@ -57,7 +57,7 @@ const HeroSlider = () => {
 
     return (
     <>
-        {slideData.length > 1 ? (
+        {slideData.length >= 1 ? (
             <article className="h-[600px] my-12 rounded-lg relative">
                 {/* slides */}
                 <ul>
