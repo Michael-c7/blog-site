@@ -24,10 +24,6 @@ const PostPreviewCol = (props) => {
   let loadingVar = !props.image
 
 
-  useEffect(() => {
-    console.log(data)
-  },[data])
-
   return (
     <section>
       {/* post image */}
