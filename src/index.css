@@ -193,3 +193,19 @@
   /* border:4px solid rgba(0, 0, 0, 0);
   background-clip:padding-box; */
 }
+
+
+
+
+
+.skeleton-list {
+  margin:0 0.5rem;
+}
+
+.skeleton-list:first-of-type {
+  margin-left:0;
+}
+
+.skeleton-list:last-of-type {
+  margin-right:0;
+}

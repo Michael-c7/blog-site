@@ -1,6 +1,9 @@
 // react and third-party libraries
 import React, { useState, useEffect, useRef } from "react"
-import { Link, useParams } from "react-router-dom";;
+import { Link, useParams } from "react-router-dom";
+
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 // components and pages
 import Tag from "../components/widgets/Tag";
@@ -31,6 +34,7 @@ import { FaComment, FaRegHeart, FaHeart, FaEye } from "react-icons/fa";
 import { RxDotsVertical } from "react-icons/rx";
 import { AiOutlineEdit } from "react-icons/ai";
 import { BiTrash } from "react-icons/bi";
+import { CgSpinner } from "react-icons/cg"
 
 
 const Post = () => {
@@ -100,6 +104,10 @@ let [localLikeUids, setLocalLikeUids] = useState([])
 // State variables for page views
 const [localCurrentPageViews, setLocalCurrentPageViews] = useState(0)
 const [currentUserMetaData, setCurrentUserMetaData] = useState([])
+
+
+// top show / hide the skeleton placeholder loader
+let loadingVar = currentPost.image
 
 
 
@@ -422,17 +430,28 @@ const getCommentData = () => {
         <div className="col-span-2">
           {/* main post content section */}
           <header className="mb-4">
-            <Tag {...{bgColor:`--category--${currentPost.tag}`, link:`/category/${currentPost.tag}`, text:currentPost.tag}}/>
+            {loadingVar ? (
+              <Tag {...{bgColor:`--category--${currentPost.tag}`, link:`/category/${currentPost.tag}`, text:currentPost.tag}}/>
+            ) : (
+              <Skeleton className="w-24 h-6"  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"0.5rem"}/>
+            )}
+            
             <div className="relative">
-              <div className="flex items-center">
-                <h2 className="font-bold text-4xl my-4">{currentPost.title}</h2>
-                {/* this is be checking if current user uid is same as user uid of the author of the post not if user is logged in not not */}
-                {user?.uid === currentPost?.authorUid ? (
-                  <button className="dots-btn ml-auto relative top-1" ref={postDropdownDotsRef} onClick={() => setIsPostDropdownOpen(!isPostDropdownOpen)}>
-                    <RxDotsVertical/>
-                  </button>
-                ) : ""}
-              </div>
+                <div className="flex items-center">
+                  {loadingVar ? (
+                    <h2 className="font-bold text-4xl my-4">{currentPost.title}</h2>
+                  ) : (
+                    <Skeleton className="w-80 h-8 my-4"  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"0.5rem"}/>
+                  )}
+                  
+                  {/* this is be checking if current user uid is same as user uid of the author of the post not if user is logged in not not */}
+                  {user?.uid === currentPost?.authorUid ? (
+                    <button className="dots-btn ml-auto relative top-1" ref={postDropdownDotsRef} onClick={() => setIsPostDropdownOpen(!isPostDropdownOpen)}>
+                      <RxDotsVertical/>
+                    </button>
+                  ) : ""}
+                </div>
+
                 {/* post dropdown menu */}
                 <div  ref={postDropdownMenuRef} className={`dropdown-menu-container ${isPostDropdownOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed hidden"} top-[60px] w-28 flex`}>
                   <ul className="w-full">
@@ -454,40 +473,71 @@ const getCommentData = () => {
                   </ul>
                 </div>
             </div>
-            <div className="flex flex-col gap-1 min-[375px]:flex-row min-[375px]:gap-0 items-center">
-              <Author {...{textColor:"#000", authorLink:`/author/${currentPost.username}`, authorName:currentPost.displayName}}/>
-              <DateWidget {...{textColor:"#000", date:currentPost.createdAt}}/>
-              <div className="flex items-center text-sm mx-3">
-                <FaComment className="text-xs mr-1"/>
-                <p>{socialMediaNumberFormatter.format(localCommentData.length)} comments</p>
+            {loadingVar ? (
+              <div className="flex flex-col gap-1 min-[375px]:flex-row min-[375px]:gap-0 items-center">
+                <Author {...{textColor:"#000", authorLink:`/author/${currentPost.username}`, authorName:currentPost.displayName}}/>
+                <DateWidget {...{textColor:"#000", date:currentPost.createdAt}}/>
+                <div className="flex items-center text-sm mx-3">
+                  <FaComment className="text-xs mr-1"/>
+                  <p>{socialMediaNumberFormatter.format(localCommentData.length)} comments</p>
+                </div>
+                <button className="flex items-center text-sm" type="button" onClick={() => isPostLikedByCurrentUser ? unlikePostLocal(user.uid, currentPostId) : likePostLocal(user.uid, currentPostId)}>
+                  {isPostLikedByCurrentUser ? (
+                    <FaHeart className="text-xs mr-1"/>
+                  ) : (
+                    <FaRegHeart className="text-xs mr-1"/>
+                  )}
+                  <p>{socialMediaNumberFormatter.format(localLikeUids?.length)}</p>
+                </button>
+                <div className="flex items-center text-sm mx-3">
+                  <FaEye className="mr-1"/>
+                  <p>{socialMediaNumberFormatter.format(localCurrentPageViews)}</p>
+                </div>
               </div>
-              <button className="flex items-center text-sm" type="button" onClick={() => isPostLikedByCurrentUser ? unlikePostLocal(user.uid, currentPostId) : likePostLocal(user.uid, currentPostId)}>
-                {isPostLikedByCurrentUser ? (
-                   <FaHeart className="text-xs mr-1"/>
-                ) : (
-                  <FaRegHeart className="text-xs mr-1"/>
-                )}
-                <p>{socialMediaNumberFormatter.format(localLikeUids?.length)}</p>
-              </button>
-              <div className="flex items-center text-sm mx-3">
-                <FaEye className="mr-1"/>
-                <p>{socialMediaNumberFormatter.format(localCurrentPageViews)}</p>
-              </div>
-            </div>
+            ) : (
+              <Skeleton className="w-96 h-6"  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"0.5rem"}/>
+            )}
           </header>
           {/* post section */}
           <section>
             {/* the actual post */}
-            <img src={currentPost.image} alt={currentPost.altText ? currentPost.altText : ""} className="w-full rounded-xl my-6"/>
-            <p className="leading-relaxed">{currentPost.text}</p>
+            {loadingVar ? (
+              <img src={currentPost.image} alt={currentPost.altText ? currentPost.altText : ""} className="w-full rounded-xl my-6"/>
+            ) : (
+              <Skeleton className="h-96 my-6"  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"0.5rem"}/>
+            )}
+
+            {loadingVar ? (
+              <p className="leading-relaxed">{currentPost.text}</p>
+            ) : (
+              <Skeleton count={6} baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"0.25rem"}/>
+            )}
+            
             {/* author details section */}
             <div className="flex flex-col md:flex-row md:text-left text-center gap-4 my-12">
-              <Link to={`/author/${currentPost.username}`} className="w-28 h-28 rounded-full flex-shrink-0 mx-auto">
-                <img src={defaultUserImg} className="w-28 h-28 rounded-full object-cover"/>
-              </Link>
+              {loadingVar ? (
+                <Link to={`/author/${currentPost.username}`} className="w-28 h-28 rounded-full flex-shrink-0 mx-auto">
+                  <img src={defaultUserImg} className="w-28 h-28 rounded-full object-cover"/>
+                </Link>
+              ) : (
+                <Skeleton className="w-28 h-28" circle baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+              )}
+
               <div className="flex-auto">
-                <h3 className="text-xl font-bold mb-1 capitalize"><Link to={`/author/${currentPost.username}`}>{currentPost.displayName}</Link></h3>
-                <p>{authorDesc}</p>
+                {/* author username */}
+                {loadingVar ? (
+                  <h3 className="text-xl font-bold mb-1 capitalize"><Link to={`/author/${currentPost.username}`}>{currentPost.displayName}</Link></h3>
+
+                ) : (
+                  <Skeleton className="w-24 h-6 mb-1" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                )}
+                {/* author description */}
+                {loadingVar ? (
+                  <p>{authorDesc}</p>
+                ) : (
+                  <Skeleton className="h-1/2" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                )}
+                
               </div>
             </div>
           </section>
@@ -499,14 +549,31 @@ const getCommentData = () => {
               <div className={`${localCommentData.length < 1 ? "mb-0" : "mb-12"}`}>
                 <div className="flex flex-row gap-4">
                   {/* the current user */}
-                  <Link to={`/author/${currentUserName}`} className="rounded-full w-14 h-12 ">
-                    <img src={defaultUserImg} alt="alt text" className="rounded-full w-full h-full"/>
-                  </Link>
-                  <textarea id="post-a-comment-input" onChange={() => setCurrentUserCommentText(postACommentText.current.value)} ref={postACommentText} value={currentUserCommentText} maxLength={wordLimitAmount} placeholder="Join the discussion and leave a comment!" className=" resize-y w-full h-24 border border-gray-300 rounded-sm p-2"></textarea>
+                  {loadingVar ? (
+                    <Link to={`/author/${currentUserName}`} className="rounded-full w-14 h-12">
+                      <img src={defaultUserImg} alt="alt text" className="rounded-full w-full h-full"/>
+                    </Link>
+                  ) : (
+                    <Skeleton className="w-12 h-12" circle baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                  )}
+                  {/* TEXTAREA */}
+                  <div className="w-full">
+                  {loadingVar ? (
+                    <textarea id="post-a-comment-input" onChange={() => setCurrentUserCommentText(postACommentText.current.value)} ref={postACommentText} value={currentUserCommentText} maxLength={wordLimitAmount} placeholder="Join the discussion and leave a comment!" className="resize-y w-full h-24 border border-gray-300 rounded-sm p-2"></textarea>
+                    ) : (
+                      <Skeleton className="h-24" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                      )}
+                      </div>
                 </div>
+                
                 <div className="flex min-[425px]:flex-row flex-col min-[425px]:justify-between justify-center items-center mt-3  min-[425px]:ml-0  ml-16">
-                  <p className="min-[425px]:ml-16 ml-0 min-[425px]:mb-0 mb-4">{currentUserCommentText.length} / {wordLimitAmount}</p>
+                  {loadingVar ? (
+                    <p className="min-[425px]:ml-16 ml-0 min-[425px]:mb-0 mb-4">{currentUserCommentText.length} / {wordLimitAmount}</p>
+                  ) : (
+                    <Skeleton className="w-20 ml-16" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                  )}
                     
+                  {loadingVar ? (
                   <div className="flex min-[425px]:flex-row flex-col gap-4">
                     {isEditingEnabled ? (
                       <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" disabled={currentUserCommentText.length >= 1 ? false : true} type="button" onClick={() => editComment()}>Update Comment</button>
@@ -515,10 +582,19 @@ const getCommentData = () => {
                     )}
                     <button className="bg-white text-black border-2 border-black rounded-sm py-2 px-3" onClick={() => cancelBtn()}>Cancel</button>
                   </div>
+                  ) : (
+                    <Skeleton className="w-56 h-[44px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                  )}
+
                 </div>
             </div>
-            ) : ( localCommentData.length < 1 ? "" : <h2 className="mb-12 ">Log in to post a comment and add to the discussions!</h2> )}
-            {localCommentData.length <= 0 && <h2 className="mt-12 text-center text-lg">Leave a comment and start the discussion!</h2>}
+            ) : ( 
+              localCommentData.length < 1 ? "" : <h2 className="mb-12">Log in to post a comment and add to the discussions!</h2> )}
+            { localCommentData.length < 1 && localCommentData ? (
+            <h2 className="mt-12 text-center text-lg">Leave a comment and start the discussion!</h2>
+            ) : ( 
+            <div className="text-center animate-spin w-[48px] h-[48px] text-5xl mx-auto"><CgSpinner/></div>
+            )}
             
             {/* comments */}
             <ul className="w-full my-6">
