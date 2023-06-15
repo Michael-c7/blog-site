@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
+import { Link } from 'react-router-dom'
 import Tag from "../Tag"
 import AuthorAndDate from "../AuthorAndDate"
 import { getDateFromTime } from '../../../utility/misc'
@@ -26,20 +28,27 @@ const PostPreviewTogether = (props) => {
   },[props])
   
   return (
-    <section className={`${props.position ? props.position : "relative"} ${props?.width} ${props?.height}`}>
-      <Link to={`/post/${data?.postId}`} className='w-full h-full'>
-        <img src={data?.image ? data?.image : testImg} alt={data?.altText} title={data?.title} className='w-full h-full rounded-xl object-cover'/>
-      </Link>
-      <div className="absolute top-0 m-6">
-        <Tag {...{bgColor:`--category--${data?.tag}`, link:`/category/${data?.tag}`, text:`${data?.tag}`}}/>
-      </div>
-      <div className='absolute bottom-0 m-6'>
-        <Link to={`/post/${data?.postId}`}>
-          <h2 className='text-white font-medium text-2xl mb-2'>{data?.title ? (data.title.length > articleTitleCutoff ? `${data.title.slice(0, articleTitleCutoff).trim()}...` : data?.title) : "title unknown"}</h2>
-        </Link>
-        <AuthorAndDate {...{authorLink:`/author/${data?.username}`, authorName:data?.displayName, date:getDateFromTime(data?.createdAt?.nanoseconds, data?.createdAt?.seconds), textColor:"#fff"}}/>
-      </div>
-    </section>
+    <>
+      {data.image ? (
+            <section className={`${props.position ? props.position : "relative"} ${props?.width} ${props?.height}`}>
+            <Link to={`/post/${data?.postId}`} className='w-full h-full'>
+              <img src={data?.image ? data?.image : testImg} alt={data?.altText} title={data?.title} className='w-full h-full rounded-xl object-cover'/>
+            </Link>
+            <div className="absolute top-0 m-6">
+              <Tag {...{bgColor:`--category--${data?.tag}`, link:`/category/${data?.tag}`, text:`${data?.tag}`}}/>
+            </div>
+            <div className='absolute bottom-0 m-6'>
+              <Link to={`/post/${data?.postId}`}>
+                <h2 className='text-white font-medium text-2xl mb-2'>{data?.title ? (data.title.length > articleTitleCutoff ? `${data.title.slice(0, articleTitleCutoff).trim()}...` : data?.title) : "title unknown"}</h2>
+              </Link>
+              <AuthorAndDate {...{authorLink:`/author/${data?.username}`, authorName:data?.displayName, date:getDateFromTime(data?.createdAt?.nanoseconds, data?.createdAt?.seconds), textColor:"#fff"}}/>
+            </div>
+          </section>
+      ) : (
+        <Skeleton className="h-[300px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius="0.5rem"/>
+      )}
+    </>
+
   )
 }
 
