@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
-
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 import PostPreviewCol from "./widgets/postPreview/PostPreviewCol"
 import { useBlogContext } from "../contexts/blog_context"
@@ -35,13 +36,20 @@ const EditorsChoice = () => {
   return (
     <article className="my-8">
         <h2 className="text-3xl font-medium mb-8">Editor's Choice</h2>
-        <div className="grid min-[900px]:grid-cols-3 grid-cols-31 gap-6">
-          {postData.map((data, index) => {
-            return (
-              <PostPreviewCol key={index} {...{post:data}}/>
-            )
-          })}
+        {postData.length > 0 ? (
+          <div className="grid min-[900px]:grid-cols-3 grid-cols-31 gap-6">
+            {postData.map((data, index) => {
+              return (
+                <PostPreviewCol key={index} {...{post:data}}/>
+              )
+            })}
         </div>
+        ) : (
+          <div className="my-8">
+            <Skeleton className="h-[460px] mx-2 my-2" width={380} count={6} inline baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+          </div>
+        )}
+
     </article>
   )
 }
