@@ -68,10 +68,10 @@ const Footer = () => {
                   {categories.map((el, index) => {
                     return (
                       <li key={el.category} className="relative py-3 flex flex-row justify-between after:content-[''] after:absolute after:bg-zinc-800 after:w-full after:left-0 after:h-px after:bottom-0">
-                        <Link to={`/category/${el.category.toLowerCase()}`}>{el.category}</Link>
-                        <div className="rounded-full p-1 flex justify-center items-center text-center text-xs min-w-[1.5rem] min-h-[1.5rem]" 
-                          style={{backgroundColor:`var(--category--${el.category.toLowerCase()})`}}
-                        >{el.amount}</div>
+                        <Link className="flex flex-row justify-between w-full" to={`/category/${el.category.toLowerCase()}`}>
+                          <h2>{el.category}</h2>
+                          <div className="rounded-full p-1 flex justify-center items-center text-center text-xs min-w-[1.5rem] min-h-[1.5rem]" style={{backgroundColor:`var(--category--${el.category.toLowerCase()})`}}>{el.amount}</div>
+                        </Link>
                       </li>
                     )
                   })}
