@@ -437,6 +437,7 @@ const getCommentData = () => {
             )}
             
             <div className="relative">
+              {/* post title */}
                 <div className="flex items-center">
                   {loadingVar ? (
                     <h2 className="font-bold text-4xl my-4">{currentPost.title}</h2>
@@ -445,10 +446,12 @@ const getCommentData = () => {
                   )}
                   
                   {/* this is be checking if current user uid is same as user uid of the author of the post not if user is logged in not not */}
-                  {user?.uid === currentPost?.authorUid ? (
-                    <button className="dots-btn ml-auto relative top-1" ref={postDropdownDotsRef} onClick={() => setIsPostDropdownOpen(!isPostDropdownOpen)}>
-                      <RxDotsVertical/>
-                    </button>
+                  {loadingVar ? (
+                    user?.uid === currentPost?.authorUid ? (
+                      <button className="dots-btn ml-auto relative top-1" ref={postDropdownDotsRef} onClick={() => setIsPostDropdownOpen(!isPostDropdownOpen)}>
+                        <RxDotsVertical/>
+                      </button>
+                    ) : ""
                   ) : ""}
                 </div>
 
