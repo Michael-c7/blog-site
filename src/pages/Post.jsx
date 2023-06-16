@@ -591,13 +591,26 @@ const getCommentData = () => {
 
                 </div>
             </div>
-            ) : ( 
-              localCommentData.length < 1 ? "" : <h2 className="mb-12">Log in to post a comment and add to the discussions!</h2> )}
-            { localCommentData.length < 1 && localCommentData ? (
-            <h2 className="mt-12 text-center text-lg">Leave a comment and start the discussion!</h2>
-            ) : ( 
-            <div className="text-center animate-spin w-[48px] h-[48px] text-5xl mx-auto"><CgSpinner/></div>
+            ) : (
+              <>
+                {/* {localCommentData.length < 1 ? "" : <h2 className="mb-12 text-center">Log in to post a comment and add to the discussions!</h2>} */}
+              </>
             )}
+
+            {/* text for a post that is not visited by a logged in user by has not comments */}
+            {!isLoggedIn && (
+              <h2 className={`${localCommentData.length > 1 && "mb-12"} text-center text-lg`}>Log in to post a comment and add to the discussions!</h2>
+            )}
+            {/* text for a post that is visited by a logged in user by has not comments */}
+            {isLoggedIn && localCommentData.length < 1 && (
+              <h2 className="mt-12 text-center text-lg">Leave a comment and start the discussion!</h2>
+            )}
+
+            {/* loading spinner for the comments */}
+            {!loadingVar && (
+              <div className="text-center animate-spin w-[48px] h-[48px] text-5xl mx-auto my-4"><CgSpinner/></div> 
+            )}
+            
             
             {/* comments */}
             <ul className="w-full my-6">
