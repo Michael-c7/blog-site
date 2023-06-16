@@ -134,29 +134,3 @@ export function getTimeDifference(date1, date2) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
   }
-
-
-
-
-
-  const firstNames = {
-    english: ["John", "Emma", "Michael", "Sophia", "William", "Olivia", "James", "Ava", "Benjamin", "Isabella", "Daniel", "Mia", "Alexander", "Charlotte", "Ethan", "Amelia", "Jacob", "Emily", "Liam", "Abigail"],
-    chinese: ["Wei", "Yan", "Ling", "Chun", "Hua", "Jian", "Jing", "Liu", "Ming", "Shan", "Xin", "Yong", "Zhi"],
-    hindi: ["Aarav", "Aryan", "Aditya", "Arjun", "Ishaan", "Riya", "Anika", "Aarohi", "Aditi", "Diya", "Ishika", "Kavya", "Myra", "Sara", "Shreya", "Tara", "Trisha"],
-    arabic: ["Ahmed", "Ali", "Amina", "Fatima", "Hassan", "Khalid", "Laila", "Mariam", "Mohammed", "Nadia", "Nour", "Omar", "Rania", "Sana", "Yousef", "Zahra"],
-  };
-  
-  const lastNames = {
-    english: ["Smith", "Johnson", "Brown", "Taylor", "Miller", "Jones", "Davis", "Garcia", "Wilson", "Martinez", "Anderson", "Thomas", "Jackson", "White", "Harris", "Martin", "Clark", "Lewis", "Walker", "Young"],
-    chinese: ["Chen", "Huang", "Lin", "Liu", "Wang", "Yang", "Yu", "Zhang", "Zhao", "Zhou"],
-    hindi: ["Sharma", "Verma", "Singh", "Yadav", "Rao", "Mishra", "Patel", "Gupta", "Jha", "Kumar", "Chauhan", "Pandey", "Bhatia", "Joshi", "Shah", "Trivedi"],
-    arabic: ["Ali", "Hassan", "Khalid", "Mahmoud", "Mohammed", "Nasser", "Omar", "Said", "Salem", "Saleh", "Sultan"],
-  };
-  
-  export function generateRandomName() {
-    const languages = Object.keys(firstNames);
-    const randomLanguage = languages[Math.floor(Math.random() * languages.length)];
-    const firstName = firstNames[randomLanguage][Math.floor(Math.random() * firstNames[randomLanguage].length)];
-    const lastName = lastNames[randomLanguage][Math.floor(Math.random() * lastNames[randomLanguage].length)];
-    return `${firstName} ${lastName}`;
-  }
