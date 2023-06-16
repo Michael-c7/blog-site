@@ -219,13 +219,17 @@ const InfoSidebar = (props) => {
             {/* recent posts */}
             <div>
                 <h2 className="font-semibold text-3xl mb-2">Recent Posts</h2>
-                <div className="flex flex-col gap-6">
-                {recentPostsData.map((data, index) => {
-                    return (
-                        <PostPreviewRow key={index} {...{post:data, direction:"flex-row-reverse"}}/>
-                        )
+                {recentPostsData.length > 0 ? (
+                    <div className="flex flex-col gap-6">
+                    {recentPostsData.map((data, index) => {
+                        return (
+                            <PostPreviewRow key={index} {...{post:data, direction:"flex-row-reverse"}}/>
+                            )
                     })}
-                </div>
+                    </div>
+                ) : (
+                    <Skeleton className="h-[64px] my-2" count={3}  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
+                )}
             </div>
             {/* mini slider */}
             <div className="relative my-8 h-[375px]">
@@ -238,28 +242,27 @@ const InfoSidebar = (props) => {
                     </button>
                 </div>
                 {/* slides */}
-
                 <div className="w-full h-full relative overflow-hidden rounded-xl">
                 {/* slide */}
                     {sliderPostData.length > 0 ? (
-                    sliderPostData.map((data, index) => {
-                        let slidePosition = "mini-slider--next"
+                        sliderPostData.map((data, index) => {
+                            let slidePosition = "mini-slider--next"
 
-                        if (sliderCurrentIndex === index) {
-                        slidePosition = "mini-slider--current";
-                        }
-                        if 
-                        (sliderCurrentIndex === index - 1 || 
-                        (index === 0 && sliderCurrentIndex === sliderPostData.length - 1)
-                        ) {
-                        slidePosition = "mini-slider--prev";
-                        }
+                            if (sliderCurrentIndex === index) {
+                            slidePosition = "mini-slider--current";
+                            }
+                            if 
+                            (sliderCurrentIndex === index - 1 || 
+                            (index === 0 && sliderCurrentIndex === sliderPostData.length - 1)
+                            ) {
+                            slidePosition = "mini-slider--prev";
+                            }
 
-                        return (
-                            <div key={index} className={`${slidePosition} opacity-0 transition-all duration-700 absolute w-full h-full top-0`}>
-                                <PostPreviewTogether {...{post:data, position:"absolute", width:"w-full", height:"h-full"}} />
-                            </div>
-                        )
+                            return (
+                                <div key={index} className={`${slidePosition} opacity-0 transition-all duration-700 absolute w-full h-full top-0`}>
+                                    <PostPreviewTogether {...{post:data, position:"absolute", width:"w-full", height:"h-full"}} />
+                                </div>
+                            )
                     })
                 ) : (
                     <Skeleton className="h-full"  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
