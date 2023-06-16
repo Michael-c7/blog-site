@@ -1,6 +1,9 @@
 import React, { useState } from "react"
 import { Link } from "react-router-dom"
 
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
 import {
   getAllCategories,
   socialMediaItems,
@@ -51,14 +54,17 @@ const Footer = () => {
               {/* Recent posts section */}
               <div>
                 <h2 className="font-bold mb-4 text-lg">Recent Posts</h2>
-                <div className="flex flex-col gap-6">
-                  {recentPostsData.map((data, index) => {
-                    return (
-                      <PostPreviewRow key={index} {...{post:data, textColor:"#fff", direction:"flex-row-reverse"}} />
-                    )
-                  })}
+                {recentPostsData.length > 0 ? (
+                  <div className="flex flex-col gap-6">
+                    {recentPostsData.map((data, index) => {
+                      return (
+                        <PostPreviewRow key={index} {...{post:data, textColor:"#fff", direction:"flex-row-reverse"}} />
+                      )
+                    })}
                 </div>
-
+                ) : (
+                  <Skeleton className="h-24 my-2" count={2} baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
+                )}
               </div>
               {/* categories section */}
               <div className="categories">
