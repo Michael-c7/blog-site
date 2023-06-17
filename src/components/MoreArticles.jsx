@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react"
+
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
 import PostPreviewRowBig from "./widgets/postPreview/PostPreviewRowBig"
 import InfoSidebar from "./InfoSidebar"
 import PostPreviewCol from "./widgets/postPreview/PostPreviewCol"
@@ -8,6 +12,12 @@ import { useBlogContext } from "../contexts/blog_context"
 const MoreArticles = () => {
   const { getPostsByIds } = useBlogContext()
   let [postData, setPostData] = useState([])
+
+
+  let loadingVar = postData.length > 0
+  let skeletonArticleLayoutArray = Array.from({ length:6 })
+  let skeletonBottomArticleLayoutArray = Array.from({ length:4 })
+
 
   let topDataStartIndex = 0
   let topDataEndIndex = 6
@@ -34,29 +44,77 @@ const MoreArticles = () => {
     getPostsByIds(moreArticlePostIds).then((data) => setPostData(data))
   }, [])
 
+  
+
+
+  const TopArticleSkeleton = _ => {
+    return (
+      <div className="flex flex-row justify-center items-center my-2">
+        <Skeleton className="min-[360px]:w-[350px] w-[220px] h-[240px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+        <div className="ml-4 w-full min-[600px]:block hidden">
+          <Skeleton className=" w-3/5 h-[24px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+          <Skeleton className="w-4/5 h-[64px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+          <Skeleton className="w-full h-[96px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+        </div>
+      </div>
+    )
+  }
+
+
+  const BottomArticleSkeleton = () => {
+    return (
+      <div>
+        <Skeleton className="h-[250px] my-1" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius="0.5rem"/>
+        <Skeleton className="h-[64px] my-1" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+        <Skeleton className="h-[24px] my-2" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+      </div>
+    )
+  }
+
+
+
+
   return (
     <div className="bg-white my-10">
         <div className="min-[995px]:grid min-[995px]:grid-cols-3 flex flex-col gap-28 mb-8">
             {/* main articles */}
             <div className="col-span-2">
-            {postData.slice(topDataStartIndex, topDataEndIndex).map((data, index) => {
-                    return (
-                        <div className="my-8 first-of-type:mt-0 last-of-type:mb-0" key={index}>
-                            <PostPreviewRowBig {...{post:data, direction:"md:flex-row flex-col"}}/>
-                        </div>
-                    )
+            {/* NOW DO THE SKELETON HERE */}
+            {loadingVar ? (
+              postData.slice(topDataStartIndex, topDataEndIndex).map((data, index) => {
+                return (
+                  <div className="my-8 first-of-type:mt-0 last-of-type:mb-0" key={index}>
+                      <PostPreviewRowBig {...{post:data, direction:"md:flex-row flex-col"}}/>
+                  </div>
+                )
+              })
+            ) : (
+              <div className="my-8 first-of-type:mt-0 last-of-type:mb-0 w-full">
+                {skeletonArticleLayoutArray.map((_) => {
+                  return <TopArticleSkeleton/>
                 })}
+              </div>
+            )}
+
             </div>
             {/* info sidebar */}
             <InfoSidebar/>
         </div>
         {/* bottom articles */}
         <div className="min-[900px]:grid min-[900px]:grid-cols-4 gap-6 flex flex-col">
-            {postData.slice(bottomDataStartIndex, bottomDataEndIndex).map((data, index) => {
+            {loadingVar ? (
+              postData.slice(bottomDataStartIndex, bottomDataEndIndex).map((data, index) => {
                 return (
                     <PostPreviewCol key={index} {...{post:data, hideDescription:true}}/>
                 )
-            })}
+              })
+            ) : (
+              skeletonBottomArticleLayoutArray.map((_) => {
+                return (
+                  <BottomArticleSkeleton/>
+                )
+              })
+            )}
         </div>
     </div>
   )

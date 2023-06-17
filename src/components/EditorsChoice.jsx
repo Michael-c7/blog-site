@@ -6,9 +6,7 @@ import PostPreviewCol from "./widgets/postPreview/PostPreviewCol"
 import { useBlogContext } from "../contexts/blog_context"
 
 
-let testArr = Array.from({ length:6 })
-
-
+let skeletonArticleLayoutArray = Array.from({ length:6 })
 
 
 const EditorsChoice = () => {
@@ -33,23 +31,33 @@ const EditorsChoice = () => {
 
 
 
+  const SkeletonArticle = () => {
+    return (
+      <div>
+        <Skeleton className="h-[250px] my-2" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius="0.5rem"/>
+        <Skeleton className="h-[64px] my-2" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+        <Skeleton className="h-[24px] my-2" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+        <Skeleton className="h-[72px] my-2" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+      </div>
+    )
+  }
+
   return (
     <article className="my-8">
         <h2 className="text-3xl font-medium mb-8">Editor's Choice</h2>
-        {postData.length > 0 ? (
-          <div className="grid min-[900px]:grid-cols-3 grid-cols-31 gap-6">
-            {postData.map((data, index) => {
+        <div className="grid min-[900px]:grid-cols-3 grid-cols-31 gap-6">
+          {postData.length > 0 ? (
+            postData.map((data, index) => {
               return (
                 <PostPreviewCol key={index} {...{post:data}}/>
               )
-            })}
-        </div>
-        ) : (
-          <div className="my-8">
-            <Skeleton className="h-[460px] mx-2 my-2" width={380} count={6} inline baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+            })
+          ) : (
+            skeletonArticleLayoutArray.map((_) => {
+              return <SkeletonArticle/>
+            })
+          )}
           </div>
-        )}
-
     </article>
   )
 }

@@ -10,7 +10,6 @@ const GeneralPageComponent = ({headingText, isGeneralHeadingShown = true, pagina
     // have ten articles / PostPreviewCol per page
     let testArr = Array.from({ length:10 })
     let paginationBtnAmt = Array.from({ length:paginationDotAmount })
-    
 
     return (
         <div>
