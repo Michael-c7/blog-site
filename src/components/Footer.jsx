@@ -69,19 +69,24 @@ const Footer = () => {
               {/* categories section */}
               <div className="categories">
                 <h2 className="font-bold mb-4 text-lg">Categories</h2>
-                <ul>
+                {categories.length > 0 ? (
+                  <ul>
                   {/* Slice removes the first item which is home */}
-                  {categories.map((el, index) => {
-                    return (
-                      <li key={el.category} className="relative py-3 flex flex-row justify-between after:content-[''] after:absolute after:bg-zinc-800 after:w-full after:left-0 after:h-px after:bottom-0">
-                        <Link className="flex flex-row justify-between w-full" to={`/category/${el.category.toLowerCase()}`}>
-                          <h2>{el.category}</h2>
-                          <div className="rounded-full p-1 flex justify-center items-center text-center text-xs min-w-[1.5rem] min-h-[1.5rem]" style={{backgroundColor:`var(--category--${el.category.toLowerCase()})`}}>{el.amount}</div>
-                        </Link>
-                      </li>
-                    )
-                  })}
-                </ul>
+                    {categories.map((el, index) => {
+                      return (
+                        <li key={el.category} className="relative py-3 flex flex-row justify-between after:content-[''] after:absolute after:bg-zinc-800 after:w-full after:left-0 after:h-px after:bottom-0">
+                          <Link className="flex flex-row justify-between w-full" to={`/category/${el.category.toLowerCase()}`}>
+                            <h2>{el.category}</h2>
+                            <div className="rounded-full p-1 flex justify-center items-center text-center text-xs min-w-[1.5rem] min-h-[1.5rem]" style={{backgroundColor:`var(--category--${el.category.toLowerCase()})`}}>{el.amount}</div>
+                          </Link>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                ) : (
+                  <Skeleton className="h-6 my-3" count={5} baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                )}
+
               </div>
             </section>
           </div>
