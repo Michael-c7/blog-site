@@ -15,7 +15,6 @@ import {
   collection, getDocs, query, where, orderBy, limit,
   arrayUnion, arrayRemove,
 } from "firebase/firestore"; 
-import { useNavigate, redirect, Navigate, } from "react-router-dom";
 
 import { getDateFromTime } from "../utility/misc"
 
@@ -295,69 +294,7 @@ export const BlogProvider = ({ children }) => {
 
 
 
-  const getSearchPosts = async (searchTerm, currentPageNumber) => {
-    /* can't find good in-the box solution for this w/ firebase for i think i will...
-        1. get all post title and put them in an array,
-        2. split all the posts titles and split them into words eg: searchTerm.split(" ")
-        3. return in limits of 10 posts, very similar to how i did /likePosts 
-    */
-   
-  
-    // get all posts, (Yikes)
-    const postsRef = collection(db, 'posts');
-    const querySnapshot = await getDocs(postsRef);
-
-
-    const titles = [];
-  
-    // get the all the titles and postId's from the posts
-    querySnapshot.forEach((doc) => {
-      const title = doc.data().title;
-      const postId = doc.data().postId;
-      titles.push({title, postId});
-    });
-
-
-
-// BUG IS HERE I THINK
-    /* Compare the words in the titles array
-    and the words in the searchTerm */
-    const result = [];
-    for (let i = 0; i < titles.length; i++) {
-      const titleWords = titles[i].title.toLowerCase().split(" ");
-      for (let j = 0; j < searchTerm.length; j++) {
-        if (titleWords.includes(searchTerm[j].toLowerCase())) {
-          result.push(titles[i]);
-          break;
-        }
-      }
-    }
-
-    console.log(titles)
-
-
-    // now set the pagination ect...
-    // let postAmtToGetEnd = POSTS_PER_PAGE * currentPageNumber
-    // let postAmtToGetStart = postAmtToGetEnd - POSTS_PER_PAGE
-    // let resultsPaginated = result.slice(postAmtToGetStart, postAmtToGetEnd)
-    // setPaginatedBlogPosts(result)
-    // setPaginationDotsLoaded(true)
-    
-
-    // get post data from the postIds in the current page
-    // let postObjects  = []
-
-    // for (const post of resultsPaginated) {
-    //   if (post.postId) {
-    //     const postRef = doc(db, 'posts', post.postId);
-    //     const postDoc = await getDoc(postRef);
-    //     const postObject = postDoc.data();
-    //     postObjects.push(postObject);
-    //   }
-    // }
-
-    // setCurrentGeneralPagePosts(postObjects)
-  }
+  const getSearchPosts = async (searchTerm, currentPageNumber) => {}
 
   
   
