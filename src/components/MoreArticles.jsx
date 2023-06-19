@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react"
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+import { generateUniqueId } from "../utility/misc"
+
+
 import PostPreviewRowBig from "./widgets/postPreview/PostPreviewRowBig"
 import InfoSidebar from "./InfoSidebar"
 import PostPreviewCol from "./widgets/postPreview/PostPreviewCol"
@@ -52,7 +55,7 @@ const MoreArticles = () => {
       <div className="flex flex-row justify-center items-center my-2">
         <Skeleton className="min-[360px]:w-[350px] w-[220px] h-[240px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
         <div className="ml-4 w-full min-[600px]:block hidden">
-          <Skeleton className=" w-3/5 h-[24px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+          <Skeleton className="w-3/5 h-[24px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
           <Skeleton className="w-4/5 h-[64px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
           <Skeleton className="w-full h-[96px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
         </div>
@@ -79,11 +82,10 @@ const MoreArticles = () => {
         <div className="min-[995px]:grid min-[995px]:grid-cols-3 flex flex-col gap-28 mb-8">
             {/* main articles */}
             <div className="col-span-2">
-            {/* NOW DO THE SKELETON HERE */}
             {loadingVar ? (
-              postData.slice(topDataStartIndex, topDataEndIndex).map((data, index) => {
+              postData.slice(topDataStartIndex, topDataEndIndex).map((data) => {
                 return (
-                  <div className="my-8 first-of-type:mt-0 last-of-type:mb-0" key={index}>
+                  <div className="my-8 first-of-type:mt-0 last-of-type:mb-0" key={data.postId}>
                       <PostPreviewRowBig {...{post:data, direction:"md:flex-row flex-col"}}/>
                   </div>
                 )
@@ -91,7 +93,7 @@ const MoreArticles = () => {
             ) : (
               <div className="my-8 first-of-type:mt-0 last-of-type:mb-0 w-full">
                 {skeletonArticleLayoutArray.map((_) => {
-                  return <TopArticleSkeleton/>
+                  return <TopArticleSkeleton key={generateUniqueId()}/>
                 })}
               </div>
             )}
@@ -103,15 +105,15 @@ const MoreArticles = () => {
         {/* bottom articles */}
         <div className="min-[900px]:grid min-[900px]:grid-cols-4 gap-6 flex flex-col">
             {loadingVar ? (
-              postData.slice(bottomDataStartIndex, bottomDataEndIndex).map((data, index) => {
+              postData.slice(bottomDataStartIndex, bottomDataEndIndex).map((data) => {
                 return (
-                    <PostPreviewCol key={index} {...{post:data, hideDescription:true}}/>
+                    <PostPreviewCol key={data.postId} {...{post:data, hideDescription:true}}/>
                 )
               })
             ) : (
               skeletonBottomArticleLayoutArray.map((_) => {
                 return (
-                  <BottomArticleSkeleton/>
+                  <BottomArticleSkeleton key={generateUniqueId()}/>
                 )
               })
             )}

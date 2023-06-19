@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react"
+
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 import PostPreviewCol from "./widgets/postPreview/PostPreviewCol"
 import { useBlogContext } from "../contexts/blog_context"
+import { generateUniqueId } from "../utility/misc"
 
 
 let skeletonArticleLayoutArray = Array.from({ length:6 })
+
+
 
 
 const EditorsChoice = () => {
@@ -43,22 +47,22 @@ const EditorsChoice = () => {
   }
 
   return (
-    <article className="my-8">
-        <h2 className="text-3xl font-medium mb-8">Editor's Choice</h2>
-        <div className="grid min-[900px]:grid-cols-3 grid-cols-31 gap-6">
-          {postData.length > 0 ? (
-            postData.map((data, index) => {
-              return (
-                <PostPreviewCol key={index} {...{post:data}}/>
-              )
-            })
-          ) : (
-            skeletonArticleLayoutArray.map((_) => {
-              return <SkeletonArticle/>
-            })
-          )}
-          </div>
-    </article>
+      <article className="my-8">
+          <h2 className="text-3xl font-medium mb-8">Editor's Choice</h2>
+          <div className="grid min-[900px]:grid-cols-3 grid-cols-31 gap-6">
+            {postData.length > 0 ? (
+              postData.map((data) => {
+                return (
+                  <PostPreviewCol key={data?.postId} {...{post:data}}/>
+                  )
+                })
+                ) : (
+                  skeletonArticleLayoutArray.map((_) => {
+                    return <SkeletonArticle key={generateUniqueId()}/>
+                  })
+                  )}
+            </div>
+      </article>
   )
 }
 

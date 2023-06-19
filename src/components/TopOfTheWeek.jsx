@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react"
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+import { generateUniqueId } from "../utility/misc"
+
+
 import PostPreviewTogether from "./widgets/postPreview/PostPreviewTogether"
 import PostPreviewRow from "./widgets/postPreview/PostPreviewRow"
 
@@ -81,19 +84,19 @@ const TopOfTheWeek = () => {
             {/* sidebar articles here */}
             {loadingVar ? (
               <div className="grid grid-rows-4 gap-6">
-                {posts?.slice(sideArticlesIndexStart, sideArticlesIndexEnd)?.map((data, index) => {
+                {posts?.slice(sideArticlesIndexStart, sideArticlesIndexEnd)?.map((data) => {
                   return (
-                    <PostPreviewRow key={index} {...{post:data}}/>
+                    <PostPreviewRow key={data.postId} {...{post:data}}/>
                     )
                   })}
               </div>
             ) : (
               <div className="grid grid-rows-4 gap-6">
-                {sidebarSkeletonLayoutArray.map((_ => {
+                {sidebarSkeletonLayoutArray.map((_) => {
                   return (
-                    <SideArticle/>
+                    <SideArticle key={generateUniqueId()}/>
                   )
-                }))}
+                })}
               </div>
             )}
 
@@ -101,15 +104,15 @@ const TopOfTheWeek = () => {
           {/* bottom together articles here */}
             <div className="grid min-[900px]:grid-cols-3 grid-cols-1 gap-6">
               {loadingVar ? (
-                posts?.slice(bottomArticlesIndexStart, bottomArticlesIndexEnd)?.map((data, index) => {
+                posts?.slice(bottomArticlesIndexStart, bottomArticlesIndexEnd)?.map((data) => {
                   return (
-                    <PostPreviewTogether key={index} {...{post:data}}/>
+                    <PostPreviewTogether key={data?.postId} {...{post:data}}/>
                     )
                 })
               ) : (
                 bottomSkeletonLayoutArray.map((_) => {
                   return (
-                    <Skeleton className="h-[256px] w-full" inline baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
+                    <Skeleton key={generateUniqueId()} className="h-[256px] w-full" inline baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
                   )
                 })
               )}
