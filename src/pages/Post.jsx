@@ -5,6 +5,9 @@ import { Link, useParams } from "react-router-dom";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+import LazyLoad from 'react-lazy-load';
+
+
 // components and pages
 import Tag from "../components/widgets/Tag";
 import InfoSidebar from "../components/InfoSidebar";
@@ -525,145 +528,147 @@ const getCommentData = () => {
               ) : (
                 <Skeleton className="w-28 h-28" circle baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
               )}
+              <LazyLoad offset={100}>
+                <div className="flex-auto">
+                  {/* author username */}
+                  {loadingVar ? (
+                    <h3 className="text-xl font-bold mb-1 capitalize"><Link to={`/author/${currentPost.username}`}>{currentPost.displayName}</Link></h3>
 
-              <div className="flex-auto">
-                {/* author username */}
-                {loadingVar ? (
-                  <h3 className="text-xl font-bold mb-1 capitalize"><Link to={`/author/${currentPost.username}`}>{currentPost.displayName}</Link></h3>
-
-                ) : (
-                  <Skeleton className="w-24 h-6 mb-1" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
-                )}
-                {/* author description */}
-                {loadingVar ? (
-                  <p>{authorDesc}</p>
-                ) : (
-                  <Skeleton className="h-1/2" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
-                )}
-                
-              </div>
+                  ) : (
+                    <Skeleton className="w-24 h-6 mb-1" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                  )}
+                  {/* author description */}
+                  {loadingVar ? (
+                    <p>{authorDesc}</p>
+                  ) : (
+                    <Skeleton className="h-1/2" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                  )}
+                </div>
+              </LazyLoad>
             </div>
           </section>
 
           {/* comments section */}
-          <section className="p-6 bg-slate-100 rounded">
-            {/* post a comment */}
-            {isLoggedIn ? (
-              <div className={`${localCommentData.length < 1 ? "mb-0" : "mb-12"}`}>
-                <div className="flex flex-row gap-4">
-                  {/* the current user */}
-                  {loadingVar ? (
-                    <Link to={`/author/${currentUserName}`} className="rounded-full w-14 h-12">
-                      <img src={defaultUserImg} alt="alt text" className="rounded-full w-full h-full"/>
-                    </Link>
-                  ) : (
-                    <Skeleton className="w-12 h-12" circle baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
-                  )}
-                  {/* TEXTAREA */}
-                  <div className="w-full">
-                  {loadingVar ? (
-                    <textarea id="post-a-comment-input" onChange={() => setCurrentUserCommentText(postACommentText.current.value)} ref={postACommentText} value={currentUserCommentText} maxLength={wordLimitAmount} placeholder="Join the discussion and leave a comment!" className="resize-y w-full h-24 border border-gray-300 rounded-sm p-2"></textarea>
-                    ) : (
-                      <Skeleton className="h-24" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
-                      )}
-                      </div>
-                </div>
-                
-                <div className="flex min-[425px]:flex-row flex-col min-[425px]:justify-between justify-center items-center mt-3  min-[425px]:ml-0  ml-16">
-                  {loadingVar ? (
-                    <p className="min-[425px]:ml-16 ml-0 min-[425px]:mb-0 mb-4">{currentUserCommentText.length} / {wordLimitAmount}</p>
-                  ) : (
-                    <Skeleton className="w-20 ml-16" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
-                  )}
-                    
-                  {loadingVar ? (
-                  <div className="flex min-[425px]:flex-row flex-col gap-4">
-                    {isEditingEnabled ? (
-                      <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" disabled={currentUserCommentText.length >= 1 ? false : true} type="button" onClick={() => editComment()}>Update Comment</button>
-                    ) : (
-                      <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" disabled={currentUserCommentText.length >= 1 ? false : true} type="button" onClick={() => postComment()}>Post comment</button>
-                    )}
-                    <button className="bg-white text-black border-2 border-black rounded-sm py-2 px-3" onClick={() => cancelBtn()}>Cancel</button>
-                  </div>
-                  ) : (
-                    <Skeleton className="w-56 h-[44px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
-                  )}
-
-                </div>
-            </div>
-            ) : (
-              <>
-                {/* {localCommentData.length < 1 ? "" : <h2 className="mb-12 text-center">Log in to post a comment and add to the discussions!</h2>} */}
-              </>
-            )}
-
-            {/* text for a post that is not visited by a logged in user by has not comments */}
-            {!isLoggedIn && (
-              <h2 className={`${localCommentData.length > 1 && "mb-12"} text-center text-lg`}>Log in to post a comment and add to the discussions!</h2>
-            )}
-            {/* text for a post that is visited by a logged in user by has not comments */}
-            {isLoggedIn && localCommentData.length < 1 && (
-              <h2 className="mt-12 text-center text-lg">Leave a comment and start the discussion!</h2>
-            )}
-
-            {/* loading spinner for the comments */}
-            {!loadingVar && (
-              <div className="text-center animate-spin w-[48px] h-[48px] text-5xl mx-auto my-4"><CgSpinner/></div> 
-            )}
-            
-            
-            {/* comments */}
-            <ul className="w-full my-6">
-              {/* comment */}
-              {localCommentData.map((el, index) => {
-                const { id } = el
-                let isOpen = isDropdownOpen.filter((el) => el.id === id)[0]?.isOpen
-
-                return (
-                  <li id="post-comment" data-uniqueid={el.id} className="flex flex-row gap-4 w-full my-8 relative" key={index}>
-                  <Link to={`/author/${el.authorUsername}`} className="rounded-full w-14 h-12">
-                    <img src={defaultUserImg} alt="alt text" className="rounded-full w-12 h-12 object-cover"/>
-                  </Link>
-                  <div id="container-test" className="w-full">
-                    <header className="flex flex-row items-center w-full">
-                      <Link to={`/author/${el.authorUsername}`}>
-                        <h2 className="font-medium mr-2">{el.authorDisplayName}</h2>
+          <LazyLoad offset={100}>
+            <section className="p-6 bg-slate-100 rounded">
+              {/* post a comment */}
+              {isLoggedIn ? (
+                <div className={`${localCommentData.length < 1 ? "mb-0" : "mb-12"}`}>
+                  <div className="flex flex-row gap-4">
+                    {/* the current user */}
+                    {loadingVar ? (
+                      <Link to={`/author/${currentUserName}`} className="rounded-full w-14 h-12">
+                        <img src={defaultUserImg} alt="alt text" className="rounded-full w-full h-full"/>
                       </Link>
-                      <p className="text-slate-500 text-sm">{getTimeDifference(el.createdAt, Date())}</p>
-                      {el.isEdited ? <span className="text-slate-500 text-sm ml-1">(edited)</span> : ""}
-                      {isLoggedIn && user?.uid === el.authorUid ? (
-                        <button className="dots-btn ml-auto">
-                          <RxDotsVertical/>
-                        </button>
-                      ) : ""}
-                      {/* comment dropdown menu */}
-                      <div className={`dropdown-menu-container ${isOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed hidden"} top-[30px] w-28 flex`}>
-                        <ul className="w-full">
-                          <li className="mb-4 w-full">
-                            <button className="flex flex-row items-center w-full" type="button" onClick={() => editBtn(el.id, el.text)}>
-                              <AiOutlineEdit/>
-                              <span className="ml-2">Edit</span>
-                            </button>
-                          </li>
-                          <li className="mt-4">
-                            <button className="flex flex-row items-center w-full text-red-600" type="button" onClick={() => {
-                              setIsDeleteCommentModalOpen(true)
-                              setCurrentCommentId(id)
-                            }}>
-                              <BiTrash/>
-                              <span className="ml-2">Delete</span>
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-                    </header>
-                    <p className="flex flex-row flex-wrap">{el.text}</p>
+                    ) : (
+                      <Skeleton className="w-12 h-12" circle baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                    )}
+                    {/* TEXTAREA */}
+                    <div className="w-full">
+                    {loadingVar ? (
+                      <textarea id="post-a-comment-input" onChange={() => setCurrentUserCommentText(postACommentText.current.value)} ref={postACommentText} value={currentUserCommentText} maxLength={wordLimitAmount} placeholder="Join the discussion and leave a comment!" className="resize-y w-full h-24 border border-gray-300 rounded-sm p-2"></textarea>
+                      ) : (
+                        <Skeleton className="h-24" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                        )}
+                        </div>
                   </div>
-                </li>
-                )
-              })}
-            </ul>
-          </section>
+                  
+                  <div className="flex min-[425px]:flex-row flex-col min-[425px]:justify-between justify-center items-center mt-3  min-[425px]:ml-0  ml-16">
+                    {loadingVar ? (
+                      <p className="min-[425px]:ml-16 ml-0 min-[425px]:mb-0 mb-4">{currentUserCommentText.length} / {wordLimitAmount}</p>
+                    ) : (
+                      <Skeleton className="w-20 ml-16" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                    )}
+                      
+                    {loadingVar ? (
+                    <div className="flex min-[425px]:flex-row flex-col gap-4">
+                      {isEditingEnabled ? (
+                        <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" disabled={currentUserCommentText.length >= 1 ? false : true} type="button" onClick={() => editComment()}>Update Comment</button>
+                      ) : (
+                        <button className="bg-black text-white rounded-sm py-2 px-3 disabled:opacity-75 disabled:bg-slate-700" disabled={currentUserCommentText.length >= 1 ? false : true} type="button" onClick={() => postComment()}>Post comment</button>
+                      )}
+                      <button className="bg-white text-black border-2 border-black rounded-sm py-2 px-3" onClick={() => cancelBtn()}>Cancel</button>
+                    </div>
+                    ) : (
+                      <Skeleton className="w-56 h-[44px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                    )}
+
+                  </div>
+              </div>
+              ) : (
+                <>
+                  {/* {localCommentData.length < 1 ? "" : <h2 className="mb-12 text-center">Log in to post a comment and add to the discussions!</h2>} */}
+                </>
+              )}
+
+              {/* text for a post that is not visited by a logged in user by has not comments */}
+              {!isLoggedIn && (
+                <h2 className={`${localCommentData.length > 1 && "mb-12"} text-center text-lg`}>Log in to post a comment and add to the discussions!</h2>
+              )}
+              {/* text for a post that is visited by a logged in user by has not comments */}
+              {isLoggedIn && localCommentData.length < 1 && (
+                <h2 className="mt-12 text-center text-lg">Leave a comment and start the discussion!</h2>
+              )}
+
+              {/* loading spinner for the comments */}
+              {!loadingVar && (
+                <div className="text-center animate-spin w-[48px] h-[48px] text-5xl mx-auto my-4"><CgSpinner/></div> 
+              )}
+              
+              
+              {/* comments */}
+              <ul className="w-full my-6">
+                {/* comment */}
+                {localCommentData.map((el, index) => {
+                  const { id } = el
+                  let isOpen = isDropdownOpen.filter((el) => el.id === id)[0]?.isOpen
+
+                  return (
+                    <li id="post-comment" data-uniqueid={el.id} className="flex flex-row gap-4 w-full my-8 relative" key={index}>
+                    <Link to={`/author/${el.authorUsername}`} className="rounded-full w-14 h-12">
+                      <img src={defaultUserImg} alt="alt text" className="rounded-full w-12 h-12 object-cover"/>
+                    </Link>
+                    <div id="container-test" className="w-full">
+                      <header className="flex flex-row items-center w-full">
+                        <Link to={`/author/${el.authorUsername}`}>
+                          <h2 className="font-medium mr-2">{el.authorDisplayName}</h2>
+                        </Link>
+                        <p className="text-slate-500 text-sm">{getTimeDifference(el.createdAt, Date())}</p>
+                        {el.isEdited ? <span className="text-slate-500 text-sm ml-1">(edited)</span> : ""}
+                        {isLoggedIn && user?.uid === el.authorUid ? (
+                          <button className="dots-btn ml-auto">
+                            <RxDotsVertical/>
+                          </button>
+                        ) : ""}
+                        {/* comment dropdown menu */}
+                        <div className={`dropdown-menu-container ${isOpen ? "dropdown-menu-container--open" : "dropdown-menu-container--closed hidden"} top-[30px] w-28 flex`}>
+                          <ul className="w-full">
+                            <li className="mb-4 w-full">
+                              <button className="flex flex-row items-center w-full" type="button" onClick={() => editBtn(el.id, el.text)}>
+                                <AiOutlineEdit/>
+                                <span className="ml-2">Edit</span>
+                              </button>
+                            </li>
+                            <li className="mt-4">
+                              <button className="flex flex-row items-center w-full text-red-600" type="button" onClick={() => {
+                                setIsDeleteCommentModalOpen(true)
+                                setCurrentCommentId(id)
+                              }}>
+                                <BiTrash/>
+                                <span className="ml-2">Delete</span>
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </header>
+                      <p className="flex flex-row flex-wrap">{el.text}</p>
+                    </div>
+                  </li>
+                  )
+                })}
+              </ul>
+            </section>
+          </LazyLoad>
         </div>
         {/* info sidebar */}
         <InfoSidebar/>

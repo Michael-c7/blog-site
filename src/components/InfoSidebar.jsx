@@ -7,6 +7,8 @@ import { getAllCategories } from "../utility/reusable";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+import LazyLoad from 'react-lazy-load';
+
 // icons 
 import {
     FaFacebookF,
@@ -198,77 +200,80 @@ const InfoSidebar = (props) => {
             ) : (
                 <Skeleton className="h-[172px]" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
             )}
-
-            {/* categories group */}
-            <section className="flex flex-col gap-3 my-10">
-                {categories.length > 0 ? (
-                    categoriesList.map((el, index) => {
-                        return (
-                            <Link to={`/category/${el.category.toLowerCase()}`} key={index} className="bg-slate-500 p-4 rounded-xl flex justify-between bg-no-repeat bg-center bg-cover" style={{backgroundImage:`url(${categoriesImageMap[el?.category.toLowerCase()]})`, boxShadow:"inset 0px 0px 75px 17px rgba(0,0,0,0.75)"}}>
-                                <span className="text-white capitalize">{el.category}</span>
-                                <span className="bg-white p-1 rounded-full w-8 flex justify-center items-center">{el.amount}</span>
-                            </Link>
-                        )
-                    })
-                ) : (
-                    <Skeleton className="h-[64px] my-2" count={4}  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
-                )}
-
-
-            </section>
-            {/* recent posts */}
-            <div>
-                <h2 className="font-semibold text-3xl mb-2">Recent Posts</h2>
-                {recentPostsData.length > 0 ? (
-                    <div className="flex flex-col gap-6">
-                    {recentPostsData.map((data, index) => {
-                        return (
-                            <PostPreviewRow key={index} {...{post:data, direction:"flex-row-reverse"}}/>
-                            )
-                    })}
-                    </div>
-                ) : (
-                    <Skeleton className="h-[64px] my-2" count={3}  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
-                )}
-            </div>
-            {/* mini slider */}
-            <div className="relative my-8 h-[375px]">
-                <div className={`absolute z-30 mt-5 mr-4 right-0 text-white text-xl ${sliderPostData.length <= 0 && "opacity-0"}`}>
-                    <button onClick={() => prevSlide()} className="bg-[rgba(10,10,10,0.30)] rounded-full p-2 mx-1">
-                        <RiArrowLeftSLine/>
-                    </button>
-                    <button onClick={() => nextSlide()} className="bg-[rgba(10,10,10,0.30)] rounded-full p-2 mx-1">
-                        <RiArrowRightSLine/>
-                    </button>
-                </div>
-                {/* slides */}
-                <div className="w-full h-full relative overflow-hidden rounded-xl">
-                {/* slide */}
-                    {sliderPostData.length > 0 ? (
-                        sliderPostData.map((data, index) => {
-                            let slidePosition = "mini-slider--next"
-
-                            if (sliderCurrentIndex === index) {
-                            slidePosition = "mini-slider--current";
-                            }
-                            if 
-                            (sliderCurrentIndex === index - 1 || 
-                            (index === 0 && sliderCurrentIndex === sliderPostData.length - 1)
-                            ) {
-                            slidePosition = "mini-slider--prev";
-                            }
-
+            <LazyLoad offset={100}>
+                {/* categories group */}
+                <section className="flex flex-col gap-3 my-10">
+                    {categories.length > 0 ? (
+                        categoriesList.map((el, index) => {
                             return (
-                                <div key={index} className={`${slidePosition} opacity-0 transition-all duration-700 absolute w-full h-full top-0`}>
-                                    <PostPreviewTogether {...{post:data, position:"absolute", width:"w-full", height:"h-full"}} />
-                                </div>
+                                <Link to={`/category/${el.category.toLowerCase()}`} key={index} className="bg-slate-500 p-4 rounded-xl flex justify-between bg-no-repeat bg-center bg-cover" style={{backgroundImage:`url(${categoriesImageMap[el?.category.toLowerCase()]})`, boxShadow:"inset 0px 0px 75px 17px rgba(0,0,0,0.75)"}}>
+                                    <span className="text-white capitalize">{el.category}</span>
+                                    <span className="bg-white p-1 rounded-full w-8 flex justify-center items-center">{el.amount}</span>
+                                </Link>
                             )
-                    })
-                ) : (
-                    <Skeleton className="h-full"  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
-                )}
+                        })
+                    ) : (
+                        <Skeleton className="h-[64px] my-2" count={4}  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
+                    )}
+                </section>
+            </LazyLoad>
+            {/* recent posts */}
+            <LazyLoad offset={100}>
+                <div>
+                    <h2 className="font-semibold text-3xl mb-2">Recent Posts</h2>
+                    {recentPostsData.length > 0 ? (
+                        <div className="flex flex-col gap-6">
+                        {recentPostsData.map((data, index) => {
+                            return (
+                                <PostPreviewRow key={index} {...{post:data, direction:"flex-row-reverse"}}/>
+                                )
+                        })}
+                        </div>
+                    ) : (
+                        <Skeleton className="h-[64px] my-2" count={3}  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
+                    )}
                 </div>
-            </div>
+            </LazyLoad>
+            <LazyLoad offset={100}>
+                {/* mini slider */}
+                <div className="relative my-8 h-[375px]">
+                    <div className={`absolute z-30 mt-5 mr-4 right-0 text-white text-xl ${sliderPostData.length <= 0 && "opacity-0"}`}>
+                        <button onClick={() => prevSlide()} className="bg-[rgba(10,10,10,0.30)] rounded-full p-2 mx-1">
+                            <RiArrowLeftSLine/>
+                        </button>
+                        <button onClick={() => nextSlide()} className="bg-[rgba(10,10,10,0.30)] rounded-full p-2 mx-1">
+                            <RiArrowRightSLine/>
+                        </button>
+                    </div>
+                    {/* slides */}
+                    <div className="w-full h-full relative overflow-hidden rounded-xl">
+                    {/* slide */}
+                        {sliderPostData.length > 0 ? (
+                            sliderPostData.map((data, index) => {
+                                let slidePosition = "mini-slider--next"
+
+                                if (sliderCurrentIndex === index) {
+                                slidePosition = "mini-slider--current";
+                                }
+                                if 
+                                (sliderCurrentIndex === index - 1 || 
+                                (index === 0 && sliderCurrentIndex === sliderPostData.length - 1)
+                                ) {
+                                slidePosition = "mini-slider--prev";
+                                }
+
+                                return (
+                                    <div key={index} className={`${slidePosition} opacity-0 transition-all duration-700 absolute w-full h-full top-0`}>
+                                        <PostPreviewTogether {...{post:data, position:"absolute", width:"w-full", height:"h-full"}} />
+                                    </div>
+                                )
+                        })
+                    ) : (
+                        <Skeleton className="h-full"  baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
+                    )}
+                    </div>
+                </div>
+            </LazyLoad>
         </div>
     </div>
   )

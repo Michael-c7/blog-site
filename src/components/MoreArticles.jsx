@@ -5,6 +5,8 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 import { generateUniqueId } from "../utility/misc"
 
+import LazyLoad from 'react-lazy-load';
+
 
 import PostPreviewRowBig from "./widgets/postPreview/PostPreviewRowBig"
 import InfoSidebar from "./InfoSidebar"
@@ -79,29 +81,31 @@ const MoreArticles = () => {
 
   return (
     <div className="bg-white my-10">
+      <LazyLoad offset={100}>
         <div className="min-[995px]:grid min-[995px]:grid-cols-3 flex flex-col gap-28 mb-8">
             {/* main articles */}
             <div className="col-span-2">
-            {loadingVar ? (
-              postData.slice(topDataStartIndex, topDataEndIndex).map((data) => {
-                return (
-                  <div className="my-8 first-of-type:mt-0 last-of-type:mb-0" key={data.postId}>
-                      <PostPreviewRowBig {...{post:data, direction:"md:flex-row flex-col"}}/>
-                  </div>
-                )
-              })
-            ) : (
-              <div className="my-8 first-of-type:mt-0 last-of-type:mb-0 w-full">
-                {skeletonArticleLayoutArray.map((_) => {
-                  return <TopArticleSkeleton key={generateUniqueId()}/>
-                })}
-              </div>
-            )}
-
+              {loadingVar ? (
+                postData.slice(topDataStartIndex, topDataEndIndex).map((data) => {
+                  return (
+                    <div className="my-8 first-of-type:mt-0 last-of-type:mb-0" key={data.postId}>
+                        <PostPreviewRowBig {...{post:data, direction:"md:flex-row flex-col"}}/>
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="my-8 first-of-type:mt-0 last-of-type:mb-0 w-full">
+                  {skeletonArticleLayoutArray.map((_) => {
+                    return <TopArticleSkeleton key={generateUniqueId()}/>
+                  })}
+                </div>
+              )}
             </div>
             {/* info sidebar */}
             <InfoSidebar/>
         </div>
+      </LazyLoad>
+      <LazyLoad offset={100}>
         {/* bottom articles */}
         <div className="min-[900px]:grid min-[900px]:grid-cols-4 gap-6 flex flex-col">
             {loadingVar ? (
@@ -118,6 +122,7 @@ const MoreArticles = () => {
               })
             )}
         </div>
+      </LazyLoad>
     </div>
   )
 }
