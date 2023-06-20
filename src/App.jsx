@@ -3,30 +3,36 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 
 import PrivateRoutes from "./utility/PrivateRoutes"
 
+
 // public route
 import Home from "./pages/Home"
-import Login from "./pages/Login"
-import SignUp from "./pages/SignUp"
-import ForgotPassword from "./pages/forgotPassword"
-import Author from "./pages/Author"
-import Category from "./pages/Category"
-import Post from "./pages/Post"
-// import Search from "./pages/Search"
+const Login = React.lazy(() => import("./pages/Login"))
+const SignUp = React.lazy(() => import("./pages/SignUp"))
+const ForgotPassword = React.lazy(() => import("./pages/forgotPassword"))
+const Author = React.lazy(() => import("./pages/Author"))
+const Category = React.lazy(() => import("./pages/Category"))
+const Post = React.lazy(() => import("./pages/Post"))
 
-import Error from "./pages/Error"
+
+
+
 // private route
-import CreateAPost from "./pages/CreateAPost"
+const CreateAPost = React.lazy(() => import("./pages/CreateAPost"))
+const LikedPosts = React.lazy(() => import("./pages/LikedPosts"))
+const Stats = React.lazy(() => import("./pages/Stats"))
+
 
 // component
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 import Sidebar from "./components/Sidebar"
 import Overlay from "./components/Overlay"
-// import SearchOverlay from "./components/SearchOverlay"
-import ScrollToTop from "./components/ScrollToTop"
-import LikedPosts from "./pages/LikedPosts";
-import Stats from "./pages/Stats";
+import Error from "./pages/Error"
 import ErrorComponent from "./components/Error";
+import Loading from "./components/Loading";
+import ScrollToTop from "./components/ScrollToTop"
+
+
 
 import { useAuthContext } from "./Auth/AuthContext"
 
@@ -41,40 +47,42 @@ function App() {
   return (
     <>
       <Router>
-        <Navbar/>
+        <React.Suspense fallback={<Loading/>}>
+          <Navbar/>
 
-        {isAuthError ? <ErrorComponent errorMessage={AuthErrorMsg}/> : ""}
+          {isAuthError ? <ErrorComponent errorMessage={AuthErrorMsg}/> : ""}
 
-        <Sidebar/>
+          <Sidebar/>
 
-        {/* <SearchOverlay/> */}
+          {/* <SearchOverlay/> */}
 
-        <ScrollToTop/>
-        
-        <Overlay/>
+          <ScrollToTop/>
+          
+          <Overlay/>
 
-        <Routes>
-          {/* All private routes go in here */}
-          <Route element={<PrivateRoutes/>}>
-            <Route element={<CreateAPost/>} path="/createAPost"/>
-            <Route element={<Stats/>} path="/stats"/>
-          </Route>
+          <Routes>
+            {/* All private routes go in here */}
+            <Route element={<PrivateRoutes/>}>
+              <Route element={<CreateAPost/>} path="/createAPost"/>
+              <Route element={<Stats/>} path="/stats"/>
+            </Route>
 
-          <Route element={<Home/>} path="/"/>
-          <Route element={<Login/>} path="/login"/>
-          <Route element={<SignUp/>} path="/SignUp"/>
-          <Route element={<ForgotPassword/>} path="/forgotPassword"/>
-          <Route element={<Author/>} path="/author/:authorId"/>
-          <Route element={<Category/>} path="/category/:categoryName"/>
-          <Route element={<Post/>} path="/post/:postId"/>
-          {/* <Route element={<Search/>} path="/search"/> */}
-          <Route element={<LikedPosts/>} path="/likedPosts"/>
+            <Route element={<Home/>} path="/"/>
+            <Route element={<Login/>} path="/login"/>
+            <Route element={<SignUp/>} path="/SignUp"/>
+            <Route element={<ForgotPassword/>} path="/forgotPassword"/>
+            <Route element={<Author/>} path="/author/:authorId"/>
+            <Route element={<Category/>} path="/category/:categoryName"/>
+            <Route element={<Post/>} path="/post/:postId"/>
+            {/* <Route element={<Search/>} path="/search"/> */}
+            <Route element={<LikedPosts/>} path="/likedPosts"/>
+ 
 
 
-
-          <Route element={<Error/>} path="*"/>
-        </Routes>
-        <Footer/>
+            <Route element={<Error/>} path="*"/>
+          </Routes>
+          <Footer/>
+        </React.Suspense>
       </Router>
     </>
   )
