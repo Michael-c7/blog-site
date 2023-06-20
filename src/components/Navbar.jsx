@@ -138,12 +138,12 @@ const Navbar = () => {
                       <span>Liked Posts</span>
                     </Link>
                   </li>
-                  <li className="my-4 hover:text-zinc-900">
+                  {/* <li className="my-4 hover:text-zinc-900">
                     <Link to="/stats" className="flex flex-row items-center" onClick={() =>  setIsDropdownMenuOpen(false)}>
                       <AiOutlineBarChart className="mr-3 text-xl"/>
                       <span>Stats</span>
                     </Link>
-                  </li>
+                  </li> */}
 
                   <li className="my-4 hover:text-zinc-900">
                     <button className="flex flex-row items-center" onClick={() => {
