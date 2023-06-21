@@ -17,6 +17,10 @@
   --vimeo--bg-color:#1AB7EA;
   --youtube--bg-color:#FE2905;
 
+
+  --skeleton-base-color:#ccc;
+  --skeleton-highlight-color:#a8a8a8;
+
   /* the width for the site container, on mobile */
   --smaller-main-width:calc(100% - 1rem);
 }
@@ -188,4 +192,20 @@
   /* the border and background-clip create the appearance of padding */
   /* border:4px solid rgba(0, 0, 0, 0);
   background-clip:padding-box; */
+}
+
+
+
+
+
+.skeleton-list {
+  margin:0 0.5rem;
+}
+
+.skeleton-list:first-of-type {
+  margin-left:0;
+}
+
+.skeleton-list:last-of-type {
+  margin-right:0;
 }

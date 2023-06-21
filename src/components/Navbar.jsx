@@ -1,28 +1,27 @@
 import React, { useState, useEffect, useRef } from "react"
-import { Link } from "react-router-dom";
-
+import { Link } from "react-router-dom"
+// images
 import logo from "../assets/images/BizTech.png"
 import user from "../assets/images/defaultUser.png"
+
 // icons
-import { IoIosArrowDown, } from "react-icons/io";
+import { IoIosArrowDown, } from "react-icons/io"
 import { BiSearch, BiUser } from "react-icons/bi"
 import { 
   AiOutlineHeart,
   AiOutlineForm,
   AiOutlineMenu,
-  AiOutlineBarChart,
 } from "react-icons/ai"
 import { MdLogout } from "react-icons/md"
 
+// misc
 import { navItems } from "../utility/reusable"
+import useClickOff from "../hooks/useClickOff"
 
-import useClickOff from "../hooks/useClickOff";
-
-import { useStandardContext } from "../contexts/standard_context";
-
+// contexts
+import { useStandardContext } from "../contexts/standard_context"
 import { useAuthContext } from "../Auth/AuthContext"
-
-import { useBlogContext } from "../contexts/blog_context";
+import { useBlogContext } from "../contexts/blog_context"
 
 
 const Navbar = () => {
@@ -53,7 +52,7 @@ const Navbar = () => {
       <div className="py-4 flex-center flex-row outer-width mx-auto max-[320px]:flex-col">
           <div className="left-side flex flex-row">
             <Link className="logo-container mr-3 max-[320px]:mr-3 max-[320px]:mb-2" to="/">
-              <img src={logo}/>
+              <img src={logo} alt="biztech logo"/>
             </Link>
 
             <ul className="flex flex-row relative">
@@ -112,7 +111,7 @@ const Navbar = () => {
             
 
             <button ref={profileRef} className="flex-center flex-row ml-3" onClick={() => setIsDropdownMenuOpen(!isDropdownMenuOpen)}>
-                <img src={user} className="mr-1 w-[32px]"/>
+                <img src={user} className="mr-1 w-[32px]" alt="user image"/>
                 <IoIosArrowDown className="text-zinc-500"/>
             </button>
 
@@ -138,12 +137,12 @@ const Navbar = () => {
                       <span>Liked Posts</span>
                     </Link>
                   </li>
-                  <li className="my-4 hover:text-zinc-900">
+                  {/* <li className="my-4 hover:text-zinc-900">
                     <Link to="/stats" className="flex flex-row items-center" onClick={() =>  setIsDropdownMenuOpen(false)}>
                       <AiOutlineBarChart className="mr-3 text-xl"/>
                       <span>Stats</span>
                     </Link>
-                  </li>
+                  </li> */}
 
                   <li className="my-4 hover:text-zinc-900">
                     <button className="flex flex-row items-center" onClick={() => {

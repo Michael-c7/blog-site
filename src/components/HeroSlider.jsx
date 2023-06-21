@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react"
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 // components
 import Tag from "../components/widgets/Tag"
@@ -54,44 +56,50 @@ const HeroSlider = () => {
 
 
     return (
-        <article className="h-[600px] my-12 rounded-lg relative">
-            {/* slides */}
-            <ul>
-                {slideData.map((el, index) => {
-                    return (
-                        <li key={el?.postId} className={`${currentSlideIndex === index ? "hero-slider-transition--current" : ""}  hero-slider-transition--start absolute rounded-lg w-full h-full text-white`}>
-                            <Link to={`/post/${el?.postId}`} className="top-0 absolute w-full h-full rounded-xl">
-                                <img src={el?.image} alt={el?.altText} className="top-0 left-0 absolute w-full h-full rounded-xl object-cover" />
-                             </Link>
-                             <div className="absolute min-[425px]:mx-16 mx-0 min-[425px]:w-auto w-full top-1/2 -translate-y-1/2">
-                                 <div className="w-full flex min-[425px]:justify-start justify-center z-40">
-                                     <Tag {...{bgColor:`--category--${el.tag}`, text:`${el.tag}`, link:`/category/${el.tag}`}}/>
-                                 </div>
-                                 <h2 className="font-semibold min-[425px]:text-4xl text-3xl uppercase my-5 w-full min-[425px]:text-left text-center">
-                                  <Link to={`/post/${el?.postId}`}>
-                                     {el.title.length <= titleCharacterLimit ? `${el.title}` : `${el.title.slice(0, titleCharacterLimit)}...`}
-                                  </Link>
-                                 </h2>
-                                 <AuthorAndDate {...{authorLink:`/author/${el.username}`, authorName:el.displayName, textColor:"#fff", date:getDateFromTime(el.createdAt?.nanoseconds, el.createdAt?.seconds)}}/>
-                             </div>
-                        </li>
-                    )
-                })}
-            </ul>
-            {/* slide buttons */}
-            <ul className="absolute bottom-0 px-8 mb-8 w-full justify-between md:grid grid-rows-1 hidden z-10 grid-cols-4 gap-4">
-                {slideData.map((el, index) => {
-                    return (
-                        <li key={el.postId} onClick={() => setCurrentSlideIndex(index)} className="text-white flex items-center">
-                            <button className="flex items-center">
-                                <img src={el.image} alt={el.title} className="w-14 h-14 rounded-full mr-2 object-cover"/>
-                                <h2 className={` ${currentSlideIndex === index ? "text-white" : "text-neutral-300"} font-semibold uppercase text-sm text-left`}>{el.title.length <= titleBtnCharacterLimit ? `${el.title}` : `${el.title.slice(0,titleBtnCharacterLimit)}...`}</h2>
-                            </button>
-                        </li>
-                    )
-                })}
-            </ul>
-        </article>
+    <>
+        {slideData.length >= 1 ? (
+            <article className="h-[600px] my-12 rounded-lg relative">
+                {/* slides */}
+                <ul>
+                    {slideData.map((el, index) => {
+                        return (
+                            <li key={el?.postId} className={`${currentSlideIndex === index ? "hero-slider-transition--current" : ""}  hero-slider-transition--start absolute rounded-lg w-full h-full text-white`}>
+                                <Link to={`/post/${el?.postId}`} className="top-0 absolute w-full h-full rounded-xl">
+                                    <img src={el?.image} alt={el?.altText} className="top-0 left-0 absolute w-full h-full rounded-xl object-cover" />
+                                </Link>
+                                <div className="absolute min-[425px]:mx-16 mx-0 min-[425px]:w-auto w-full top-1/2 -translate-y-1/2">
+                                    <div className="w-full flex min-[425px]:justify-start justify-center z-40">
+                                        <Tag {...{bgColor:`--category--${el.tag}`, text:`${el.tag}`, link:`/category/${el.tag}`}}/>
+                                    </div>
+                                    <h2 className="font-semibold min-[425px]:text-4xl text-3xl uppercase my-5 w-full min-[425px]:text-left text-center">
+                                    <Link to={`/post/${el?.postId}`}>
+                                        {el.title.length <= titleCharacterLimit ? `${el.title}` : `${el.title.slice(0, titleCharacterLimit)}...`}
+                                    </Link>
+                                    </h2>
+                                    <AuthorAndDate {...{authorLink:`/author/${el.username}`, authorName:el.displayName, textColor:"#fff", date:getDateFromTime(el.createdAt?.nanoseconds, el.createdAt?.seconds)}}/>
+                                </div>
+                            </li>
+                        )
+                    })}
+                </ul>
+                {/* slide buttons */}
+                <ul className="absolute bottom-0 px-8 mb-8 w-full justify-between md:grid grid-rows-1 hidden z-10 grid-cols-4 gap-4">
+                    {slideData.map((el, index) => {
+                        return (
+                            <li key={el.postId} onClick={() => setCurrentSlideIndex(index)} className="text-white flex items-center">
+                                <button className="flex items-center">
+                                    <img src={el.image} alt={el.title} className="w-14 h-14 rounded-full mr-2 object-cover"/>
+                                    <h2 className={`${currentSlideIndex === index ? "text-white" : "text-neutral-300"} font-semibold uppercase text-sm text-left`}>{el.title.length <= titleBtnCharacterLimit ? `${el.title}` : `${el.title.slice(0,titleBtnCharacterLimit)}...`}</h2>
+                                </button>
+                            </li>
+                        )
+                    })}
+                </ul>
+            </article>
+        ) : (
+            <Skeleton className="h-[600px] my-12" baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius="0.5rem"/>
+        )}
+    </>
     )
 }
 

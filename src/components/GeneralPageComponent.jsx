@@ -1,16 +1,12 @@
 import React from "react"
 import GeneralHeading from "./GeneralHeading"
 import InfoSidebar from "./InfoSidebar"
-import PostPreviewCol from "./widgets/postPreview/PostPreviewCol"
-
 import GeneralPageCard from "./GeneralPageCard"
 
 
 const GeneralPageComponent = ({headingText, isGeneralHeadingShown = true, paginationDotAmount, currentPageNumber, setCurrentPageNumber, currentGeneralPagePosts,}) => {
-    // have ten articles / PostPreviewCol per page
-    let testArr = Array.from({ length:10 })
+    // have ten articles per page
     let paginationBtnAmt = Array.from({ length:paginationDotAmount })
-    
 
     return (
         <div>

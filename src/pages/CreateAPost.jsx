@@ -1,23 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
 import GeneralPageHeading from "../components/GeneralHeading";
 import ErrorComponent from "../components/Error";
-import useClickOff from "../hooks/useClickOff";
-import { debounce, convertImageToBlob, compressImage, generateUniqueId } from "../utility/misc";
-import { defaultImgData } from "../utility/reusable";
-import Loading from "../components/Loading"
-
 // Importing icons
 import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 import { BiSearch, BiTrash } from "react-icons/bi";
 import { RiCloseLine } from "react-icons/ri";
-
+// contexts
 import { useBlogContext } from "../contexts/blog_context"
 import { useAuthContext } from "../Auth/AuthContext"
-import { serverTimestamp } from "@firebase/firestore";
-
+// helper functions / data
+import { defaultImgData } from "../utility/reusable";
 import { useNavigate } from "react-router-dom";
+import { serverTimestamp } from "@firebase/firestore";
+import { 
+  debounce,
+  convertImageToBlob,
+  compressImage,
+  generateUniqueId,
+} from "../utility/misc";
 
-import useGetScrollY from "../hooks/useGetScrollY";
+
 
 const CreateAPost = () => {
   const { 
@@ -367,7 +369,7 @@ const CreateAPost = () => {
                     )
                   }) : (
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                      <Loading/>
+                      <h2 className=" text-2xl">Loading...</h2>
                     </div>
                   )}
                 </div>

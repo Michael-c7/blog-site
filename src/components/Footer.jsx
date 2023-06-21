@@ -1,6 +1,11 @@
 import React, { useState } from "react"
 import { Link } from "react-router-dom"
 
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
+import LazyLoad from 'react-lazy-load';
+
 import {
   getAllCategories,
   socialMediaItems,
@@ -18,12 +23,12 @@ const Footer = () => {
   React.useEffect(() => {
     let amountOfPostsToGet = 2
     getMostRecentPosts(amountOfPostsToGet).then((data) => setRecentPostsData(data))
-  },[])
+  }, [])
 
 
   React.useEffect(() => {
     getAllCategoriesAndCategoryAmount(getAllCategories()).then((data) => setCategories(data))
-}, [getAllCategories])
+  }, [getAllCategories])
 
   return (
     <footer className="bg-black text-white relative">
@@ -51,31 +56,42 @@ const Footer = () => {
               {/* Recent posts section */}
               <div>
                 <h2 className="font-bold mb-4 text-lg">Recent Posts</h2>
-                <div className="flex flex-col gap-6">
-                  {recentPostsData.map((data, index) => {
-                    return (
-                      <PostPreviewRow key={index} {...{post:data, textColor:"#fff", direction:"flex-row-reverse"}} />
-                    )
-                  })}
-                </div>
-
+                <LazyLoad offset={100}>
+                  {recentPostsData.length > 0 ? (
+                    <div className="flex flex-col gap-6">
+                      {recentPostsData.map((data, index) => {
+                        return (
+                          <PostPreviewRow key={index} {...{post:data, textColor:"#fff", direction:"flex-row-reverse"}} />
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <Skeleton className="h-24 my-2" count={2} baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)" borderRadius={"1rem"}/>
+                  )}
+                </LazyLoad>
               </div>
               {/* categories section */}
               <div className="categories">
                 <h2 className="font-bold mb-4 text-lg">Categories</h2>
-                <ul>
-                  {/* Slice removes the first item which is home */}
-                  {categories.map((el, index) => {
-                    return (
-                      <li key={el.category} className="relative py-3 flex flex-row justify-between after:content-[''] after:absolute after:bg-zinc-800 after:w-full after:left-0 after:h-px after:bottom-0">
-                        <Link to={`/category/${el.category}`}>{el.category}</Link>
-                        <div className="rounded-full p-1 flex justify-center items-center text-center text-xs min-w-[1.5rem] min-h-[1.5rem]" 
-                          style={{backgroundColor:`var(--category--${el.category.toLowerCase()})`}}
-                        >{el.amount}</div>
-                      </li>
-                    )
-                  })}
-                </ul>
+                <LazyLoad offset={100}>
+                  {categories.length > 0 ? (
+                    <ul>
+                    {/* Slice removes the first item which is home */}
+                      {categories.map((el) => {
+                        return (
+                          <li key={el.category} className="relative py-3 flex flex-row justify-between after:content-[''] after:absolute after:bg-zinc-800 after:w-full after:left-0 after:h-px after:bottom-0">
+                            <Link className="flex flex-row justify-between w-full" to={`/category/${el.category.toLowerCase()}`}>
+                              <h2>{el.category}</h2>
+                              <div className="rounded-full p-1 flex justify-center items-center text-center text-xs min-w-[1.5rem] min-h-[1.5rem]" style={{backgroundColor:`var(--category--${el.category.toLowerCase()})`}}>{el.amount}</div>
+                            </Link>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  ) : (
+                    <Skeleton className="h-6 my-3" count={5} baseColor="var(--skeleton-base-color)" highlightColor="var(--skeleton-highlight-color)"/>
+                  )}
+                </LazyLoad>
               </div>
             </section>
           </div>
